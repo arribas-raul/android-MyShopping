@@ -34,6 +34,7 @@ fun DetailBody(
         verticalArrangement = Arrangement.spacedBy(32.dp)
     ) {
         ItemInputForm(articleUiState = articleUiState, onValueChange = onItemValueChange)
+
         Button(
             onClick = onSaveClick,
             enabled = articleUiState.actionEnabled,

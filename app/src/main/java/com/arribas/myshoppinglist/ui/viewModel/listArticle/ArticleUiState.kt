@@ -5,7 +5,7 @@ import com.arribas.myshoppinglist.data.model.Article
 data class ArticleUiState(
     val id: Int = 0,
     val name: String = "",
-    val quantity: String = "",
+    val quantity: String = "1",
     val check: Boolean = false,
     val actionEnabled: Boolean = false
 )

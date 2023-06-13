@@ -39,7 +39,7 @@ fun InventoryListHeader(modifier: Modifier = Modifier) {
 
 private val headerList = listOf(
     InventoryHeader(headerStringId = R.string.check, weight = 0.5f, textAlign = TextAlign.Center),
-    InventoryHeader(headerStringId = R.string.item, weight = 2f, textAlign = TextAlign.Left),
+    InventoryHeader(headerStringId = R.string.item, weight = 1.8f, textAlign = TextAlign.Left),
     InventoryHeader(headerStringId = R.string.quantity, weight = 0.6f, textAlign = TextAlign.Center),
     InventoryHeader(headerStringId = R.string.string_void, weight = 0.3f, TextAlign.Right),
 )

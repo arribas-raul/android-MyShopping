@@ -31,6 +31,8 @@ interface ArticleRepository {
      */
     fun getItem(id: Int): Flow<Article?>
 
+    fun getItemByName(name: String): Flow<Article?>
+
     /**
      * Insert item in the data source
      */
@@ -51,6 +53,8 @@ class OfflineArticleRepository(private val articleDao: ArticleDao) : ArticleRepo
     override fun getAllItems(): Flow<List<Article>> = articleDao.getAllItems()
 
     override fun getItem(id: Int): Flow<Article?> = articleDao.getItem(id)
+
+    override fun getItemByName(name: String): Flow<Article?> = articleDao.getItemByName(name)
 
     override suspend fun insertItem(item: Article) = articleDao.insert(item)
 

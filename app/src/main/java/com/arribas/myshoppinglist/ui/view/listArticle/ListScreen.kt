@@ -41,7 +41,6 @@ import com.arribas.myshoppinglist.ui.view.general.FloatingButton
 import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
 import com.arribas.myshoppinglist.ui.viewModel.AppViewModelProvider
 import com.arribas.myshoppinglist.ui.viewModel.ListViewModel
-import kotlinx.coroutines.launch
 
 object ListDestination : NavigationDestination {
     override val route = "list"
@@ -64,9 +63,14 @@ fun ListScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
 
-        topBar = { TopBar(title = stringResource(id = R.string.app_name)) },
+        topBar = {
+            TopBar(
+                title = stringResource(id = R.string.app_name),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.primary)) },
 
-        floatingActionButton = { FloatingButton(onClick = navigateToItemEntry,) },
+        floatingActionButton = { FloatingButton(onClick = navigateToItemEntry) },
 
         ) { innerPadding ->
             ListBody(
@@ -79,6 +83,9 @@ fun ListScreen(
 
             SimpleAlertDialog(
                 show = showDialogState,
+                title = "Please confirm",
+                body =  "Should I continue with the requested action?",
+                showDismissButton = true,
                 onDismiss = viewModel::onDialogDismiss,
                 onConfirm = viewModel::onDialogConfirm
             )
@@ -101,6 +108,7 @@ fun ListBody(
     ) {
         InventoryListHeader()
         Divider()
+
         if (itemList.isEmpty()) {
             Text(
                 text = stringResource(R.string.no_item_description),
@@ -125,7 +133,10 @@ private fun InventoryList(
     onCheckClick: (Article) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    LazyColumn(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(8.dp))
+    {
         items(items = itemList, key = { it.id }) { item ->
             InventoryItem(
                 item = item,
@@ -169,7 +180,7 @@ private fun InventoryItem(
 
         Text(
             text = item.name,
-            modifier = Modifier.weight(2f),
+            modifier = Modifier.weight(1.8f),
             style = MaterialTheme.typography.labelMedium,
         )
 

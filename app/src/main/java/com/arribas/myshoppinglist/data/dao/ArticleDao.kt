@@ -23,6 +23,9 @@ interface ArticleDao {
     @Query("SELECT * from article WHERE id = :id")
     fun getItem(id: Int): Flow<Article>
 
+    @Query("SELECT * from article WHERE name = :name")
+    fun getItemByName(name: String): Flow<Article>
+
     @Query("SELECT * from article ORDER BY name ASC")
     fun getAllItems(): Flow<List<Article>>
 }

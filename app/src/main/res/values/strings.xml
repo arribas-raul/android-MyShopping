@@ -15,8 +15,8 @@
     <string name="check">Check</string>
     <string name="string_void"></string>
     <string name="action">Actions</string>
-    <string name="save_action">Save</string>
     <string name="sell">Sell</string>
+    <string name="save_action">Save</string>
     <string name="yes">Yes</string>
     <string name="back_button">Back</string>
 </resources>

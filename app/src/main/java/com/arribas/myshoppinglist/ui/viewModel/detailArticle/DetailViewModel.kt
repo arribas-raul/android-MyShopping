@@ -48,11 +48,16 @@ class DetailViewModel(
         private set
 
     init {
-        viewModelScope.launch {
-            articleUiState = articleRepository.getItem(itemId)
-                .filterNotNull()
-                .first()
-                .toArticleUiState(actionEnabled = true)
+        try {
+            viewModelScope.launch {
+                articleUiState = articleRepository.getItem(itemId)
+                    .filterNotNull()
+                    .first()
+                    .toArticleUiState(actionEnabled = true)
+            }
+
+        }catch (e: IllegalArgumentException){
+
         }
     }
 

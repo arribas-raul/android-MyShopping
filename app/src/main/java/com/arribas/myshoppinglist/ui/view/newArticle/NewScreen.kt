@@ -14,6 +14,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -26,6 +28,7 @@ import com.arribas.myshoppinglist.ui.navigation.NavigationDestination
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.TopBar
 import com.arribas.myshoppinglist.ui.view.general.DetailBody
+import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
 import com.arribas.myshoppinglist.ui.viewModel.AppViewModelProvider
 import com.arribas.myshoppinglist.ui.viewModel.detailArticle.NewViewModel
 import com.arribas.myshoppinglist.ui.viewModel.listArticle.ArticleUiState
@@ -49,6 +52,7 @@ fun NewScreen(
     modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val showDialogState: Boolean by viewModel.showDialog.collectAsState()
 
     Scaffold(
         modifier = Modifier
@@ -59,7 +63,10 @@ fun NewScreen(
             TopBar(
                 title = stringResource(id = R.string.app_name),
                 canNavigateBack = true,
-                navigateUp = navigateBack) },
+                navigateUp = navigateBack,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.primary)) },
 
         ) { innerPadding ->
             DetailBody(
@@ -69,7 +76,6 @@ fun NewScreen(
                 onSaveClick = {
                     coroutineScope.launch {
                         viewModel.saveItem()
-                        navigateBack()
                     }
                 },
 
@@ -82,5 +88,12 @@ fun NewScreen(
 
                 modifier = Modifier.padding(innerPadding),
             )
+
+        SimpleAlertDialog(
+            show = showDialogState,
+            title = "Exist this item",
+            showDismissButton = false,
+            onConfirm = { viewModel.onDialogDismiss() }
+        )
     }
 }
