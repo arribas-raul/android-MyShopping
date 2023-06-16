@@ -3,7 +3,11 @@ package com.arribas.myshoppinglist
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.App
@@ -14,7 +18,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyShoppingListTheme {
                 // A surface container using the 'background' color from the theme
-                App()
+                App(modifier = Modifier
+                        .fillMaxSize()
+                        .background(colorResource(R.color.my_background))
+                )
             }
         }
     }
@@ -24,6 +31,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun GreetingPreview() {
     MyShoppingListTheme {
-        App()
+        App(modifier = Modifier
+            .fillMaxSize())
     }
 }

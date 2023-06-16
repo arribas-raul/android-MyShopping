@@ -26,7 +26,7 @@ fun TopBar(
     modifier: Modifier = Modifier){
 
     TopAppBar(
-        title = { Text(title) },
+        title = { Text(text= title) },
 
         colors = TopAppBarDefaults.smallTopAppBarColors(
             containerColor = colorResource(R.color.my_primary),
@@ -54,5 +54,6 @@ fun TopBar(
 @Composable
 fun TopBarMainPreview() {
     TopBar(
-        title = "Lista de la compra")
+        title = "Lista de la compra",
+        canNavigateBack = true)
 }

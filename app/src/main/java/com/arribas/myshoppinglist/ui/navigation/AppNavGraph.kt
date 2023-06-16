@@ -45,7 +45,7 @@ fun AppNavHost(
     NavHost(
         navController = navController,
         startDestination = MainDestination.route,
-        modifier = modifier.background(colorResource(R.color.my_background))
+        modifier = modifier
     ) {
         composable(
             route = MainDestination.route
@@ -68,20 +68,5 @@ fun AppNavHost(
                 modifier = modifier
             )
         }
-
-        /*composable(route = ListArticleDestination.route) {
-            ListScreen(
-                navigateToItemEntry = { navController.navigate("${NewDestination.route}") },
-                navigateToItemUpdate = {
-                    navController.navigate("${DetailDestination.route}/${it}")
-                }
-            )
-        }*/
-
-        /*composable(route = NewDestination.route) {
-            NewScreen(
-                navigateBack = { navController.popBackStack() }
-            )
-        }*/
     }
 }

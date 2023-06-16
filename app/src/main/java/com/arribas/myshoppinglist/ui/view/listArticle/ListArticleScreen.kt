@@ -78,9 +78,7 @@ fun ListArticleBody(
     modifier: Modifier = Modifier){
 
     Column(
-        modifier = modifier
-            .fillMaxSize(),
-
+        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         if (itemList.isEmpty()) {

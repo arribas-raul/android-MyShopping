@@ -19,4 +19,6 @@
     <string name="save_action">Save</string>
     <string name="yes">Yes</string>
     <string name="back_button">Back</string>
+    <string name="bt_add">Aumentar</string>
+    <string name="bt_remove">Reducir</string>
 </resources>

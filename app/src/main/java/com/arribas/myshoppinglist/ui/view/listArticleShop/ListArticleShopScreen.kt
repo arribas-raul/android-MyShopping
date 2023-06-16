@@ -1,5 +1,6 @@
 package com.arribas.myshoppinglist.ui.view.listArticle
 
+import android.graphics.drawable.shapes.Shape
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -12,9 +13,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
@@ -32,6 +35,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.StrokeCap.Companion.Square
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -43,6 +48,7 @@ import com.arribas.myshoppinglist.R
 import com.arribas.myshoppinglist.data.model.Article
 import com.arribas.myshoppinglist.data.model.ArticleShop
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
+import com.arribas.myshoppinglist.ui.view.general.CircleButton
 import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
 import com.arribas.myshoppinglist.ui.view.listArticleShop.ListArticleShopHeader
 import com.arribas.myshoppinglist.ui.viewModel.AppViewModelProvider
@@ -84,9 +90,7 @@ fun ListArticleShopBody(
     modifier: Modifier = Modifier){
 
     Column(
-        modifier = modifier
-            .fillMaxSize(),
-
+        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         if (itemList.isEmpty()) {
@@ -148,7 +152,6 @@ private fun InventoryArticleShopItem(
     ) {
         Row(
             modifier = modifier
-                .fillMaxWidth()
                 .background(colorResource(R.color.white))
                 .padding(8.dp)
         ) {
@@ -169,7 +172,8 @@ private fun InventoryArticleShopItem(
 
             Text(
                 text = item.name,
-                modifier = Modifier.weight(2f)
+                modifier = Modifier
+                    .weight(2f)
                     .align(Alignment.CenterVertically),
 
                 style = MaterialTheme.typography.bodyLarge,
@@ -181,72 +185,60 @@ private fun InventoryArticleShopItem(
                     .weight(1f)
                     .align(Alignment.CenterVertically)
             ) {
-
-                OutlinedIconButton(
-                    onClick = {
-                        onChangeItem(item.copy(quantity = item.quantity + 1))
-                    },
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .width(30.dp)
-                        .height(30.dp)
-                        .padding(end = 5.dp)
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.ic_add),
-                        contentDescription = "Add",
-                    )
-                }
-
-                OutlinedIconButton(
-                    onClick = {
+                CircleButton(
+                    icon = R.drawable.ic_remove,
+                    color = R.color.white,
+                    backgroundColor = R.color.my_warning,
+                    quantity = item.quantity,
+                    description = R.string.bt_remove,
+                    onChangeItem = {
                         if (item.quantity - 1 > 0) {
                             onChangeItem(item.copy(quantity = item.quantity - 1))
                         }
-                    },
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .width(30.dp)
-                        .height(30.dp)
-                        .padding(end = 5.dp)
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.ic_remove),
-                        contentDescription = "Remove"
-                    )
-                }
+                    }
+                )
+
+                CircleButton(
+                    icon = R.drawable.ic_add,
+                    color = R.color.white,
+                    backgroundColor = R.color.my_primary,
+                    quantity = item.quantity,
+                    description = R.string.bt_add,
+                    onChangeItem = {
+                        onChangeItem(item.copy(quantity = item.quantity + 1))
+                    }
+                )
 
                 Text(
                     text = item.quantity.toString(),
 
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
-                        .padding(start = 10.dp),
+                        .padding(start = 5.dp, end = 5.dp),
+
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyLarge,
                     color = Color.Black
                 )
             }
 
-
             IconButton(
                 onClick = { onDeleteClick(item) },
-                modifier = Modifier.weight(0.3f).align(Alignment.CenterVertically)
+
+                modifier = Modifier
+                    .weight(0.3f)
+                    .width(30.dp)
+                    .height(30.dp)
+                    .align(Alignment.CenterVertically)
             ) {
                 Image(
                     painter = painterResource(R.drawable.ic_delete),
-                    contentDescription = stringResource(R.string.delete)
+                    contentDescription = stringResource(R.string.delete),
+                    modifier = Modifier
+                        .fillMaxSize()
                 )
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ListArticleShopHeaderPreview() {
-    MyShoppingListTheme {
-        ListArticleHeader()
     }
 }
 

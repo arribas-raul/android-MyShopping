@@ -51,9 +51,8 @@ object MainDestination : NavigationDestination {
 fun MainScreen(
     navController: NavHostController,
     viewModel: MainViewModel,
-    modifier: Modifier = Modifier.background(colorResource(R.color.my_background))
+    modifier: Modifier = Modifier
 ){
-
     val uiState by viewModel.uiState.collectAsState()
     val navigationItemContentList = MainDataProvider.getMainData()
 
@@ -73,15 +72,12 @@ fun MainScreen(
                     viewModel.updateCurrentTypeList(tab = type)
                 },
                 navigationItemContentList = navigationItemContentList,
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = modifier
             )
         }
     ) { innerPadding ->
-        Row(modifier = Modifier
+        Row(modifier = modifier
             .wrapContentWidth()
-            .fillMaxHeight()
-            .background(colorResource(R.color.my_background))
             .padding(innerPadding)) {
 
             when(uiState.currentTab){
