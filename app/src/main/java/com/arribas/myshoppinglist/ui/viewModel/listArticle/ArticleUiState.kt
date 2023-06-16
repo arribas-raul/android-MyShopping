@@ -13,8 +13,7 @@ data class ArticleUiState(
 fun ArticleUiState.toItem(): Article = Article(
     id = id,
     name = name,
-    quantity =  quantity.toIntOrNull() ?: 0,
-    check = check
+    shopCheked = check
 )
 
 /**
@@ -23,8 +22,7 @@ fun ArticleUiState.toItem(): Article = Article(
 fun Article.toArticleUiState(actionEnabled: Boolean = false): ArticleUiState = ArticleUiState(
     id = id,
     name = name,
-    quantity = quantity.toString(),
-    check = check,
+    check = shopCheked,
     actionEnabled = actionEnabled
 )
 

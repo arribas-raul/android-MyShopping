@@ -16,19 +16,21 @@
 
 package com.arribas.myshoppinglist.ui.navigation
 
+import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.arribas.myshoppinglist.R
 import com.arribas.myshoppinglist.ui.view.detailArticle.DetailDestination
 import com.arribas.myshoppinglist.ui.view.detailArticle.DetailScreen
-import com.arribas.myshoppinglist.ui.view.detailArticle.NewDestination
-import com.arribas.myshoppinglist.ui.view.detailArticle.NewScreen
-import com.arribas.myshoppinglist.ui.view.listArticle.ListDestination
-import com.arribas.myshoppinglist.ui.view.listArticle.ListScreen
+import com.arribas.myshoppinglist.ui.view.main.MainDestination
+import com.arribas.myshoppinglist.ui.view.main.MainScreen
+import com.arribas.myshoppinglist.ui.viewModel.MainViewModel
 
 /**
  * Provides Navigation graph for the application.
@@ -38,24 +40,20 @@ fun AppNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
+    val mainViewModel = MainViewModel()
+
     NavHost(
         navController = navController,
-        startDestination = ListDestination.route,
-        modifier = modifier
+        startDestination = MainDestination.route,
+        modifier = modifier.background(colorResource(R.color.my_background))
     ) {
-        composable(route = ListDestination.route) {
-            ListScreen(
-                navigateToItemEntry = { navController.navigate("${NewDestination.route}") },
-                navigateToItemUpdate = {
-                    navController.navigate("${DetailDestination.route}/${it}")
-                }
-            )
-        }
-
-        composable(route = NewDestination.route) {
-            NewScreen(
-                navigateBack = { navController.popBackStack() },
-                onNavigateUp = { navController.navigateUp() }
+        composable(
+            route = MainDestination.route
+        ){
+            MainScreen(
+                navController = navController,
+                viewModel = mainViewModel,
+                modifier = modifier
             )
         }
 
@@ -64,11 +62,26 @@ fun AppNavHost(
             arguments = listOf(navArgument(DetailDestination.itemIdArg) {
                 type = NavType.IntType
             })
-        ) {
+        ){
             DetailScreen(
                 navigateBack = { navController.popBackStack() },
-                onNavigateUp = { navController.navigateUp() }
+                modifier = modifier
             )
         }
+
+        /*composable(route = ListArticleDestination.route) {
+            ListScreen(
+                navigateToItemEntry = { navController.navigate("${NewDestination.route}") },
+                navigateToItemUpdate = {
+                    navController.navigate("${DetailDestination.route}/${it}")
+                }
+            )
+        }*/
+
+        /*composable(route = NewDestination.route) {
+            NewScreen(
+                navigateBack = { navController.popBackStack() }
+            )
+        }*/
     }
 }

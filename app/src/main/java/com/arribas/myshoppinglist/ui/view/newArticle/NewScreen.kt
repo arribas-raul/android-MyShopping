@@ -1,99 +1,85 @@
 package com.arribas.myshoppinglist.ui.view.detailArticle
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arribas.myshoppinglist.R
 import com.arribas.myshoppinglist.ui.navigation.NavigationDestination
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
-import com.arribas.myshoppinglist.ui.view.TopBar
 import com.arribas.myshoppinglist.ui.view.general.DetailBody
 import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
 import com.arribas.myshoppinglist.ui.viewModel.AppViewModelProvider
 import com.arribas.myshoppinglist.ui.viewModel.detailArticle.NewViewModel
 import com.arribas.myshoppinglist.ui.viewModel.listArticle.ArticleUiState
 import kotlinx.coroutines.launch
-import java.util.Currency
-import java.util.Locale
-
 
 object NewDestination : NavigationDestination {
     override val route = "new"
     override val titleRes = R.string.item_entry_title
-
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewScreen(
     navigateBack: () -> Unit,
-    onNavigateUp: () -> Unit,
     viewModel: NewViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()
     val showDialogState: Boolean by viewModel.showDialog.collectAsState()
 
-    Scaffold(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
+    NewForm(
+        updateUiState = { viewModel.updateUiState(it) },
 
-        topBar = {
-            TopBar(
-                title = stringResource(id = R.string.app_name),
-                canNavigateBack = true,
-                navigateUp = navigateBack,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.primary)) },
+        saveItem = {
+            coroutineScope.launch {
+                viewModel.saveItem()
+                //navigateBack()
+            }
+        },
 
-        ) { innerPadding ->
-            DetailBody(
-                articleUiState = viewModel.articleUiState,
-                onItemValueChange = { viewModel.updateUiState(it)},
+        onDialogDismiss = { viewModel.onDialogDismiss() },
+        articleUiState = viewModel.articleUiState,
+        showDialogState = showDialogState,
+        modifier = Modifier.background(colorResource(R.color.my_background))
+    )
+}
 
-                onSaveClick = {
-                    coroutineScope.launch {
-                        viewModel.saveItem()
-                    }
-                },
+@Composable
+fun NewForm(
+    updateUiState: (ArticleUiState) -> Unit = {},
+    saveItem: () -> Unit = {},
+    onDialogDismiss: () -> Unit = {},
+    articleUiState: ArticleUiState,
+    showDialogState: Boolean = false,
+    modifier: Modifier = Modifier) {
 
-                onDeleteClick = {
-                    coroutineScope.launch {
-                        viewModel.deleteItem()
-                        navigateBack()
-                    }
-                },
+    DetailBody(
+        articleUiState = articleUiState,
+        onItemValueChange = { updateUiState(it) },
+        onSaveClick = { saveItem() },
+        onDeleteClick = { }
+    )
 
-                modifier = Modifier.padding(innerPadding),
-            )
+    SimpleAlertDialog(
+        show = showDialogState,
+        title = "Exist this item",
+        showDismissButton = false,
+        onConfirm = onDialogDismiss
+    )
+}
 
-        SimpleAlertDialog(
-            show = showDialogState,
-            title = "Exist this item",
-            showDismissButton = false,
-            onConfirm = { viewModel.onDialogDismiss() }
-        )
+@Preview(showBackground = true)
+@Composable
+fun NewScreenPreview() {
+    val articleUiState = ArticleUiState()
+
+    MyShoppingListTheme {
+        NewForm(articleUiState = articleUiState )
     }
 }

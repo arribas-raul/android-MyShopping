@@ -1,6 +1,7 @@
 package com.arribas.myshoppinglist.ui.view.detailArticle
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,6 +13,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -39,9 +41,9 @@ object DetailDestination : NavigationDestination {
 @Composable
 fun DetailScreen(
     navigateBack: () -> Unit,
-    onNavigateUp: () -> Unit,
     viewModel: DetailViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier.fillMaxHeight()
+        .background(colorResource(R.color.my_background))
 ) {
     val coroutineScope = rememberCoroutineScope()
     val showDialogState: Boolean by viewModel.showDialog.collectAsState()
@@ -67,7 +69,9 @@ fun DetailScreen(
         onOpenDialogClicked = { viewModel.onOpenDialogClicked() },
         onDialogDismiss = { viewModel.onDialogDismiss() },
         articleUiState = viewModel.articleUiState,
-        showDialogState = showDialogState
+        showDialogState = showDialogState,
+        modifier = Modifier.fillMaxHeight()
+            .background(colorResource(R.color.my_background))
     )
 }
 
@@ -85,18 +89,18 @@ fun DetailForm(
     modifier: Modifier = Modifier)
 {
     Scaffold(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
+            .background(colorResource(R.color.my_background)),
 
         topBar = {
             TopBar(
-                title = stringResource(id = R.string.app_name),
+                title = articleUiState.name,
                 canNavigateBack = true,
                 navigateUp = navigateBack,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.primary)) },
+            ) },
 
         ) { innerPadding ->
 
@@ -104,7 +108,7 @@ fun DetailForm(
             articleUiState = articleUiState,
             onItemValueChange = { updateUiState(it) },
             onSaveClick = { updateItem() },
-            modifier = Modifier.padding(innerPadding),
+            modifier = modifier.padding(innerPadding),
             onDeleteClick = {
                 onOpenDialogClicked()
             },

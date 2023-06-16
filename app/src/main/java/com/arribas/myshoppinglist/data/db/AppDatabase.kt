@@ -5,12 +5,20 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.arribas.myshoppinglist.data.dao.ArticleDao
+import com.arribas.myshoppinglist.data.dao.ArticleShopDao
 import com.arribas.myshoppinglist.data.model.Article
+import com.arribas.myshoppinglist.data.model.ArticleShop
 
-@Database(entities = [Article::class], version = 1, exportSchema = false)
+@Database(
+    entities = [Article::class, ArticleShop::class],
+    version = 3,
+    exportSchema = false)
+
 abstract class AppDatabase: RoomDatabase() {
 
     abstract fun articleDao(): ArticleDao
+
+    abstract fun articleShopDao(): ArticleShopDao
 
     companion object {
         @Volatile

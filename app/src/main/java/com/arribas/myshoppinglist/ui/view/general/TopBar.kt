@@ -12,8 +12,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import com.arribas.myshoppinglist.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -28,10 +29,10 @@ fun TopBar(
         title = { Text(title) },
 
         colors = TopAppBarDefaults.smallTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            titleContentColor = MaterialTheme.colorScheme.onPrimary,
-            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-            actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+            containerColor = colorResource(R.color.my_primary),
+            titleContentColor = colorResource(R.color.white),
+            navigationIconContentColor = colorResource(R.color.white),
+            actionIconContentColor = colorResource(R.color.white)
         ),
 
         navigationIcon = {
@@ -47,4 +48,11 @@ fun TopBar(
 
         modifier = modifier)
 
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TopBarMainPreview() {
+    TopBar(
+        title = "Lista de la compra")
 }

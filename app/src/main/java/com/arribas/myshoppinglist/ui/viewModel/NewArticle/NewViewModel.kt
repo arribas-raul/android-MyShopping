@@ -27,6 +27,7 @@ import com.arribas.myshoppinglist.ui.viewModel.listArticle.toItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 
 /**
  * View Model to validate and insert items in the Room database.
@@ -49,17 +50,20 @@ class NewViewModel(
     }
 
     suspend fun saveItem() {
-        if (articleUiState.isValid()) {
-            articleRepository.insertItem(articleUiState.toItem())
+        if (!articleUiState.isValid()) {
+            return
         }
 
         val article = articleRepository.getItemByName(articleUiState.name)
 
-        if(article != null){
+        if(article.first() != null){
             onOpenDialogClicked()
-        }
 
-        articleUiState = ArticleUiState()
+        }else{
+            articleRepository.insertItem(articleUiState.toItem())
+
+            articleUiState = ArticleUiState()
+        }
     }
 
     suspend fun deleteItem() {

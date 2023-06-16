@@ -20,7 +20,7 @@ import com.arribas.myshoppinglist.data.dao.ArticleDao
 import com.arribas.myshoppinglist.data.model.Article
 import kotlinx.coroutines.flow.Flow
 
-interface ArticleRepository {
+interface ArticleRepositoryInterface {
     /**
      * Retrieve all the items from the the given data source.
      */
@@ -49,7 +49,7 @@ interface ArticleRepository {
     suspend fun updateItem(item: Article)
 }
 
-class OfflineArticleRepository(private val articleDao: ArticleDao) : ArticleRepository {
+class ArticleRepository(private val articleDao: ArticleDao) : ArticleRepositoryInterface {
     override fun getAllItems(): Flow<List<Article>> = articleDao.getAllItems()
 
     override fun getItem(id: Int): Flow<Article?> = articleDao.getItem(id)

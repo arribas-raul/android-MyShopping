@@ -19,13 +19,14 @@ package com.arribas.myshoppinglist.data
 import android.content.Context
 import com.arribas.myshoppinglist.data.db.AppDatabase
 import com.arribas.myshoppinglist.data.repository.ArticleRepository
-import com.arribas.myshoppinglist.data.repository.OfflineArticleRepository
+import com.arribas.myshoppinglist.data.repository.ArticleShopRepository
 
 /**
  * App container for Dependency injection.
  */
 interface AppContainer {
     val articleRepository: ArticleRepository
+    val articleShopRepository: ArticleShopRepository
 }
 
 /**
@@ -36,6 +37,10 @@ class AppDataContainer(private val context: Context) : AppContainer {
      * Implementation for [ItemsRepository]
      */
     override val articleRepository: ArticleRepository by lazy {
-        OfflineArticleRepository(AppDatabase.getDatabase(context).articleDao())
+        ArticleRepository(AppDatabase.getDatabase(context).articleDao())
+    }
+
+    override val articleShopRepository: ArticleShopRepository by lazy {
+        ArticleShopRepository(AppDatabase.getDatabase(context).articleShopDao())
     }
 }

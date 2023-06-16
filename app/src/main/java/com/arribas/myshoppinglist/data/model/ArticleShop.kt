@@ -4,9 +4,11 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class Article(
+data class ArticleShop(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    val id: Int = 0,
     val name: String,
-    val shopCheked: Boolean
+    val quantity: Int = 1,
+    val check: Boolean = false,
+    val order: Int = 1,
 )

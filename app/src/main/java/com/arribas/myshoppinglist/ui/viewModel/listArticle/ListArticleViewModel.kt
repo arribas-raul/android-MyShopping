@@ -3,18 +3,21 @@ package com.arribas.myshoppinglist.ui.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arribas.myshoppinglist.data.model.Article
+import com.arribas.myshoppinglist.data.model.ArticleShop
 import com.arribas.myshoppinglist.data.repository.ArticleRepository
-import com.arribas.myshoppinglist.ui.viewModel.listArticle.isValid
-import com.arribas.myshoppinglist.ui.viewModel.listArticle.toItem
+import com.arribas.myshoppinglist.data.repository.ArticleShopRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class ListViewModel(private val articleRepository: ArticleRepository): ViewModel() {
+class ListArticleViewModel(
+    private val articleRepository: ArticleRepository,
+    private val articleShopRepository: ArticleShopRepository): ViewModel() {
 
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
@@ -33,6 +36,21 @@ class ListViewModel(private val articleRepository: ArticleRepository): ViewModel
     fun updateItem(article: Article) {
         viewModelScope.launch {
             articleRepository.updateItem(article)
+
+            val items = articleShopRepository.getAllItems()
+/*
+            items?.let { _items->
+                val count = _items.count()
+            }
+*/
+            var count = 0;
+
+            val articleShop = ArticleShop(
+                name = article.name,
+                order = count
+            )
+
+            articleShopRepository.insertItem(articleShop)
         }
     }
 

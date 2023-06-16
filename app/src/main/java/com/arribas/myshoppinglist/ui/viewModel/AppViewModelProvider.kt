@@ -25,6 +25,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.arribas.myshoppinglist.AppApplication
 import com.arribas.myshoppinglist.ui.viewModel.detailArticle.DetailViewModel
 import com.arribas.myshoppinglist.ui.viewModel.detailArticle.NewViewModel
+import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.ListArticleShopViewModel
 
 /**
  * Provides Factory to create instance of ViewModel for the entire Inventory app
@@ -33,8 +34,16 @@ object AppViewModelProvider {
     val Factory = viewModelFactory {
         // Initializer for ItemEditViewModel
         initializer {
-            ListViewModel(
-                AppApplication().container.articleRepository
+            ListArticleShopViewModel(
+                AppApplication().container.articleRepository,
+                AppApplication().container.articleShopRepository
+            )
+        }
+
+        initializer {
+            ListArticleViewModel(
+                AppApplication().container.articleRepository,
+                AppApplication().container.articleShopRepository
             )
         }
 
