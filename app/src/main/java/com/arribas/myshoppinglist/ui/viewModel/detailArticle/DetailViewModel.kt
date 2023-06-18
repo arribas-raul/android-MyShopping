@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2022 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.arribas.myshoppinglist.ui.viewModel.detailArticle
 
 import androidx.compose.runtime.getValue
@@ -28,6 +12,8 @@ import com.arribas.myshoppinglist.ui.viewModel.listArticle.ArticleUiState
 import com.arribas.myshoppinglist.ui.viewModel.listArticle.isValid
 import com.arribas.myshoppinglist.ui.viewModel.listArticle.toArticleUiState
 import com.arribas.myshoppinglist.ui.viewModel.listArticle.toItem
+import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.DIALOG_UI_TAG
+import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.DialogUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -79,23 +65,51 @@ class DetailViewModel(
         }
     }
 
-    suspend fun deleteItem() {
+    fun onDialogDelete(){
+        onOpenDialogClicked(tag = DIALOG_UI_TAG.TAG_DELETE)
+    }
+
+    /**Private functions****************************/
+    suspend private fun deleteItem() {
         articleRepository.deleteItem(articleUiState.toItem())
     }
 
     /**AlertDialog functions****************************************/
-    private val _showDialog = MutableStateFlow(false)
-    val showDialog: StateFlow<Boolean> = _showDialog.asStateFlow()
+    private val _dialogState = MutableStateFlow(DialogUiState())
+    val dialogState: StateFlow<DialogUiState> = _dialogState.asStateFlow()
 
-    fun onOpenDialogClicked() {
-        _showDialog.value = true
+    fun onOpenDialogClicked(tag: DIALOG_UI_TAG) {
+
+        val _dialog: DialogUiState
+
+        when(tag) {
+            DIALOG_UI_TAG.TAG_DELETE ->
+                _dialog = DialogUiState(
+                    tag = tag,
+                    title = "¿Seguro que quieres continuar",
+                    body = "Si continuas se eliminará el artículo de la lista",
+                    isShow = true,
+                    isShowBtDismiss = true
+                )
+            else ->
+                _dialog = DialogUiState(
+                    tag = tag
+                )
+        }
+
+        _dialogState.value = _dialog
     }
 
-    fun onDialogConfirm() {
-        _showDialog.value = false
+    suspend fun onDialogConfirm() {
+        when(_dialogState.value.tag) {
+            DIALOG_UI_TAG.TAG_DELETE -> deleteItem()
+            else -> {}
+        }
+
+        _dialogState.value = DialogUiState(isShow = false)
     }
 
     fun onDialogDismiss() {
-        _showDialog.value = false
+        _dialogState.value = DialogUiState(isShow = false)
     }
 }

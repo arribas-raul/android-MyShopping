@@ -24,6 +24,7 @@ import com.arribas.myshoppinglist.data.repository.ArticleRepository
 import com.arribas.myshoppinglist.ui.viewModel.listArticle.ArticleUiState
 import com.arribas.myshoppinglist.ui.viewModel.listArticle.isValid
 import com.arribas.myshoppinglist.ui.viewModel.listArticle.toItem
+import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.DialogUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -71,18 +72,19 @@ class NewViewModel(
     }
 
     /**AlertDialog functions****************************************/
-    private val _showDialog = MutableStateFlow(false)
-    val showDialog: StateFlow<Boolean> = _showDialog.asStateFlow()
+    private val _dialogState = MutableStateFlow(DialogUiState())
+    val dialogState: StateFlow<DialogUiState> = _dialogState.asStateFlow()
+
 
     fun onOpenDialogClicked() {
-        _showDialog.value = true
+        _dialogState.value.isShow = true
     }
 
     fun onDialogConfirm() {
-        _showDialog.value = false
+        _dialogState.value.isShow = false
     }
 
     fun onDialogDismiss() {
-        _showDialog.value = false
+        _dialogState.value.isShow = false
     }
 }

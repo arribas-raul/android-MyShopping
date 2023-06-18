@@ -28,4 +28,8 @@ interface ArticleShopDao {
 
     @Query("SELECT * from articleShop ORDER BY `order` DESC")
     fun getAllItems(): Flow<List<ArticleShop>>
+
+    /**Update functions***************/
+    @Query("UPDATE articleShop SET `check` = 0")
+    fun reset()
 }

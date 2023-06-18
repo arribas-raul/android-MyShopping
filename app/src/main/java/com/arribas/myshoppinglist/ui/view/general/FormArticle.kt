@@ -26,9 +26,9 @@ import com.arribas.myshoppinglist.ui.viewModel.listArticle.ArticleUiState
 @Composable
 fun DetailBody(
     articleUiState: ArticleUiState,
-    onItemValueChange: (ArticleUiState) -> Unit,
-    onSaveClick: () -> Unit,
-    onDeleteClick: () -> Unit,
+    onItemValueChange: (ArticleUiState) -> Unit = {},
+    onSaveClick: () -> Unit = {},
+    onDeleteClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ){
     Column(

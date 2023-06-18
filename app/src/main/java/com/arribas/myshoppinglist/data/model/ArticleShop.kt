@@ -9,6 +9,6 @@ data class ArticleShop(
     val id: Int = 0,
     val name: String,
     val quantity: Int = 1,
-    val check: Boolean = false,
+    var check: Boolean = false,
     val order: Int = 1,
 )

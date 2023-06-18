@@ -19,6 +19,7 @@ import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
 import com.arribas.myshoppinglist.ui.viewModel.AppViewModelProvider
 import com.arribas.myshoppinglist.ui.viewModel.detailArticle.DetailViewModel
 import com.arribas.myshoppinglist.ui.viewModel.listArticle.ArticleUiState
+import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.DialogUiState
 import kotlinx.coroutines.launch
 
 object DetailDestination : NavigationDestination {
@@ -28,7 +29,6 @@ object DetailDestination : NavigationDestination {
     val routeWithArgs = "$route/{$itemIdArg}"
 
     override val titleRes = R.string.item_detail_title
-
 }
 
 @Composable
@@ -38,7 +38,7 @@ fun DetailScreen(
     modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val showDialogState: Boolean by viewModel.showDialog.collectAsState()
+    val dialogState: DialogUiState by viewModel.dialogState.collectAsState()
 
     DetailForm(
         navigateBack = { navigateBack() },
@@ -51,18 +51,20 @@ fun DetailScreen(
             }
         },
 
-        deleteItem = {
+        deleteItem = viewModel::onDialogDelete,
+        articleUiState = viewModel.articleUiState,
+        modifier = modifier
+    )
+
+    SimpleAlertDialog(
+        dialogState = dialogState,
+        onDismiss = viewModel::onDialogDismiss,
+        onConfirm = {
             coroutineScope.launch {
-                viewModel.deleteItem()
+                viewModel.onDialogConfirm()
                 navigateBack()
             }
-        },
-
-        onOpenDialogClicked = { viewModel.onOpenDialogClicked() },
-        onDialogDismiss = { viewModel.onDialogDismiss() },
-        articleUiState = viewModel.articleUiState,
-        showDialogState = showDialogState,
-        modifier = modifier
+        }
     )
 }
 
@@ -73,10 +75,7 @@ fun DetailForm(
     updateUiState: (ArticleUiState) -> Unit = {},
     updateItem: () -> Unit = {},
     deleteItem: () -> Unit = {},
-    onOpenDialogClicked: () -> Unit = {},
-    onDialogDismiss: () -> Unit = {},
     articleUiState: ArticleUiState,
-    showDialogState: Boolean = false,
     modifier: Modifier = Modifier)
 {
     Scaffold(
@@ -94,18 +93,7 @@ fun DetailForm(
             onItemValueChange = { updateUiState(it) },
             onSaveClick = { updateItem() },
             modifier = modifier.padding(innerPadding),
-            onDeleteClick = {
-                onOpenDialogClicked()
-            },
-        )
-
-        SimpleAlertDialog(
-            show = showDialogState,
-            title = "Please confirm",
-            body =  "Should I continue with the requested action?",
-            showDismissButton = true,
-            onDismiss = onDialogDismiss,
-            onConfirm = { deleteItem() }
+            onDeleteClick = deleteItem
         )
     }
 }

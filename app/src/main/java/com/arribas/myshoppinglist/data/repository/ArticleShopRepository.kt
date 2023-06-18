@@ -47,6 +47,8 @@ interface ArticleShopRepositoryInterface {
      * Update item in the data source
      */
     suspend fun updateItem(item: ArticleShop)
+
+    suspend fun reset()
 }
 
 class ArticleShopRepository(private val articleShopDao: ArticleShopDao) : ArticleShopRepositoryInterface {
@@ -61,4 +63,6 @@ class ArticleShopRepository(private val articleShopDao: ArticleShopDao) : Articl
     override suspend fun deleteItem(item: ArticleShop) = articleShopDao.delete(item)
 
     override suspend fun updateItem(item: ArticleShop) = articleShopDao.update(item)
+
+    override suspend fun reset() = articleShopDao.reset()
 }

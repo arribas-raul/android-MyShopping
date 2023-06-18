@@ -6,6 +6,8 @@ import com.arribas.myshoppinglist.data.model.Article
 import com.arribas.myshoppinglist.data.model.ArticleShop
 import com.arribas.myshoppinglist.data.repository.ArticleRepository
 import com.arribas.myshoppinglist.data.repository.ArticleShopRepository
+import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.DIALOG_UI_TAG
+import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.DialogUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -24,7 +26,13 @@ class ListArticleViewModel(
     }
 
     val listUiState: StateFlow<ListUiState> =
-        articleRepository.getAllItems().map { ListUiState(it) }
+        articleRepository.getAllItems().map { list ->
+            ListUiState(
+                    itemList = list,
+                    itemCount = list.count(),
+                    itemSelectCount = list.count { it.shopCheked }
+                )
+            }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
@@ -38,45 +46,78 @@ class ListArticleViewModel(
             articleRepository.updateItem(article)
 
             val items = articleShopRepository.getAllItems()
-/*
-            items?.let { _items->
-                val count = _items.count()
+
+            val count = items?.let { _items->
+                _items.count()
             }
-*/
-            var count = 0;
 
             val articleShop = ArticleShop(
                 name = article.name,
-                order = count
+                order = count ?: 1
             )
 
             articleShopRepository.insertItem(articleShop)
         }
     }
 
-    fun deleteItem() {
+    fun onDialogDelete(article: Article){
+        onOpenDialogClicked(
+            _article = article,
+            tag = DIALOG_UI_TAG.TAG_DELETE
+        )
+    }
+
+    /**Private functions***********************/
+    private fun deleteItem() {
         viewModelScope.launch {
             articleRepository.deleteItem(article)
         }
     }
 
-    /**AlertDialog functions****************************************/
-    private val _showDialog = MutableStateFlow(false)
-    val showDialog: StateFlow<Boolean> = _showDialog.asStateFlow()
 
-    fun onOpenDialogClicked(_article: Article) {
-        article = _article
-        _showDialog.value = true
+    /**AlertDialog functions****************************************/
+    private val _dialogState = MutableStateFlow(DialogUiState())
+    val dialogState: StateFlow<DialogUiState> = _dialogState.asStateFlow()
+
+    fun onOpenDialogClicked(_article: Article? = null, tag: DIALOG_UI_TAG) {
+        if(_article !== null) {
+            article = _article
+        }
+
+        val _dialog: DialogUiState
+
+        when(tag) {
+            DIALOG_UI_TAG.TAG_DELETE ->
+                _dialog = DialogUiState(
+                    tag = tag,
+                    title = "¿Seguro que quieres continuar",
+                    body = "Si continuas se eliminará el artículo de la lista",
+                    isShow = true,
+                    isShowBtDismiss = true
+                )
+            else ->
+                _dialog = DialogUiState()
+        }
+
+        _dialogState.value = _dialog
     }
 
     fun onDialogConfirm() {
-        _showDialog.value = false
-        deleteItem()
+        when(_dialogState.value.tag) {
+            DIALOG_UI_TAG.TAG_DELETE  -> deleteItem()
+            else -> {}
+        }
+
+        _dialogState.value = DialogUiState(isShow = false)
     }
 
     fun onDialogDismiss() {
-        _showDialog.value = false
+        _dialogState.value = DialogUiState(isShow = false)
     }
 }
 
-data class ListUiState(val itemList: List<Article> = listOf())
+data class ListUiState(
+    val itemList: List<Article> = listOf(),
+    val itemCount: Int = 0,
+    val itemSelectCount: Int = 0
+)

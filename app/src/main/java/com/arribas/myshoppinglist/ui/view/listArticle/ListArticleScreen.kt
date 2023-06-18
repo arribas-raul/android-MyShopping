@@ -8,16 +8,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -32,7 +28,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -42,6 +37,7 @@ import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
 import com.arribas.myshoppinglist.ui.viewModel.AppViewModelProvider
 import com.arribas.myshoppinglist.ui.viewModel.ListArticleViewModel
+import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.DialogUiState
 
 @Composable
 fun ListArticleScreen(
@@ -50,20 +46,19 @@ fun ListArticleScreen(
     modifier: Modifier = Modifier){
 
     val listUiState by viewModel.listUiState.collectAsState()
-    val showDialogState: Boolean by viewModel.showDialog.collectAsState()
+    val dialogState: DialogUiState by viewModel.dialogState.collectAsState()
+
+    //ListArticleHeader()
 
     ListArticleBody(
         itemList = listUiState.itemList,
         navigateToItemUpdate = { navigateToItemUpdate(it) },
-        deleteItem = { viewModel.onOpenDialogClicked(it) },
+        deleteItem = { viewModel.onDialogDelete(it) },
         updateItem = { viewModel.updateItem(it) }
     )
 
     SimpleAlertDialog(
-        show = showDialogState,
-        title = "Please confirm",
-        body =  "Should I continue with the requested action?",
-        showDismissButton = true,
+        dialogState = dialogState,
         onDismiss = viewModel::onDialogDismiss,
         onConfirm = viewModel::onDialogConfirm
     )
@@ -179,6 +174,7 @@ private fun InventoryItem(
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable

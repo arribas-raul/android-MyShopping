@@ -10,28 +10,22 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arribas.myshoppinglist.R
-import com.arribas.myshoppinglist.ui.navigation.NavigationDestination
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.general.DetailBody
 import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
 import com.arribas.myshoppinglist.ui.viewModel.AppViewModelProvider
 import com.arribas.myshoppinglist.ui.viewModel.detailArticle.NewViewModel
 import com.arribas.myshoppinglist.ui.viewModel.listArticle.ArticleUiState
+import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.DialogUiState
 import kotlinx.coroutines.launch
-
-object NewDestination : NavigationDestination {
-    override val route = "new"
-    override val titleRes = R.string.item_entry_title
-}
 
 @Composable
 fun NewScreen(
-    navigateBack: () -> Unit,
     viewModel: NewViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val showDialogState: Boolean by viewModel.showDialog.collectAsState()
+    val dialogState: DialogUiState by viewModel.dialogState.collectAsState()
 
     NewForm(
         updateUiState = { viewModel.updateUiState(it) },
@@ -39,14 +33,16 @@ fun NewScreen(
         saveItem = {
             coroutineScope.launch {
                 viewModel.saveItem()
-                //navigateBack()
             }
         },
 
-        onDialogDismiss = { viewModel.onDialogDismiss() },
         articleUiState = viewModel.articleUiState,
-        showDialogState = showDialogState,
         modifier = Modifier.background(colorResource(R.color.my_background))
+    )
+
+    SimpleAlertDialog(
+        dialogState = dialogState,
+        onDismiss = viewModel::onDialogDismiss
     )
 }
 
@@ -54,23 +50,13 @@ fun NewScreen(
 fun NewForm(
     updateUiState: (ArticleUiState) -> Unit = {},
     saveItem: () -> Unit = {},
-    onDialogDismiss: () -> Unit = {},
     articleUiState: ArticleUiState,
-    showDialogState: Boolean = false,
     modifier: Modifier = Modifier) {
 
     DetailBody(
         articleUiState = articleUiState,
         onItemValueChange = { updateUiState(it) },
-        onSaveClick = { saveItem() },
-        onDeleteClick = { }
-    )
-
-    SimpleAlertDialog(
-        show = showDialogState,
-        title = "Exist this item",
-        showDismissButton = false,
-        onConfirm = onDialogDismiss
+        onSaveClick = { saveItem() }
     )
 }
 
