@@ -24,7 +24,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.arribas.myshoppinglist.AppApplication
 import com.arribas.myshoppinglist.ui.viewModel.detailArticle.DetailViewModel
-import com.arribas.myshoppinglist.ui.viewModel.detailArticle.NewViewModel
+import com.arribas.myshoppinglist.ui.viewModel.NewArticle.NewViewModel
 import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.ListArticleShopViewModel
 
 /**

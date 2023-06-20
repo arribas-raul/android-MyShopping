@@ -33,6 +33,8 @@ interface ArticleShopRepositoryInterface {
 
     fun getItemByName(name: String): Flow<ArticleShop?>
 
+    suspend fun count(): Int
+
     /**
      * Insert item in the data source
      */
@@ -49,6 +51,8 @@ interface ArticleShopRepositoryInterface {
     suspend fun updateItem(item: ArticleShop)
 
     suspend fun reset()
+
+
 }
 
 class ArticleShopRepository(private val articleShopDao: ArticleShopDao) : ArticleShopRepositoryInterface {
@@ -58,6 +62,8 @@ class ArticleShopRepository(private val articleShopDao: ArticleShopDao) : Articl
 
     override fun getItemByName(name: String): Flow<ArticleShop?> = articleShopDao.getItemByName(name)
 
+    override suspend fun count(): Int = articleShopDao.count()
+
     override suspend fun insertItem(item: ArticleShop) = articleShopDao.insert(item)
 
     override suspend fun deleteItem(item: ArticleShop) = articleShopDao.delete(item)
@@ -65,4 +71,6 @@ class ArticleShopRepository(private val articleShopDao: ArticleShopDao) : Articl
     override suspend fun updateItem(item: ArticleShop) = articleShopDao.update(item)
 
     override suspend fun reset() = articleShopDao.reset()
+
+
 }

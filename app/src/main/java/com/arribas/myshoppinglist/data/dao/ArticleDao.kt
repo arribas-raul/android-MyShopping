@@ -28,4 +28,5 @@ interface ArticleDao {
 
     @Query("SELECT * from article WHERE shopCheked = 0 ORDER BY name ASC")
     fun getAllItems(): Flow<List<Article>>
+
 }

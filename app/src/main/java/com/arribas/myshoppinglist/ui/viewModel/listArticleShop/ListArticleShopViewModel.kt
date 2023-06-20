@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.arribas.myshoppinglist.data.model.ArticleShop
 import com.arribas.myshoppinglist.data.repository.ArticleRepository
 import com.arribas.myshoppinglist.data.repository.ArticleShopRepository
+import com.arribas.myshoppinglist.data.utils.DIALOG_UI_TAG
+import com.arribas.myshoppinglist.data.utils.DialogUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -23,30 +25,30 @@ class ListArticleShopViewModel(
         private const val TIMEOUT_MILLIS = 5_000L
     }
 
-    val listUiState: StateFlow<ListShopUiState> =
-        articleShopRepository.getAllItems().map { list ->
-            ListShopUiState(
-                itemList = list,
-                itemCount = list.count(),
-                itemSelectCount = list.count { it.check }
-            )
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-            initialValue = ListShopUiState()
-        )
+    private val _dialogState = MutableStateFlow(DialogUiState())
+    val dialogState: StateFlow<DialogUiState> = _dialogState.asStateFlow()
+
+    val listUiState: StateFlow<ListArticleShopUiState> = getData()
 
     lateinit var article: ArticleShop
 
-    fun updateItem(article: ArticleShop) {
-        viewModelScope.launch {
-            articleShopRepository.updateItem(article)
+
+    /**Public functions**************************************/
+    fun onUpdateItem(_article: ArticleShop) {
+        article = _article
+
+        if(article.quantity == 0){
+            onOpenDialogClicked(tag = DIALOG_UI_TAG.TAG_DELETE)
+
+        }else{
+            updateItem()
         }
     }
 
-    fun onDialogDelete(article: ArticleShop){
-        onOpenDialogClicked(_article = article, tag = DIALOG_UI_TAG.TAG_DELETE)
+    fun onDialogDelete(_article: ArticleShop){
+        article = _article
+
+        onOpenDialogClicked(tag = DIALOG_UI_TAG.TAG_DELETE)
     }
 
     fun onDialogReset(){
@@ -54,9 +56,30 @@ class ListArticleShopViewModel(
     }
 
     /**Private functions********************************************/
+    private fun getData(): StateFlow<ListArticleShopUiState>{
+        return articleShopRepository.getAllItems().map { list ->
+            ListArticleShopUiState(
+                itemList = list,
+                itemCount = list.count(),
+                itemSelectCount = list.count { it.check }
+            )
+        }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+                initialValue = ListArticleShopUiState()
+            )
+    }
+
     private fun reset(){
         viewModelScope.launch(Dispatchers.IO) {
             articleShopRepository.reset()
+        }
+    }
+
+    private fun updateItem(){
+        viewModelScope.launch {
+            articleShopRepository.updateItem(article)
         }
     }
 
@@ -77,14 +100,31 @@ class ListArticleShopViewModel(
     }
 
     /**AlertDialog functions****************************************/
-    private val _dialogState = MutableStateFlow(DialogUiState())
-    val dialogState: StateFlow<DialogUiState> = _dialogState.asStateFlow()
-
-    fun onOpenDialogClicked(_article: ArticleShop? = null, tag: DIALOG_UI_TAG) {
-        if(_article !== null) {
-            article = _article
+    fun onDialogConfirm() {
+        when(_dialogState.value.tag) {
+            DIALOG_UI_TAG.TAG_DELETE  -> deleteItem()
+            DIALOG_UI_TAG.TAG_RESET   -> reset()
+            DIALOG_UI_TAG.TAG_SUCCESS -> onDialogDismiss()
         }
 
+        _dialogState.value = DialogUiState(
+            isShow = false)
+    }
+
+    fun onDialogDismiss() {
+        when(_dialogState.value.tag) {
+            DIALOG_UI_TAG.TAG_DELETE -> {
+                if(article.quantity == 0){
+                    article.copy(quantity = 1)
+                }
+            }
+            else -> {}
+        }
+
+        _dialogState.value = DialogUiState(isShow = false)
+    }
+
+    private fun onOpenDialogClicked(tag: DIALOG_UI_TAG) {
         val _dialog: DialogUiState
 
         when(tag) {
@@ -118,42 +158,11 @@ class ListArticleShopViewModel(
 
         _dialogState.value = _dialog
     }
-
-    fun onDialogConfirm() {
-        when(_dialogState.value.tag) {
-            DIALOG_UI_TAG.TAG_DELETE  -> deleteItem()
-            DIALOG_UI_TAG.TAG_RESET   -> reset()
-            DIALOG_UI_TAG.TAG_SUCCESS -> onDialogDismiss()
-        }
-
-        _dialogState.value = DialogUiState(
-            isShow = false)
-    }
-
-    fun onDialogDismiss() {
-        _dialogState.value = DialogUiState(isShow = false)
-    }
 }
 
-/*
-* title = "Please confirm",
-        body =  "Should I continue with the requested action?",
-* */
-
-data class ListShopUiState(
+data class ListArticleShopUiState(
     val itemList: List<ArticleShop> = listOf(),
     val itemCount: Int = 0,
     val itemSelectCount: Int = 0
 )
 
-data class DialogUiState(
-    val tag: DIALOG_UI_TAG = DIALOG_UI_TAG.TAG_RESET,
-    val title: String = "",
-    val body: String = "",
-    var isShow: Boolean = false,
-    val isShowBtDismiss: Boolean = false
-)
-
-enum class DIALOG_UI_TAG{
-    TAG_DELETE, TAG_RESET, TAG_SUCCESS
-}

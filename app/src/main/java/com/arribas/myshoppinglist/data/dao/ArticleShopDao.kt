@@ -32,4 +32,7 @@ interface ArticleShopDao {
     /**Update functions***************/
     @Query("UPDATE articleShop SET `check` = 0")
     fun reset()
+
+    @Query("SELECT count(id) from articleShop")
+    fun count(): Int
 }

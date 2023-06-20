@@ -33,11 +33,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arribas.myshoppinglist.R
 import com.arribas.myshoppinglist.data.model.Article
+import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
 import com.arribas.myshoppinglist.ui.viewModel.AppViewModelProvider
 import com.arribas.myshoppinglist.ui.viewModel.ListArticleViewModel
-import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.DialogUiState
 
 @Composable
 fun ListArticleScreen(
@@ -132,11 +132,11 @@ private fun InventoryItem(
     ) {
         Row(modifier = Modifier
             .fillMaxWidth()
-            .clickable { onItemClick(item) }
+            .clickable { onCheckClick(item) }
             .background(colorResource(R.color.white))
             .padding(8.dp)
         ) {
-            var checked = remember { mutableStateOf(item.shopCheked) }
+            /*var checked = remember { mutableStateOf(item.shopCheked) }
 
             Checkbox(
                 checked = checked.value,
@@ -149,7 +149,7 @@ private fun InventoryItem(
                 modifier = Modifier
                     .weight(0.3f)
                     .padding(end = 10.dp)
-            )
+            )*/
 
             Text(
                 text = item.name,
@@ -159,6 +159,18 @@ private fun InventoryItem(
                 style = MaterialTheme.typography.bodyLarge,
                 color = Color.Black
             )
+
+            IconButton(
+                onClick = { onItemClick(item) },
+                modifier = Modifier
+                    .weight(0.3f)
+                    .align(Alignment.CenterVertically)
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.ic_create),
+                    contentDescription = stringResource(R.string.update)
+                )
+            }
 
             IconButton(
                 onClick = { onDeleteClick(item) },

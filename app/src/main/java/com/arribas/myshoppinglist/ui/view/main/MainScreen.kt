@@ -101,7 +101,7 @@ fun MainScreen(
 
                 MainTag.NEW_ITEM -> {
                     NewScreen(
-                        navigateBack = { navController.popBackStack() }
+                        //navigateBack = { navController.popBackStack() }
                     )
                 }
             }

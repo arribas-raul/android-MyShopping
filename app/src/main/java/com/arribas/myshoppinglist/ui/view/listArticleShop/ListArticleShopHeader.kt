@@ -1,10 +1,8 @@
 package com.arribas.myshoppinglist.ui.view.listArticleShop
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -25,16 +22,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arribas.myshoppinglist.R
-import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
-import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.ListShopUiState
+import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.ListArticleShopUiState
 
 @Composable
 fun HeaderArticleShopList(
-    listUiState: ListShopUiState,
+    listUiState: ListArticleShopUiState,
     onResetBt: () -> Unit = {},
     modifier: Modifier = Modifier.background(colorResource(R.color.white))
 ){
@@ -94,7 +89,7 @@ fun HeaderArticleShopList(
 @Preview(showBackground = true)
 @Composable
 fun HeaderArticleShopListPreview() {
-    val listUiState = ListShopUiState(
+    val listUiState = ListArticleShopUiState(
         itemCount = 20,
         itemSelectCount = 10
     )

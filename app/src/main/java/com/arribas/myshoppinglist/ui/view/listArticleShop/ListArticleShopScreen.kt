@@ -35,15 +35,14 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arribas.myshoppinglist.R
 import com.arribas.myshoppinglist.data.model.ArticleShop
+import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.general.CircleButton
 import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
 import com.arribas.myshoppinglist.ui.view.listArticleShop.HeaderArticleShopList
 import com.arribas.myshoppinglist.ui.viewModel.AppViewModelProvider
-import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.DIALOG_UI_TAG
-import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.DialogUiState
+import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.ListArticleShopUiState
 import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.ListArticleShopViewModel
-import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.ListShopUiState
 
 @Composable
 fun ListArticleShopScreen(
@@ -58,7 +57,7 @@ fun ListArticleShopScreen(
         listUiState = listUiState,
         navigateToItemUpdate = { navigateToItemUpdate(it) },
         deleteItem = { viewModel.onDialogDelete(it) },
-        updateItem = { viewModel.updateItem(it) },
+        updateItem = { viewModel.onUpdateItem(it) },
         onReset = { viewModel.onDialogReset() }
     )
 
@@ -71,7 +70,7 @@ fun ListArticleShopScreen(
 
 @Composable
 fun ListArticleShopBody(
-    listUiState: ListShopUiState,
+    listUiState: ListArticleShopUiState,
     navigateToItemUpdate: (Int) -> Unit,
     deleteItem: (article: ArticleShop) -> Unit,
     updateItem: (ArticleShop) -> Unit,
@@ -128,7 +127,7 @@ private fun InventoryArticleShopList(
                 onItemClick = onItemClick,
                 onDeleteClick = { onDeleteClick(it) },
                 onCheckClick = onCheckClick,
-                onChangeItem = onChangeItem,
+                onChangeItem = { onChangeItem(it) },
                 modifier = Modifier
             )
         }
@@ -179,7 +178,7 @@ private fun InventoryArticleShopItem(
 
             Row(
                 modifier = Modifier
-                    .weight(1f)
+                    .weight(0.8f)
                     .align(Alignment.CenterVertically)
             ) {
                 CircleButton(
@@ -189,9 +188,9 @@ private fun InventoryArticleShopItem(
                     quantity = item.quantity,
                     description = R.string.bt_remove,
                     onChangeItem = {
-                        if (item.quantity - 1 > 0) {
+                        //if (item.quantity - 1 > 0) {
                             onChangeItem(item.copy(quantity = item.quantity - 1))
-                        }
+                        //}
                     }
                 )
 
@@ -211,15 +210,15 @@ private fun InventoryArticleShopItem(
 
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
-                        .padding(start = 5.dp, end = 5.dp),
+                        .padding(start = 5.dp),
 
-                    textAlign = TextAlign.Center,
+                    textAlign = TextAlign.Right,
                     style = MaterialTheme.typography.bodyLarge,
                     color = Color.Black
                 )
             }
 
-            IconButton(
+            /*IconButton(
                 onClick = { onDeleteClick(item) },
 
                 modifier = Modifier
@@ -234,7 +233,7 @@ private fun InventoryArticleShopItem(
                     modifier = Modifier
                         .fillMaxSize()
                 )
-            }
+            }*/
         }
     }
 }

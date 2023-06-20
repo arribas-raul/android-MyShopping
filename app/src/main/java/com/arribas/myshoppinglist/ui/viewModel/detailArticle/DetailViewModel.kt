@@ -7,13 +7,13 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arribas.myshoppinglist.data.repository.ArticleRepository
+import com.arribas.myshoppinglist.data.utils.DIALOG_UI_TAG
+import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.ui.view.detailArticle.DetailDestination
 import com.arribas.myshoppinglist.ui.viewModel.listArticle.ArticleUiState
 import com.arribas.myshoppinglist.ui.viewModel.listArticle.isValid
 import com.arribas.myshoppinglist.ui.viewModel.listArticle.toArticleUiState
 import com.arribas.myshoppinglist.ui.viewModel.listArticle.toItem
-import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.DIALOG_UI_TAG
-import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.DialogUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

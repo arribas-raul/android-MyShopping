@@ -6,13 +6,13 @@ import com.arribas.myshoppinglist.data.model.Article
 import com.arribas.myshoppinglist.data.model.ArticleShop
 import com.arribas.myshoppinglist.data.repository.ArticleRepository
 import com.arribas.myshoppinglist.data.repository.ArticleShopRepository
-import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.DIALOG_UI_TAG
-import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.DialogUiState
+import com.arribas.myshoppinglist.data.utils.DIALOG_UI_TAG
+import com.arribas.myshoppinglist.data.utils.DialogUiState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -42,18 +42,18 @@ class ListArticleViewModel(
     lateinit var article: Article
 
     fun updateItem(article: Article) {
-        viewModelScope.launch {
-            articleRepository.updateItem(article)
+        viewModelScope.launch(Dispatchers.IO) {
+            articleRepository.updateItem(article.copy(shopCheked = true))
 
-            val items = articleShopRepository.getAllItems()
+            val count: Int = articleShopRepository.count()
 
-            val count = items?.let { _items->
+            /*val count = items?.let { _items->
                 _items.count()
-            }
+            }*/
 
             val articleShop = ArticleShop(
                 name = article.name,
-                order = count ?: 1
+                order = count + 1
             )
 
             articleShopRepository.insertItem(articleShop)
@@ -73,7 +73,6 @@ class ListArticleViewModel(
             articleRepository.deleteItem(article)
         }
     }
-
 
     /**AlertDialog functions****************************************/
     private val _dialogState = MutableStateFlow(DialogUiState())

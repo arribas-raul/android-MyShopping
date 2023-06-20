@@ -2,6 +2,7 @@
     <string name="app_name">My Shopping List</string>
 
     <string name="delete">Delete</string>
+    <string name="update">Update</string>
     <string name="delete_question">Are you sure you want to delete?</string>
     <string name="no_item_description">No articles in the list</string>
     <string name="edit_item_title">Edit Item</string>

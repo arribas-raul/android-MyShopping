@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import com.arribas.myshoppinglist.R
-import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.DialogUiState
+import com.arribas.myshoppinglist.data.utils.DialogUiState
 
 @Composable
 fun SimpleAlertDialog(
