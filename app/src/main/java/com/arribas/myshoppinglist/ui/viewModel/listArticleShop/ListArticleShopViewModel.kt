@@ -28,10 +28,9 @@ class ListArticleShopViewModel(
     private val _dialogState = MutableStateFlow(DialogUiState())
     val dialogState: StateFlow<DialogUiState> = _dialogState.asStateFlow()
 
-    val listUiState: StateFlow<ListArticleShopUiState> = getData()
+    var listUiState: StateFlow<ListArticleShopUiState> = getData()
 
     lateinit var article: ArticleShop
-
 
     /**Public functions**************************************/
     fun onUpdateItem(_article: ArticleShop) {
@@ -42,6 +41,16 @@ class ListArticleShopViewModel(
 
         }else{
             updateItem()
+        }
+    }
+
+    fun onReorderItems(startIndex: Int, endIndex: Int){
+        val articleTo = listUiState.value.itemList.get(startIndex)
+        val articleFrom = listUiState.value.itemList.get(endIndex)
+
+        viewModelScope.launch(Dispatchers.IO) {
+            articleShopRepository.updateItem(articleTo.copy(order = articleFrom.order))
+            articleShopRepository.updateItem(articleFrom.copy(order = articleTo.order))
         }
     }
 
@@ -161,7 +170,7 @@ class ListArticleShopViewModel(
 }
 
 data class ListArticleShopUiState(
-    val itemList: List<ArticleShop> = listOf(),
+    var itemList: List<ArticleShop> = listOf(),
     val itemCount: Int = 0,
     val itemSelectCount: Int = 0
 )

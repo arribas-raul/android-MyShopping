@@ -26,7 +26,7 @@ interface ArticleShopDao {
     @Query("SELECT * from articleShop WHERE name = :name")
     fun getItemByName(name: String): Flow<ArticleShop>
 
-    @Query("SELECT * from articleShop ORDER BY `order` DESC")
+    @Query("SELECT * from articleShop ORDER BY `order` ASC")
     fun getAllItems(): Flow<List<ArticleShop>>
 
     /**Update functions***************/

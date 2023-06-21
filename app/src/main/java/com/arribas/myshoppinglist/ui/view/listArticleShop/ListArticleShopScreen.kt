@@ -1,21 +1,16 @@
 package com.arribas.myshoppinglist.ui.view.listArticle
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,7 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,6 +37,10 @@ import com.arribas.myshoppinglist.ui.view.listArticleShop.HeaderArticleShopList
 import com.arribas.myshoppinglist.ui.viewModel.AppViewModelProvider
 import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.ListArticleShopUiState
 import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.ListArticleShopViewModel
+import org.burnoutcrew.reorderable.ReorderableItem
+import org.burnoutcrew.reorderable.detectReorderAfterLongPress
+import org.burnoutcrew.reorderable.rememberReorderableLazyListState
+import org.burnoutcrew.reorderable.reorderable
 
 @Composable
 fun ListArticleShopScreen(
@@ -58,7 +56,8 @@ fun ListArticleShopScreen(
         navigateToItemUpdate = { navigateToItemUpdate(it) },
         deleteItem = { viewModel.onDialogDelete(it) },
         updateItem = { viewModel.onUpdateItem(it) },
-        onReset = { viewModel.onDialogReset() }
+        onReset = { viewModel.onDialogReset() },
+        onReorderItems = viewModel::onReorderItems
     )
 
     SimpleAlertDialog(
@@ -75,6 +74,7 @@ fun ListArticleShopBody(
     deleteItem: (article: ArticleShop) -> Unit,
     updateItem: (ArticleShop) -> Unit,
     onReset: () -> Unit,
+    onReorderItems: (to: Int, from:Int) -> Unit,
     modifier: Modifier = Modifier)
 {
     Column(
@@ -98,7 +98,8 @@ fun ListArticleShopBody(
                 onItemClick = { navigateToItemUpdate(it.id) },
                 onDeleteClick = { deleteItem(it) },
                 onCheckClick =  { updateItem(it) },
-                onChangeItem = { updateItem(it) }
+                onChangeItem = { updateItem(it) },
+                onReorderItems = onReorderItems
             )
         }
     }
@@ -113,23 +114,43 @@ private fun InventoryArticleShopList(
     onDeleteClick: (ArticleShop) -> Unit,
     onCheckClick: (ArticleShop) -> Unit,
     onChangeItem: (ArticleShop) -> Unit,
+    onReorderItems: (Int, Int) -> Unit,
     modifier: Modifier = Modifier
-) {
+){
+    val data = remember { mutableStateOf(itemList) }
+    val state = rememberReorderableLazyListState(
+        onMove = { to, from ->
+            data.value = data.value.toMutableList().apply {
+                add(to.index, removeAt(from.index))
+                onReorderItems(to.index, from.index)
+            }
+        },
+
+        canDragOver = {draggedOver, dragging ->
+            data.value.getOrNull(draggedOver.index)?.isLocked != true
+
+        }
+    )
+
     LazyColumn(
-        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(vertical = 8.dp, horizontal = 8.dp)
+        contentPadding = PaddingValues(vertical = 8.dp, horizontal = 8.dp),
+        state = state.listState,
+        modifier = modifier
+            .reorderable(state)
     )
     {
         items(items = itemList, key = { it.id }) { item ->
-            InventoryArticleShopItem(
-                item = item,
-                onItemClick = onItemClick,
-                onDeleteClick = { onDeleteClick(it) },
-                onCheckClick = onCheckClick,
-                onChangeItem = { onChangeItem(it) },
-                modifier = Modifier
-            )
+            ReorderableItem(state, key = item.id, defaultDraggingModifier = Modifier) { isDragging ->
+                InventoryArticleShopItem(
+                    item = item,
+                    onItemClick = onItemClick,
+                    onDeleteClick = { onDeleteClick(it) },
+                    onCheckClick = { onCheckClick(it) },
+                    onChangeItem = { onChangeItem(it) },
+                    modifier = Modifier.detectReorderAfterLongPress(state)
+                )
+            }
         }
     }
 }
