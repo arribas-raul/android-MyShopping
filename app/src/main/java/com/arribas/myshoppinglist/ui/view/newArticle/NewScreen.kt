@@ -42,7 +42,7 @@ fun NewScreen(
 
     SimpleAlertDialog(
         dialogState = dialogState,
-        onDismiss = viewModel::onDialogDismiss
+        onConfirm = viewModel::onDialogConfirm
     )
 }
 

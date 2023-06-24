@@ -1,7 +1,7 @@
 package com.arribas.myshoppinglist.data.utils
 
 enum class DIALOG_UI_TAG{
-    TAG_DELETE, TAG_RESET, TAG_SUCCESS
+    TAG_DELETE, TAG_RESET, TAG_SUCCESS, TAG_ELEMENT_EXISTS
 }
 
 data class DialogUiState(

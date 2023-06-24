@@ -21,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.arribas.myshoppinglist.data.repository.ArticleRepository
+import com.arribas.myshoppinglist.data.utils.DIALOG_UI_TAG
 import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.ui.viewModel.listArticle.ArticleUiState
 import com.arribas.myshoppinglist.ui.viewModel.listArticle.isValid
@@ -42,6 +43,10 @@ class NewViewModel(
     var articleUiState by mutableStateOf(ArticleUiState())
         private set
 
+    private val _dialogState = MutableStateFlow(DialogUiState())
+    /**AlertDialog functions****************************************/
+    val dialogState: StateFlow<DialogUiState> = _dialogState.asStateFlow()
+
     /**
      * Updates the [itemUiState] with the value provided in the argument. This method also triggers
      * a validation for input values.
@@ -55,10 +60,13 @@ class NewViewModel(
             return
         }
 
+        articleUiState.copy(name = articleUiState.name
+            .trim().lowercase().replace("\n", ""))
+
         val article = articleRepository.getItemByName(articleUiState.name)
 
         if(article.first() != null){
-            onOpenDialogClicked()
+            onOpenDialogClicked(tag = DIALOG_UI_TAG.TAG_ELEMENT_EXISTS)
 
         }else{
             articleRepository.insertItem(articleUiState.toItem())
@@ -71,20 +79,28 @@ class NewViewModel(
         articleRepository.deleteItem(articleUiState.toItem())
     }
 
-    /**AlertDialog functions****************************************/
-    private val _dialogState = MutableStateFlow(DialogUiState())
-    val dialogState: StateFlow<DialogUiState> = _dialogState.asStateFlow()
+    fun onOpenDialogClicked(tag: DIALOG_UI_TAG) {
+        val _dialog: DialogUiState
 
+        when(tag) {
+            DIALOG_UI_TAG.TAG_ELEMENT_EXISTS ->
+                _dialog = DialogUiState(
+                    tag = tag,
+                    title = "Este elemento ya existe",
+                    isShow = true
+                )
+            else ->
+                _dialog = DialogUiState()
+        }
 
-    fun onOpenDialogClicked() {
+        _dialogState.value = _dialog
         _dialogState.value.isShow = true
     }
 
     fun onDialogConfirm() {
-        _dialogState.value.isShow = false
+        _dialogState.value = DialogUiState(isShow = false)
     }
 
     fun onDialogDismiss() {
-        _dialogState.value.isShow = false
     }
 }

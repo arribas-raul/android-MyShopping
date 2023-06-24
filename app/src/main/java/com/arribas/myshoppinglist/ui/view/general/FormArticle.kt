@@ -86,7 +86,7 @@ fun ItemInputForm(
 ) {
     OutlinedTextField(
         value = articleUiState.name,
-        onValueChange = { onValueChange(articleUiState.copy(name = it)) },
+        onValueChange = { onValueChange(articleUiState.copy(name = it.replace("\n",""))) },
         label = { Text(stringResource(R.string.item_name_req)) },
 
         enabled = enabled,

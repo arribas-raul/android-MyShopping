@@ -114,6 +114,8 @@ class ListArticleShopViewModel(
             DIALOG_UI_TAG.TAG_DELETE  -> deleteItem()
             DIALOG_UI_TAG.TAG_RESET   -> reset()
             DIALOG_UI_TAG.TAG_SUCCESS -> onDialogDismiss()
+
+            else -> {}
         }
 
         _dialogState.value = DialogUiState(
@@ -163,6 +165,8 @@ class ListArticleShopViewModel(
                     isShow = true,
                     isShowBtDismiss = false
                 )
+
+            else -> _dialog = DialogUiState()
         }
 
         _dialogState.value = _dialog
