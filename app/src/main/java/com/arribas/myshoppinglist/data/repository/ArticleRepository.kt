@@ -33,6 +33,8 @@ interface ArticleRepositoryInterface {
 
     fun getItemByName(name: String): Flow<Article?>
 
+    fun getItemsByName(name: String): Flow<List<Article>>
+
     /**
      * Insert item in the data source
      */
@@ -55,6 +57,8 @@ class ArticleRepository(private val articleDao: ArticleDao) : ArticleRepositoryI
     override fun getItem(id: Int): Flow<Article?> = articleDao.getItem(id)
 
     override fun getItemByName(name: String): Flow<Article?> = articleDao.getItemByName(name)
+
+    override fun getItemsByName(name: String): Flow<List<Article>> = articleDao.getItemsByName(name)
 
     override suspend fun insertItem(item: Article) = articleDao.insert(item)
 

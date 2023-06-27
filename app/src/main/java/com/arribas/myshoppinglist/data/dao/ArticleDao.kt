@@ -26,6 +26,9 @@ interface ArticleDao {
     @Query("SELECT * from article WHERE name = :name")
     fun getItemByName(name: String): Flow<Article>
 
+    @Query("SELECT * from article WHERE name like '%' || :name || '%' AND shopCheked = 0 ORDER BY name ASC")
+    fun getItemsByName(name: String): Flow<List<Article>>
+
     @Query("SELECT * from article WHERE shopCheked = 0 ORDER BY name ASC")
     fun getAllItems(): Flow<List<Article>>
 

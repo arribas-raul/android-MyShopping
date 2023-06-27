@@ -26,9 +26,12 @@ interface ArticleShopDao {
     @Query("SELECT * from articleShop WHERE name = :name")
     fun getItemByName(name: String): Flow<ArticleShop>
 
+    @Query("SELECT * from articleShop WHERE `check` = :check ORDER BY `order` ASC")
+    fun getAllItems(check: Boolean): Flow<List<ArticleShop>>
+/*
     @Query("SELECT * from articleShop ORDER BY `order` ASC")
     fun getAllItems(): Flow<List<ArticleShop>>
-
+*/
     /**Update functions***************/
     @Query("UPDATE articleShop SET `check` = 0")
     fun reset()

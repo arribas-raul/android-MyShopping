@@ -38,6 +38,7 @@ import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
 import com.arribas.myshoppinglist.ui.viewModel.AppViewModelProvider
 import com.arribas.myshoppinglist.ui.viewModel.ListArticleViewModel
+import com.arribas.myshoppinglist.ui.viewModel.SearchUiState
 
 @Composable
 fun ListArticleScreen(
@@ -48,20 +49,26 @@ fun ListArticleScreen(
     val listUiState by viewModel.listUiState.collectAsState()
     val dialogState: DialogUiState by viewModel.dialogState.collectAsState()
 
-    //ListArticleHeader()
+    Column {
+        ListArticleHeader(
+            //searchUiState = searchUiState,
+            onValueChange = { viewModel.search(it) }
+        )
 
-    ListArticleBody(
-        itemList = listUiState.itemList,
-        navigateToItemUpdate = { navigateToItemUpdate(it) },
-        deleteItem = { viewModel.onDialogDelete(it) },
-        updateItem = { viewModel.updateItem(it) }
-    )
+        ListArticleBody(
+            itemList = listUiState.itemList,
+            navigateToItemUpdate = { navigateToItemUpdate(it) },
+            deleteItem = { viewModel.onDialogDelete(it) },
+            updateItem = { viewModel.updateItem(it) }
+        )
+    }
 
     SimpleAlertDialog(
         dialogState = dialogState,
         onDismiss = viewModel::onDialogDismiss,
         onConfirm = viewModel::onDialogConfirm
     )
+
 }
 
 @Composable

@@ -1,18 +1,26 @@
 package com.arribas.myshoppinglist.ui.viewModel
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.arribas.myshoppinglist.data.MainTag
 import com.arribas.myshoppinglist.data.model.Article
 import com.arribas.myshoppinglist.data.model.ArticleShop
 import com.arribas.myshoppinglist.data.repository.ArticleRepository
 import com.arribas.myshoppinglist.data.repository.ArticleShopRepository
 import com.arribas.myshoppinglist.data.utils.DIALOG_UI_TAG
 import com.arribas.myshoppinglist.data.utils.DialogUiState
+import com.arribas.myshoppinglist.ui.viewModel.listArticle.ArticleUiState
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -21,35 +29,36 @@ class ListArticleViewModel(
     private val articleRepository: ArticleRepository,
     private val articleShopRepository: ArticleShopRepository): ViewModel() {
 
-    companion object {
-        private const val TIMEOUT_MILLIS = 5_000L
+    var searchUiState by mutableStateOf(SearchUiState())
+        private set
+
+    private val _listUiState = MutableStateFlow(ListUiState())
+    var listUiState: StateFlow<ListUiState> = _listUiState
+
+    lateinit var article: Article
+
+    init{
+        getData()
     }
 
-    val listUiState: StateFlow<ListUiState> =
-        articleRepository.getAllItems().map { list ->
-            ListUiState(
+    fun getData(){
+        viewModelScope.launch{
+
+            articleRepository.getItemsByName(searchUiState.name).collect { list ->
+                _listUiState.value = ListUiState(
                     itemList = list,
                     itemCount = list.count(),
                     itemSelectCount = list.count { it.shopCheked }
                 )
             }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-                initialValue = ListUiState()
-            )
-
-    lateinit var article: Article
+        }
+    }
 
     fun updateItem(article: Article) {
         viewModelScope.launch(Dispatchers.IO) {
             articleRepository.updateItem(article.copy(shopCheked = true))
 
             val count: Int = articleShopRepository.count()
-
-            /*val count = items?.let { _items->
-                _items.count()
-            }*/
 
             val articleShop = ArticleShop(
                 name = article.name,
@@ -58,6 +67,11 @@ class ListArticleViewModel(
 
             articleShopRepository.insertItem(articleShop)
         }
+    }
+
+    fun search(_name: String){
+        searchUiState = searchUiState.copy(name = _name)
+        getData()
     }
 
     fun onDialogDelete(article: Article){
@@ -116,7 +130,12 @@ class ListArticleViewModel(
 }
 
 data class ListUiState(
-    val itemList: List<Article> = listOf(),
+    var itemList: List<Article> = listOf(),
     val itemCount: Int = 0,
-    val itemSelectCount: Int = 0
+    val itemSelectCount: Int = 0,
+    val searchName: String = ""
+)
+
+data class SearchUiState(
+    val name: String = ""
 )

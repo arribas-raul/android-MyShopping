@@ -1,5 +1,8 @@
 package com.arribas.myshoppinglist.ui.viewModel.listArticleShop
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arribas.myshoppinglist.data.model.ArticleShop
@@ -7,6 +10,8 @@ import com.arribas.myshoppinglist.data.repository.ArticleRepository
 import com.arribas.myshoppinglist.data.repository.ArticleShopRepository
 import com.arribas.myshoppinglist.data.utils.DIALOG_UI_TAG
 import com.arribas.myshoppinglist.data.utils.DialogUiState
+import com.arribas.myshoppinglist.ui.viewModel.ListUiState
+import com.arribas.myshoppinglist.ui.viewModel.SearchUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -28,9 +33,19 @@ class ListArticleShopViewModel(
     private val _dialogState = MutableStateFlow(DialogUiState())
     val dialogState: StateFlow<DialogUiState> = _dialogState.asStateFlow()
 
-    var listUiState: StateFlow<ListArticleShopUiState> = getData()
+    //var listUiState: StateFlow<ListArticleShopUiState> = getData()
+
+    private val _listUiState = MutableStateFlow(ListArticleShopUiState())
+    var listUiState: StateFlow<ListArticleShopUiState> = _listUiState
+
+    var searchListArticleUiState by mutableStateOf(SearchListArticleUiState())
+        private set
 
     lateinit var article: ArticleShop
+
+    init{
+        getData()
+    }
 
     /**Public functions**************************************/
     fun onUpdateItem(_article: ArticleShop) {
@@ -54,6 +69,12 @@ class ListArticleShopViewModel(
         }
     }
 
+    fun onCheckFilter(_searchUiFilter: SearchListArticleUiState){
+        searchListArticleUiState = searchListArticleUiState.copy(check = _searchUiFilter.check)
+
+        getData()
+    }
+
     fun onDialogDelete(_article: ArticleShop){
         article = _article
 
@@ -65,19 +86,38 @@ class ListArticleShopViewModel(
     }
 
     /**Private functions********************************************/
-    private fun getData(): StateFlow<ListArticleShopUiState>{
-        return articleShopRepository.getAllItems().map { list ->
-            ListArticleShopUiState(
-                itemList = list,
-                itemCount = list.count(),
-                itemSelectCount = list.count { it.check }
-            )
+    private fun getData() {
+        viewModelScope.launch{
+            /*if(searchListArticleUiState.check){
+                articleShopRepository.getAllItems(check = !searchListArticleUiState.check)
+                    .collect { list ->
+                        _listUiState.value = ListArticleShopUiState(
+                            itemList = list,
+                            itemCount = list.count(),
+                            itemSelectCount = list.count { it.check }
+                        )
+                }
+
+            }else{
+                articleShopRepository.getAllItems().collect { list ->
+                    _listUiState.value = ListArticleShopUiState(
+                        itemList = list,
+                        itemCount = list.count(),
+                        itemSelectCount = list.count { it.check }
+                    )
+                }
+            }*/
+
+            articleShopRepository.getAllItems(check = searchListArticleUiState.check)
+                .collect { list ->
+                    _listUiState.value = ListArticleShopUiState(
+                        itemList = list,
+                        itemCount = list.count(),
+                        itemSelectCount = list.count { it.check }
+                    )
+                }
+
         }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-                initialValue = ListArticleShopUiState()
-            )
     }
 
     private fun reset(){
@@ -177,5 +217,9 @@ data class ListArticleShopUiState(
     var itemList: List<ArticleShop> = listOf(),
     val itemCount: Int = 0,
     val itemSelectCount: Int = 0
+)
+
+data class SearchListArticleUiState(
+    val check: Boolean = false
 )
 

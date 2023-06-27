@@ -37,6 +37,7 @@ import com.arribas.myshoppinglist.ui.view.listArticleShop.HeaderArticleShopList
 import com.arribas.myshoppinglist.ui.viewModel.AppViewModelProvider
 import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.ListArticleShopUiState
 import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.ListArticleShopViewModel
+import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.SearchListArticleUiState
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
@@ -53,11 +54,13 @@ fun ListArticleShopScreen(
 
     ListArticleShopBody(
         listUiState = listUiState,
+        searchUiState = viewModel.searchListArticleUiState,
         navigateToItemUpdate = { navigateToItemUpdate(it) },
         deleteItem = { viewModel.onDialogDelete(it) },
         updateItem = { viewModel.onUpdateItem(it) },
         onReset = { viewModel.onDialogReset() },
-        onReorderItems = viewModel::onReorderItems
+        onReorderItems = viewModel::onReorderItems,
+        onCheckFilter = { viewModel.onCheckFilter(it) }
     )
 
     SimpleAlertDialog(
@@ -70,11 +73,13 @@ fun ListArticleShopScreen(
 @Composable
 fun ListArticleShopBody(
     listUiState: ListArticleShopUiState,
+    searchUiState: SearchListArticleUiState,
     navigateToItemUpdate: (Int) -> Unit,
     deleteItem: (article: ArticleShop) -> Unit,
     updateItem: (ArticleShop) -> Unit,
     onReset: () -> Unit,
     onReorderItems: (to: Int, from:Int) -> Unit,
+    onCheckFilter: (SearchListArticleUiState) -> Unit = {},
     modifier: Modifier = Modifier)
 {
     Column(
@@ -83,6 +88,8 @@ fun ListArticleShopBody(
 
         HeaderArticleShopList(
             listUiState = listUiState,
+            searchUiState = searchUiState,
+            onCheckFilter = onCheckFilter,
             onResetBt = onReset,
             modifier = Modifier.padding(8.dp)
         )
@@ -175,7 +182,7 @@ private fun InventoryArticleShopItem(
             var checked = remember { mutableStateOf(item.check) }
 
             Checkbox(
-                checked = item.check,
+                checked = checked.value,
 
                 onCheckedChange = { _checked ->
                     checked.value = _checked
