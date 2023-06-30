@@ -26,7 +26,9 @@ interface ArticleShopRepositoryInterface {
      */
     fun getAllItems(check: Boolean): Flow<List<ArticleShop>>
 
-    //fun getAllItems(): Flow<List<ArticleShop>>
+    fun getAllItems(): Flow<List<ArticleShop>>
+
+    fun getAllItemsOrderCheck(): Flow<List<ArticleShop>>
 
     /**
      * Retrieve an item from the given data source that matches with the [id].
@@ -60,7 +62,9 @@ interface ArticleShopRepositoryInterface {
 class ArticleShopRepository(private val articleShopDao: ArticleShopDao) : ArticleShopRepositoryInterface {
     override fun getAllItems(check: Boolean): Flow<List<ArticleShop>> = articleShopDao.getAllItems(check = check)
 
-    //override fun getAllItems(): Flow<List<ArticleShop>> = articleShopDao.getAllItems()
+    override fun getAllItems(): Flow<List<ArticleShop>> = articleShopDao.getAllItems()
+
+    override fun getAllItemsOrderCheck(): Flow<List<ArticleShop>> = articleShopDao.getAllItemsOrderCheck()
     override fun getItem(id: Int): Flow<ArticleShop?> = articleShopDao.getItem(id)
 
     override fun getItemByName(name: String): Flow<ArticleShop?> = articleShopDao.getItemByName(name)

@@ -18,6 +18,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -50,11 +51,12 @@ fun ListArticleShopScreen(
     modifier: Modifier = Modifier){
 
     val listUiState by viewModel.listUiState.collectAsState()
+    val searchUiState by viewModel.searchListArticleUiState.collectAsState()
     val dialogState: DialogUiState by viewModel.dialogState.collectAsState()
 
     ListArticleShopBody(
         listUiState = listUiState,
-        searchUiState = viewModel.searchListArticleUiState,
+        searchUiState = searchUiState,
         navigateToItemUpdate = { navigateToItemUpdate(it) },
         deleteItem = { viewModel.onDialogDelete(it) },
         updateItem = { viewModel.onUpdateItem(it) },
@@ -179,13 +181,13 @@ private fun InventoryArticleShopItem(
                 .background(colorResource(R.color.white))
                 .padding(8.dp)
         ) {
-            var checked = remember { mutableStateOf(item.check) }
+            var checked by remember { mutableStateOf(item.check) }
 
             Checkbox(
-                checked = checked.value,
+                checked = item.check,
 
                 onCheckedChange = { _checked ->
-                    checked.value = _checked
+                    checked = _checked
                     onCheckClick(item.copy(check = _checked))
                 },
 

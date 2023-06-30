@@ -26,20 +26,16 @@ class ListArticleShopViewModel(
     private val articleRepository: ArticleRepository,
     private val articleShopRepository: ArticleShopRepository): ViewModel() {
 
-    companion object {
-        private const val TIMEOUT_MILLIS = 5_000L
-    }
-
     private val _dialogState = MutableStateFlow(DialogUiState())
-    val dialogState: StateFlow<DialogUiState> = _dialogState.asStateFlow()
+    val dialogState: StateFlow<DialogUiState> = _dialogState
 
     //var listUiState: StateFlow<ListArticleShopUiState> = getData()
 
     private val _listUiState = MutableStateFlow(ListArticleShopUiState())
     var listUiState: StateFlow<ListArticleShopUiState> = _listUiState
 
-    var searchListArticleUiState by mutableStateOf(SearchListArticleUiState())
-        private set
+    private val _searchListArticleUiState = MutableStateFlow(SearchListArticleUiState())
+    var searchListArticleUiState: StateFlow<SearchListArticleUiState> = _searchListArticleUiState
 
     lateinit var article: ArticleShop
 
@@ -70,7 +66,8 @@ class ListArticleShopViewModel(
     }
 
     fun onCheckFilter(_searchUiFilter: SearchListArticleUiState){
-        searchListArticleUiState = searchListArticleUiState.copy(check = _searchUiFilter.check)
+        //_searchListArticleUiState = _searchListArticleUiState.copy(check = _searchUiFilter.check)
+        _searchListArticleUiState.value = _searchUiFilter
 
         getData()
     }
@@ -88,27 +85,7 @@ class ListArticleShopViewModel(
     /**Private functions********************************************/
     private fun getData() {
         viewModelScope.launch{
-            /*if(searchListArticleUiState.check){
-                articleShopRepository.getAllItems(check = !searchListArticleUiState.check)
-                    .collect { list ->
-                        _listUiState.value = ListArticleShopUiState(
-                            itemList = list,
-                            itemCount = list.count(),
-                            itemSelectCount = list.count { it.check }
-                        )
-                }
-
-            }else{
-                articleShopRepository.getAllItems().collect { list ->
-                    _listUiState.value = ListArticleShopUiState(
-                        itemList = list,
-                        itemCount = list.count(),
-                        itemSelectCount = list.count { it.check }
-                    )
-                }
-            }*/
-
-            articleShopRepository.getAllItems(check = searchListArticleUiState.check)
+            articleShopRepository.getAllItems()
                 .collect { list ->
                     _listUiState.value = ListArticleShopUiState(
                         itemList = list,
@@ -116,7 +93,6 @@ class ListArticleShopViewModel(
                         itemSelectCount = list.count { it.check }
                     )
                 }
-
         }
     }
 
@@ -144,6 +120,18 @@ class ListArticleShopViewModel(
                 )
 
                 articleRepository.updateItem(article)
+            }
+
+            updateOrderItems()
+        }
+    }
+
+    private fun updateOrderItems(){
+        viewModelScope.launch(Dispatchers.IO) {
+            var count = 1;
+
+            listUiState.value.itemList.forEach { article ->
+                articleShopRepository.updateItem(article.copy(order = count++))
             }
         }
     }

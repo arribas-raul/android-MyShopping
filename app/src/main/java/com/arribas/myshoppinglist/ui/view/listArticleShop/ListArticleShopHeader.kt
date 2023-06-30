@@ -49,7 +49,7 @@ fun HeaderArticleShopList(
     ){
         Row(modifier = modifier.fillMaxWidth())
         {
-            var checked = remember { mutableStateOf(searchUiState.check) }
+            /*var checked = remember { mutableStateOf(searchUiState.check) }
 
             Checkbox(
                 checked = checked.value,
@@ -63,7 +63,7 @@ fun HeaderArticleShopList(
                     .width(30.dp)
                     .height(30.dp)
                     .align(Alignment.CenterVertically)
-            )
+            )*/
 
             Text(
                 text = "Total Items ${listUiState.itemCount}",
