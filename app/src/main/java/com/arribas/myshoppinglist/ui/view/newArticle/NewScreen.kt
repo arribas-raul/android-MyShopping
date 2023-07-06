@@ -11,21 +11,28 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arribas.myshoppinglist.R
 import com.arribas.myshoppinglist.data.utils.DialogUiState
+import com.arribas.myshoppinglist.data.utils.TextFieldDialogUiState
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
+import com.arribas.myshoppinglist.ui.view.AppViewModelProvider
+import com.arribas.myshoppinglist.ui.view.Category.CategoryViewModel
+import com.arribas.myshoppinglist.ui.view.Category.ListCategoryUiState
 import com.arribas.myshoppinglist.ui.view.general.DetailBody
 import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
-import com.arribas.myshoppinglist.ui.viewModel.AppViewModelProvider
-import com.arribas.myshoppinglist.ui.viewModel.NewArticle.NewViewModel
-import com.arribas.myshoppinglist.ui.viewModel.listArticle.ArticleUiState
+import com.arribas.myshoppinglist.ui.view.general.TextFieldAlertDialog
+import com.arribas.myshoppinglist.ui.view.newArticle.NewViewModel
+import com.arribas.myshoppinglist.ui.view.listArticle.ArticleUiState
 import kotlinx.coroutines.launch
 
 @Composable
 fun NewScreen(
     viewModel: NewViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    categoryViewModel: CategoryViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()
     val dialogState: DialogUiState by viewModel.dialogState.collectAsState()
+    val categoryDialogState: TextFieldDialogUiState by categoryViewModel.dialogState.collectAsState()
+    val listCategoryUiState by categoryViewModel.listUiState.collectAsState()
 
     NewForm(
         updateUiState = { viewModel.updateUiState(it) },
@@ -37,6 +44,9 @@ fun NewScreen(
         },
 
         articleUiState = viewModel.articleUiState,
+        listCategoryUiState = listCategoryUiState,
+        onCategoryClick = categoryViewModel::openDialog,
+
         modifier = Modifier.background(colorResource(R.color.my_background))
     )
 
@@ -44,19 +54,29 @@ fun NewScreen(
         dialogState = dialogState,
         onConfirm = viewModel::onDialogConfirm
     )
+
+    TextFieldAlertDialog(
+        dialogState = categoryDialogState,
+        onConfirm = categoryViewModel::onDialogConfirm,
+        onDismiss = categoryViewModel::onDialogDismiss
+    )
 }
 
 @Composable
 fun NewForm(
     updateUiState: (ArticleUiState) -> Unit = {},
     saveItem: () -> Unit = {},
+    onCategoryClick: () -> Unit = {},
     articleUiState: ArticleUiState,
+    listCategoryUiState: ListCategoryUiState = ListCategoryUiState(),
     modifier: Modifier = Modifier) {
 
     DetailBody(
         articleUiState = articleUiState,
         onItemValueChange = { updateUiState(it) },
-        onSaveClick = { saveItem() }
+        onSaveClick = saveItem,
+        listCategoryUiState = listCategoryUiState,
+        onCategoryClick = onCategoryClick
     )
 }
 

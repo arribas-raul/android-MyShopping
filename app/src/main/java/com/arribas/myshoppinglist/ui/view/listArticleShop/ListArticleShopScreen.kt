@@ -32,10 +32,10 @@ import com.arribas.myshoppinglist.R
 import com.arribas.myshoppinglist.data.model.ArticleShop
 import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
+import com.arribas.myshoppinglist.ui.view.AppViewModelProvider
 import com.arribas.myshoppinglist.ui.view.general.CircleButton
 import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
 import com.arribas.myshoppinglist.ui.view.listArticleShop.HeaderArticleShopList
-import com.arribas.myshoppinglist.ui.viewModel.AppViewModelProvider
 import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.ListArticleShopUiState
 import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.ListArticleShopViewModel
 import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.SearchListArticleUiState

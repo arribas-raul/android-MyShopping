@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.arribas.myshoppinglist.ui.viewModel
+package com.arribas.myshoppinglist.ui.view
 
 import android.app.Application
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
@@ -23,8 +23,10 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.arribas.myshoppinglist.AppApplication
-import com.arribas.myshoppinglist.ui.viewModel.detailArticle.DetailViewModel
-import com.arribas.myshoppinglist.ui.viewModel.NewArticle.NewViewModel
+import com.arribas.myshoppinglist.ui.view.Category.CategoryViewModel
+import com.arribas.myshoppinglist.ui.view.detailArticle.DetailViewModel
+import com.arribas.myshoppinglist.ui.view.newArticle.NewViewModel
+import com.arribas.myshoppinglist.ui.viewModel.ListArticleViewModel
 import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.ListArticleShopViewModel
 
 /**
@@ -32,7 +34,6 @@ import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.ListArticleShopVi
  */
 object AppViewModelProvider {
     val Factory = viewModelFactory {
-        // Initializer for ItemEditViewModel
         initializer {
             ListArticleShopViewModel(
                 AppApplication().container.articleRepository,
@@ -57,6 +58,12 @@ object AppViewModelProvider {
             DetailViewModel(
                 this.createSavedStateHandle(),
                 AppApplication().container.articleRepository
+            )
+        }
+
+        initializer {
+            CategoryViewModel(
+                AppApplication().container.categoryRepository
             )
         }
     }

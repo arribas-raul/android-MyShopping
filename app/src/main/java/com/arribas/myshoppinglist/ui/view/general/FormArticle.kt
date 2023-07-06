@@ -1,38 +1,68 @@
 package com.arribas.myshoppinglist.ui.view.general
 
+import android.util.Size
 import android.view.KeyEvent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arribas.myshoppinglist.R
-import com.arribas.myshoppinglist.ui.viewModel.listArticle.ArticleUiState
+import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
+import com.arribas.myshoppinglist.ui.view.Category.ListCategoryUiState
+import com.arribas.myshoppinglist.ui.view.detailArticle.NewForm
+import com.arribas.myshoppinglist.ui.view.listArticle.ArticleUiState
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailBody(
-    articleUiState: ArticleUiState,
+    articleUiState: ArticleUiState = ArticleUiState(),
     onItemValueChange: (ArticleUiState) -> Unit = {},
     onSaveClick: () -> Unit = {},
     onDeleteClick: () -> Unit = {},
+    listCategoryUiState: ListCategoryUiState = ListCategoryUiState(),
+    onCategoryClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ){
     Column(
@@ -42,11 +72,78 @@ fun DetailBody(
 
         verticalArrangement = Arrangement.spacedBy(32.dp)
     ) {
+
         ItemInputForm(
             articleUiState = articleUiState,
             onValueChange = onItemValueChange,
             onKeyEvent = onSaveClick
         )
+
+        Row(Modifier.fillMaxWidth()) {
+
+            val options = listOf("Option 1", "Option 2", "Option 3", "Option 4", "Option 5")
+            var expanded by remember { mutableStateOf(false) }
+            var selectedOptionText by remember { mutableStateOf(options[0]) }
+
+            ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = {
+                    expanded = !expanded
+                },
+                modifier = Modifier
+                    .weight(7f)
+            ) {
+                TextField(
+                    readOnly = true,
+                    value = selectedOptionText,
+                    onValueChange = { },
+                    label = { Text("Categorias") },
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(
+                            expanded = expanded
+                        )
+                    },
+                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .fillMaxWidth()
+                        .menuAnchor()
+                        .background(colorResource(id = R.color.white))
+                )
+
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = {
+                        expanded = false
+                    },
+                    modifier = Modifier.background(colorResource(id = R.color.my_primary))
+                ) {
+                    listCategoryUiState.itemList.forEachIndexed() { index, category ->
+                        DropdownMenuItem(
+                            onClick = {
+                                selectedOptionText = category.name
+                                expanded = false
+                            },
+                            text = { Text(text = category.name) }
+                        )
+                    }
+                }
+            }
+
+            IconButton(
+                onClick = onCategoryClick,
+                modifier = modifier
+                    .weight(1f)
+                    .padding(top = 5.dp, bottom = 5.dp, start = 10.dp)
+                    .background(color = colorResource(R.color.my_primary)))
+            {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    tint = Color.White,
+                    contentDescription = "More"
+                )
+            }
+        }
 
         Button(
             onClick = onSaveClick,
@@ -82,10 +179,10 @@ fun DetailBody(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ItemInputForm(
-    articleUiState: ArticleUiState,
+    articleUiState: ArticleUiState = ArticleUiState(),
     onValueChange: (ArticleUiState) -> Unit = {},
     enabled: Boolean = true,
-    onKeyEvent: () -> Unit,
+    onKeyEvent: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     OutlinedTextField(
@@ -109,7 +206,7 @@ fun ItemInputForm(
                 containerColor = colorResource(R.color.my_background)
             ),
 
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .onKeyEvent {
                 if (it.nativeKeyEvent.keyCode == KeyEvent.KEYCODE_ENTER) {
@@ -120,4 +217,16 @@ fun ItemInputForm(
                 false
             }
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ItemInputFormPreview() {
+    ItemInputForm()
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DetailBodyPreview() {
+    DetailBody()
 }

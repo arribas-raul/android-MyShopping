@@ -11,15 +11,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arribas.myshoppinglist.R
+import com.arribas.myshoppinglist.data.MainTag
 import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.ui.navigation.NavigationDestination
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.TopBar
 import com.arribas.myshoppinglist.ui.view.general.DetailBody
 import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
-import com.arribas.myshoppinglist.ui.viewModel.AppViewModelProvider
-import com.arribas.myshoppinglist.ui.viewModel.detailArticle.DetailViewModel
-import com.arribas.myshoppinglist.ui.viewModel.listArticle.ArticleUiState
+import com.arribas.myshoppinglist.ui.view.AppViewModelProvider
+import com.arribas.myshoppinglist.ui.view.listArticle.ArticleUiState
 import kotlinx.coroutines.launch
 
 object DetailDestination : NavigationDestination {
@@ -83,8 +83,10 @@ fun DetailForm(
             TopBar(
                 title = articleUiState.name,
                 canNavigateBack = true,
-                navigateUp = navigateBack
-            ) },
+                navigateUp = navigateBack,
+                tag = MainTag.ITEM_LIST
+            )
+        },
 
         ) { innerPadding ->
 

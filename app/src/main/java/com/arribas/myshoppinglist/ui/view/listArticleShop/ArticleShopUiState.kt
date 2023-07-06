@@ -1,4 +1,4 @@
-package com.arribas.myshoppinglist.ui.viewModel.listArticleShop
+package com.arribas.myshoppinglist.ui.view.listArticleShop
 
 import com.arribas.myshoppinglist.data.model.ArticleShop
 

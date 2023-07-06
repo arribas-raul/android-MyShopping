@@ -18,8 +18,12 @@ package com.arribas.myshoppinglist.data
 
 import android.content.Context
 import com.arribas.myshoppinglist.data.db.AppDatabase
+import com.arribas.myshoppinglist.data.repository.ArticleCategoryRepository
 import com.arribas.myshoppinglist.data.repository.ArticleRepository
 import com.arribas.myshoppinglist.data.repository.ArticleShopRepository
+import com.arribas.myshoppinglist.data.repository.CategoryRepository
+import com.arribas.myshoppinglist.data.repository.ShoplistArticleRepository
+import com.arribas.myshoppinglist.data.repository.ShoplistRepository
 
 /**
  * App container for Dependency injection.
@@ -27,20 +31,39 @@ import com.arribas.myshoppinglist.data.repository.ArticleShopRepository
 interface AppContainer {
     val articleRepository: ArticleRepository
     val articleShopRepository: ArticleShopRepository
+    val shoplistRepository: ShoplistRepository
+    val shoplistArticleRepository: ShoplistArticleRepository
+    val categoryRepository: CategoryRepository
+    val articleCategoryRepository: ArticleCategoryRepository
+
 }
 
 /**
  * [AppContainer] implementation that provides instance of [OfflineItemsRepository]
  */
 class AppDataContainer(private val context: Context) : AppContainer {
-    /**
-     * Implementation for [ItemsRepository]
-     */
+
     override val articleRepository: ArticleRepository by lazy {
         ArticleRepository(AppDatabase.getDatabase(context).articleDao())
     }
 
     override val articleShopRepository: ArticleShopRepository by lazy {
         ArticleShopRepository(AppDatabase.getDatabase(context).articleShopDao())
+    }
+
+    override val shoplistRepository: ShoplistRepository by lazy {
+        ShoplistRepository(AppDatabase.getDatabase(context).shoplistDao())
+    }
+
+    override val shoplistArticleRepository: ShoplistArticleRepository by lazy {
+        ShoplistArticleRepository(AppDatabase.getDatabase(context).shoplistArticleDao())
+    }
+
+    override val categoryRepository: CategoryRepository by lazy {
+        CategoryRepository(AppDatabase.getDatabase(context).categoryDao())
+    }
+
+    override val articleCategoryRepository: ArticleCategoryRepository by lazy {
+        ArticleCategoryRepository(AppDatabase.getDatabase(context).articleCategoryDao())
     }
 }

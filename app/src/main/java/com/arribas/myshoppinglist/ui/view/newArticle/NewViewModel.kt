@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.arribas.myshoppinglist.ui.viewModel.NewArticle
+package com.arribas.myshoppinglist.ui.view.newArticle
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,9 +23,10 @@ import androidx.lifecycle.ViewModel
 import com.arribas.myshoppinglist.data.repository.ArticleRepository
 import com.arribas.myshoppinglist.data.utils.DIALOG_UI_TAG
 import com.arribas.myshoppinglist.data.utils.DialogUiState
-import com.arribas.myshoppinglist.ui.viewModel.listArticle.ArticleUiState
-import com.arribas.myshoppinglist.ui.viewModel.listArticle.isValid
-import com.arribas.myshoppinglist.ui.viewModel.listArticle.toItem
+import com.arribas.myshoppinglist.data.utils.TextFieldDialogUiState
+import com.arribas.myshoppinglist.ui.view.listArticle.ArticleUiState
+import com.arribas.myshoppinglist.ui.view.listArticle.isValid
+import com.arribas.myshoppinglist.ui.view.listArticle.toItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -43,8 +44,8 @@ class NewViewModel(
     var articleUiState by mutableStateOf(ArticleUiState())
         private set
 
-    private val _dialogState = MutableStateFlow(DialogUiState())
     /**AlertDialog functions****************************************/
+    private val _dialogState = MutableStateFlow(DialogUiState())
     val dialogState: StateFlow<DialogUiState> = _dialogState.asStateFlow()
 
     /**

@@ -12,7 +12,7 @@ import com.arribas.myshoppinglist.data.repository.ArticleRepository
 import com.arribas.myshoppinglist.data.repository.ArticleShopRepository
 import com.arribas.myshoppinglist.data.utils.DIALOG_UI_TAG
 import com.arribas.myshoppinglist.data.utils.DialogUiState
-import com.arribas.myshoppinglist.ui.viewModel.listArticle.ArticleUiState
+import com.arribas.myshoppinglist.ui.view.listArticle.ArticleUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -71,6 +71,11 @@ class ListArticleViewModel(
 
     fun search(_name: String){
         searchUiState = searchUiState.copy(name = _name)
+        getData()
+    }
+
+    fun clearName(){
+        searchUiState = searchUiState.copy(name = "")
         getData()
     }
 

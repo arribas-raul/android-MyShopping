@@ -1,4 +1,4 @@
-package com.arribas.myshoppinglist.ui.viewModel.listArticle
+package com.arribas.myshoppinglist.ui.view.listArticle
 
 import com.arribas.myshoppinglist.data.model.Article
 
@@ -6,6 +6,7 @@ data class ArticleUiState(
     val id: Int = 0,
     val name: String = "",
     val quantity: String = "1",
+    val category: Int = 0,
     val check: Boolean = false,
     val actionEnabled: Boolean = false
 )

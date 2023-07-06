@@ -58,11 +58,14 @@ fun MainScreen(
 
     Scaffold(
         topBar = {
-            TopBar(title = when(uiState.currentTab){
-                MainTag.SHOP_LIST -> "Lista de la compra"
-                MainTag.ITEM_LIST -> "Lista de productos"
-                MainTag.NEW_ITEM  -> "Nuevo producto"
-            })
+            TopBar(
+                title = when(uiState.currentTab){
+                    MainTag.SHOP_LIST -> "Lista de la compra"
+                    MainTag.ITEM_LIST -> "Lista de productos"
+                    MainTag.NEW_ITEM  -> "Nuevo producto"
+                },
+                tag = uiState.currentTab
+            )
         },
 
         bottomBar = {
@@ -155,7 +158,9 @@ fun BottomBarMain(
 fun TopBarMainPreview() {
     TopBar(
         title = "Lista de la compra",
-        modifier = Modifier.background(Color.Green))
+        modifier = Modifier.background(Color.Green),
+        tag = MainTag.NEW_ITEM
+    )
 }
 
 

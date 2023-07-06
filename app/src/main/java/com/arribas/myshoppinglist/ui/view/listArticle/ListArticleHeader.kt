@@ -1,7 +1,6 @@
 package com.arribas.myshoppinglist.ui.view.listArticle
 
 import android.view.KeyEvent
-import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,7 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -29,21 +28,17 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arribas.myshoppinglist.R
-import com.arribas.myshoppinglist.data.model.Article
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
-import com.arribas.myshoppinglist.ui.view.general.ItemInputForm
-import com.arribas.myshoppinglist.ui.viewModel.SearchUiState
-import com.arribas.myshoppinglist.ui.viewModel.listArticle.ArticleUiState
 
 @Composable
 fun ListArticleHeader(
     //searchUiState: SearchUiState = SearchUiState(),
     onValueChange: (String) -> Unit = {},
     onKeyEvent: () -> Unit = {},
+    clearName: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.padding(8.dp)) {
@@ -51,7 +46,8 @@ fun ListArticleHeader(
             SearchName(
                 //searchUiState = searchUiState,
                 onValueChange = onValueChange,
-                onKeyEvent = {  }
+                onKeyEvent = {  },
+                clearName = clearName
             )
         }
     }
@@ -63,6 +59,7 @@ fun SearchName(
     //searchUiState: SearchUiState = SearchUiState(),
     onValueChange: (String) -> Unit = {},
     onKeyEvent: () -> Unit,
+    clearName: () -> Unit,
     modifier: Modifier = Modifier
 ){
     var text by rememberSaveable(stateSaver = TextFieldValue.Saver) {
@@ -94,14 +91,12 @@ fun SearchName(
             ),
 
         trailingIcon = {
-            Icon(
-                Icons.Default.Clear,
-                contentDescription = "clear text",
-                modifier = Modifier
-                    .clickable {
-                        text = TextFieldValue("")
-                    }
-            )
+            IconButton(onClick = { clearName }) {
+                Icon(
+                    Icons.Default.Clear,
+                    contentDescription = "clear text"
+                )
+            }
         },
 
         modifier = Modifier

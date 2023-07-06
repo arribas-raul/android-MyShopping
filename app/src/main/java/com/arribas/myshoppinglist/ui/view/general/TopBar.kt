@@ -3,6 +3,7 @@ package com.arribas.myshoppinglist.ui.view
 import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -16,6 +17,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arribas.myshoppinglist.R
+import com.arribas.myshoppinglist.data.MainTag
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -23,6 +25,7 @@ fun TopBar(
     title: String,
     canNavigateBack: Boolean = false,
     navigateUp: () -> Unit = {},
+    tag: MainTag,
     modifier: Modifier = Modifier){
 
     TopAppBar(
@@ -46,6 +49,17 @@ fun TopBar(
             }
         },
 
+        actions = {
+            if(tag === MainTag.NEW_ITEM) {
+                IconButton(onClick = {}) {
+                    Icon(
+                        imageVector = Icons.Outlined.Add,
+                        contentDescription = "More"
+                    )
+                }
+            }
+        },
+
         modifier = modifier)
 
 }
@@ -55,5 +69,6 @@ fun TopBar(
 fun TopBarMainPreview() {
     TopBar(
         title = "Lista de la compra",
-        canNavigateBack = true)
+        canNavigateBack = true,
+        tag = MainTag.NEW_ITEM)
 }
