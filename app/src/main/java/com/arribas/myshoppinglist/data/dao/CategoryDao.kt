@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import com.arribas.myshoppinglist.data.model.Article
 import com.arribas.myshoppinglist.data.model.Category
 import kotlinx.coroutines.flow.Flow
 
@@ -22,6 +23,9 @@ interface CategoryDao {
 
     @Query("SELECT * from category WHERE id = :id")
     fun getItem(id: Int): Flow<Category>
+
+    @Query("SELECT * from category WHERE name = :name")
+    fun getItemByName(name: String): Flow<Category>
 
     @Query("SELECT * from category ORDER BY name ASC")
     fun getAllItems(): Flow<kotlin.collections.List<Category>>

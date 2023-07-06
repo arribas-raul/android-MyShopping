@@ -7,10 +7,13 @@ import com.arribas.myshoppinglist.data.model.Category
 import com.arribas.myshoppinglist.data.repository.CategoryRepository
 import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.data.utils.TextFieldDialogUiState
+import com.arribas.myshoppinglist.ui.view.listArticle.ArticleUiState
+import com.arribas.myshoppinglist.ui.view.listArticle.isValid
 import com.arribas.myshoppinglist.ui.viewModel.ListUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class CategoryViewModel(
@@ -39,6 +42,10 @@ class CategoryViewModel(
         }
     }
 
+    fun updateUiState(name: String) {
+        _dialogState.value = _dialogState.value.copy(name = name)
+    }
+
     /**TextFieldDialog functions****************/
     fun openDialog() {
         _dialogState.value = TextFieldDialogUiState(
@@ -48,10 +55,26 @@ class CategoryViewModel(
     }
 
     fun onDialogConfirm() {
-        _dialogState.value = TextFieldDialogUiState(isShow = false)
+        viewModelScope.launch {
+            val category = categoryRepository.getItemByName(dialogState.value.name)
+
+            if(category.first() != null){
+                _dialogState.value = _dialogState.value.copy(msgError = "Esta categoría ya existe.")
+
+            }else{
+                categoryRepository.insertItem(
+                    Category(
+                        id = 0,
+                        name = dialogState.value.name
+                    )
+                )
+                _dialogState.value = TextFieldDialogUiState(isShow = false)
+            }
+        }
     }
 
     fun onDialogDismiss() {
+        //dialogState.value.copy(name = name)
         _dialogState.value = TextFieldDialogUiState(isShow = false)
     }
 }

@@ -17,6 +17,7 @@
 package com.arribas.myshoppinglist.data.repository
 
 import com.arribas.myshoppinglist.data.dao.CategoryDao
+import com.arribas.myshoppinglist.data.model.Article
 import com.arribas.myshoppinglist.data.model.Category
 import kotlinx.coroutines.flow.Flow
 
@@ -30,6 +31,8 @@ interface CategoryRepositoryInterface {
      * Retrieve an item from the given data source that matches with the [id].
      */
     fun getItem(id: Int): Flow<Category?>
+
+    fun getItemByName(name: String): Flow<Category?>
 
     /**
      * Insert item in the data source
@@ -51,6 +54,8 @@ class CategoryRepository(private val categoryDao: CategoryDao) : CategoryReposit
     override fun getAllItems(): Flow<List<Category>> = categoryDao.getAllItems()
 
     override fun getItem(id: Int): Flow<Category?> = categoryDao.getItem(id)
+
+    override fun getItemByName(name: String): Flow<Category?> = categoryDao.getItemByName(name)
 
     override suspend fun insertItem(item: Category) = categoryDao.insert(item)
 

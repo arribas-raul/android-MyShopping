@@ -50,6 +50,7 @@ object AppViewModelProvider {
 
         initializer {
             NewViewModel(
+                AppApplication().container.articleCategoryRepository,
                 AppApplication().container.articleRepository
             )
         }

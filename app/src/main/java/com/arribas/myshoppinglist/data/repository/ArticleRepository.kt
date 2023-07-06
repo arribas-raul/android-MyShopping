@@ -38,7 +38,7 @@ interface ArticleRepositoryInterface {
     /**
      * Insert item in the data source
      */
-    suspend fun insertItem(item: Article)
+    suspend fun insertItem(item: Article): Long
 
     /**
      * Delete item from the data source

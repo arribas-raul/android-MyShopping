@@ -58,7 +58,9 @@ fun NewScreen(
     TextFieldAlertDialog(
         dialogState = categoryDialogState,
         onConfirm = categoryViewModel::onDialogConfirm,
-        onDismiss = categoryViewModel::onDialogDismiss
+        onDismiss = categoryViewModel::onDialogDismiss,
+        onValueChange = { categoryViewModel.updateUiState(it) },
+        onKeyEvent = {}
     )
 }
 

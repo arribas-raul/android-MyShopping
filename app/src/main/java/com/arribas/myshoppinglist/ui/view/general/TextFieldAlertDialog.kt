@@ -1,6 +1,7 @@
 package com.arribas.myshoppinglist.ui.view.general
 
 import android.view.KeyEvent
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -34,71 +35,85 @@ import com.arribas.myshoppinglist.data.utils.TextFieldDialogUiState
 @Composable
 fun TextFieldAlertDialog(
     dialogState: TextFieldDialogUiState = TextFieldDialogUiState(),
-    onDismiss: () -> Unit = {},
     onConfirm: () -> Unit = {},
+    onDismiss: () -> Unit = {},
     onValueChange: (String) -> Unit = {},
     onKeyEvent: () -> Unit = {},
 ) {
-    var text by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+    /*var text by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue(""))
-    }
+    }*/
 
     if(dialogState.isShow) {
         AlertDialog(
             onDismissRequest = onDismiss,
 
             confirmButton = {
-                TextButton(onClick = onConfirm)
-                { Text(text = "OK", color = colorResource(R.color.my_primary)) }
+                TextButton(
+                    onClick = onConfirm,
+                    enabled = dialogState.name !== ""
+                ){
+                    Text(
+                        text = "Guardar",
+                        color = colorResource(R.color.my_primary)
+                    )
+                }
             },
 
             dismissButton = {
                 if(dialogState.isShowBtDismiss) {
                     TextButton(onClick = onDismiss)
-                    { Text(text = "Cancel", color = colorResource(R.color.my_primary)) }
+                    { Text(text = "Cancelar", color = colorResource(R.color.my_primary)) }
                 }
             },
 
             title = { Text(text = dialogState.title, color = Color.Black) },
 
             text = {
-                Text(text = dialogState.body, color = Color.Black)
+                Column {
 
-                OutlinedTextField(
-                    value = text,
-                    onValueChange = {
-                        text = it
-                        onValueChange(it.text)
-                    },
-                    label = { Text(stringResource(R.string.item_name_req)) },
+                    Text(text = dialogState.body, color = Color.Black)
 
-                    enabled = true,
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    OutlinedTextField(
+                        value = dialogState.name,
+                        onValueChange = {
+                            //text = it
+                            onValueChange(it)
+                        },
+                        label = { Text(stringResource(R.string.item_name_req)) },
 
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            onKeyEvent()
-                        }
-                    ),
+                        enabled = true,
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
 
-                    colors = TextFieldDefaults
-                        .textFieldColors(
-                            textColor = colorResource(R.color.black),
-                            containerColor = colorResource(R.color.my_background)
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                onKeyEvent()
+                            }
                         ),
 
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .onKeyEvent {
-                            if (it.nativeKeyEvent.keyCode == KeyEvent.KEYCODE_ENTER) {
-                                onKeyEvent()
-                                true
-                            }
+                        colors = TextFieldDefaults
+                            .textFieldColors(
+                                textColor = colorResource(R.color.black),
+                                containerColor = colorResource(R.color.my_background)
+                            ),
 
-                            false
-                        }
-                )
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .onKeyEvent {
+                                if (it.nativeKeyEvent.keyCode == KeyEvent.KEYCODE_ENTER) {
+                                    onKeyEvent()
+                                    true
+                                }
+
+                                false
+                            }
+                    )
+
+                    if (dialogState.msgError !== null) {
+                        Text(text = dialogState.msgError, color = Color.Black)
+                    }
+                }
             },
 
             containerColor = colorResource(R.color.my_background)

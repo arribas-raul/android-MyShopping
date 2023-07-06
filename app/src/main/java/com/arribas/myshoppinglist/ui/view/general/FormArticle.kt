@@ -48,6 +48,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arribas.myshoppinglist.R
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.Category.ListCategoryUiState
@@ -80,10 +81,8 @@ fun DetailBody(
         )
 
         Row(Modifier.fillMaxWidth()) {
-
-            val options = listOf("Option 1", "Option 2", "Option 3", "Option 4", "Option 5")
             var expanded by remember { mutableStateOf(false) }
-            var selectedOptionText by remember { mutableStateOf(options[0]) }
+            var selectedOptionText by remember { mutableStateOf("") }
 
             ExposedDropdownMenuBox(
                 expanded = expanded,
@@ -122,6 +121,7 @@ fun DetailBody(
                         DropdownMenuItem(
                             onClick = {
                                 selectedOptionText = category.name
+                                onItemValueChange(articleUiState.copy(category = category.id))
                                 expanded = false
                             },
                             text = { Text(text = category.name) }

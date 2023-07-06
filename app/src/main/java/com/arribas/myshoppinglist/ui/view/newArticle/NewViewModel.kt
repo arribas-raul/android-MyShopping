@@ -20,6 +20,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.arribas.myshoppinglist.data.model.ArticleCategory
+import com.arribas.myshoppinglist.data.repository.ArticleCategoryRepository
 import com.arribas.myshoppinglist.data.repository.ArticleRepository
 import com.arribas.myshoppinglist.data.utils.DIALOG_UI_TAG
 import com.arribas.myshoppinglist.data.utils.DialogUiState
@@ -36,7 +38,9 @@ import kotlinx.coroutines.flow.first
  * View Model to validate and insert items in the Room database.
  */
 class NewViewModel(
-    private val articleRepository: ArticleRepository) : ViewModel() {
+    private val categoryRepository: ArticleCategoryRepository,
+    private val articleRepository: ArticleRepository
+) : ViewModel() {
 
     /**
      * Holds current item ui state
@@ -70,7 +74,17 @@ class NewViewModel(
             onOpenDialogClicked(tag = DIALOG_UI_TAG.TAG_ELEMENT_EXISTS)
 
         }else{
-            articleRepository.insertItem(articleUiState.toItem())
+            val newArticle = articleRepository.insertItem(articleUiState.toItem())
+
+            newArticle.let{id ->
+                categoryRepository.insertItem(
+                    ArticleCategory(
+                        id = 0,
+                        article_id = id.toInt(),
+                        category_id = articleUiState.category
+                    )
+                )
+            }
 
             articleUiState = ArticleUiState()
         }
