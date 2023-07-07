@@ -3,15 +3,18 @@ package com.arribas.myshoppinglist.ui.view.general
 import android.util.Size
 import android.view.KeyEvent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -33,6 +36,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -69,9 +73,7 @@ fun DetailBody(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp),
-
-        verticalArrangement = Arrangement.spacedBy(32.dp)
+            .padding(8.dp)
     ) {
 
         ItemInputForm(
@@ -80,21 +82,24 @@ fun DetailBody(
             onKeyEvent = onSaveClick
         )
 
-        Row(Modifier.fillMaxWidth()) {
+        Row(modifier
+            .fillMaxWidth()
+            .padding(top = 16.dp, bottom = 16.dp, end = 8.dp)
+        ) {
             var expanded by remember { mutableStateOf(false) }
-            var selectedOptionText by remember { mutableStateOf("") }
+            var selectedOptionText by remember { mutableStateOf(articleUiState.category) }
 
             ExposedDropdownMenuBox(
                 expanded = expanded,
                 onExpandedChange = {
                     expanded = !expanded
                 },
-                modifier = Modifier
+                modifier = modifier
                     .weight(7f)
             ) {
                 TextField(
                     readOnly = true,
-                    value = selectedOptionText,
+                    value = listCategoryUiState?.itemList?.find{it.id === articleUiState.category}?.name.orEmpty(),
                     onValueChange = { },
                     label = { Text("Categorias") },
                     trailingIcon = {
@@ -120,7 +125,7 @@ fun DetailBody(
                     listCategoryUiState.itemList.forEachIndexed() { index, category ->
                         DropdownMenuItem(
                             onClick = {
-                                selectedOptionText = category.name
+                                selectedOptionText = category.id
                                 onItemValueChange(articleUiState.copy(category = category.id))
                                 expanded = false
                             },
@@ -135,8 +140,8 @@ fun DetailBody(
                 modifier = modifier
                     .weight(1f)
                     .padding(top = 5.dp, bottom = 5.dp, start = 10.dp)
-                    .background(color = colorResource(R.color.my_primary)))
-            {
+                    .background(color = colorResource(R.color.my_primary))
+            ){
                 Icon(
                     imageVector = Icons.Filled.Add,
                     tint = Color.White,
@@ -149,11 +154,17 @@ fun DetailBody(
             onClick = onSaveClick,
             enabled = articleUiState.actionEnabled,
             colors = ButtonDefaults.buttonColors(colorResource(R.color.my_primary)),
-            modifier = Modifier
-                .fillMaxWidth()
+            shape = RoundedCornerShape(size = 10.dp),
+            modifier = Modifier.fillMaxWidth()
         ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                tint = Color.White,
+                contentDescription = "Add article"
+            )
+            Spacer(modifier = Modifier.width(width = 8.dp))
             Text(
-                text = stringResource(R.string.save_action),
+                text = stringResource(R.string.create_action).uppercase(),
                 color = colorResource(R.color.white)
             )
         }
@@ -161,7 +172,7 @@ fun DetailBody(
         if(articleUiState.id > 0) {
             Button(
                 onClick = onDeleteClick,
-                enabled = articleUiState.actionEnabled,
+                enabled = false,
                 colors = ButtonDefaults.buttonColors(colorResource(R.color.my_danger)),
                 modifier = Modifier
                     .fillMaxWidth()

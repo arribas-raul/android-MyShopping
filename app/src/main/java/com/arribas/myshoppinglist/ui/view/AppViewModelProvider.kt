@@ -58,7 +58,8 @@ object AppViewModelProvider {
         initializer {
             DetailViewModel(
                 this.createSavedStateHandle(),
-                AppApplication().container.articleRepository
+                AppApplication().container.articleRepository,
+                AppApplication().container.articleCategoryRepository,
             )
         }
 

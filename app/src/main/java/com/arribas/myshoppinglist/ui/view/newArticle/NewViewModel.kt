@@ -38,7 +38,7 @@ import kotlinx.coroutines.flow.first
  * View Model to validate and insert items in the Room database.
  */
 class NewViewModel(
-    private val categoryRepository: ArticleCategoryRepository,
+    private val articleCategoryRepository: ArticleCategoryRepository,
     private val articleRepository: ArticleRepository
 ) : ViewModel() {
 
@@ -77,7 +77,7 @@ class NewViewModel(
             val newArticle = articleRepository.insertItem(articleUiState.toItem())
 
             newArticle.let{id ->
-                categoryRepository.insertItem(
+                articleCategoryRepository.insertItem(
                     ArticleCategory(
                         id = 0,
                         article_id = id.toInt(),

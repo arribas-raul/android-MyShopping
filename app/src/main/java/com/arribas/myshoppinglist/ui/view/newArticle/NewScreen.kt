@@ -21,6 +21,7 @@ import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
 import com.arribas.myshoppinglist.ui.view.general.TextFieldAlertDialog
 import com.arribas.myshoppinglist.ui.view.newArticle.NewViewModel
 import com.arribas.myshoppinglist.ui.view.listArticle.ArticleUiState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
@@ -38,7 +39,7 @@ fun NewScreen(
         updateUiState = { viewModel.updateUiState(it) },
 
         saveItem = {
-            coroutineScope.launch {
+            coroutineScope.launch(Dispatchers.IO) {
                 viewModel.saveItem()
             }
         },
@@ -47,11 +48,12 @@ fun NewScreen(
         listCategoryUiState = listCategoryUiState,
         onCategoryClick = categoryViewModel::openDialog,
 
-        modifier = Modifier.background(colorResource(R.color.my_background))
+        modifier = modifier
     )
 
     SimpleAlertDialog(
         dialogState = dialogState,
+        onDismiss = viewModel::onDialogDismiss,
         onConfirm = viewModel::onDialogConfirm
     )
 

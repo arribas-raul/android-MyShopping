@@ -22,4 +22,7 @@ interface ArticleCategoryDao {
 
     @Query("SELECT * from article_category WHERE id = :id")
     fun getItem(id: Int): Flow<ArticleCategory>
+
+    @Query("SELECT * from article_category WHERE article_id = :article_id")
+    fun getByArticle(article_id: Int): List<ArticleCategory>
 }

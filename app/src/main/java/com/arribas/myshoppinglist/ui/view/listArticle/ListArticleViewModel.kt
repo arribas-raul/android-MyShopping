@@ -14,6 +14,7 @@ import com.arribas.myshoppinglist.data.utils.DIALOG_UI_TAG
 import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.ui.view.listArticle.ArticleUiState
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -43,7 +44,6 @@ class ListArticleViewModel(
 
     fun getData(){
         viewModelScope.launch{
-
             articleRepository.getItemsByName(searchUiState.name).collect { list ->
                 _listUiState.value = ListUiState(
                     itemList = list,

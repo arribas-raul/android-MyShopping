@@ -18,6 +18,7 @@
     <string name="action">Actions</string>
     <string name="sell">Sell</string>
     <string name="save_action">Save</string>
+    <string name="create_action">guardar</string>
     <string name="yes">Yes</string>
     <string name="back_button">Back</string>
     <string name="bt_add">Aumentar</string>
