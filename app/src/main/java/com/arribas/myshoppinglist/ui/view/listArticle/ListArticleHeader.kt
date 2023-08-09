@@ -19,6 +19,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -32,10 +33,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arribas.myshoppinglist.R
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
+import com.arribas.myshoppinglist.ui.viewModel.SearchUiState
 
 @Composable
 fun ListArticleHeader(
-    //searchUiState: SearchUiState = SearchUiState(),
+    searchUiState: SearchUiState = SearchUiState(),
     onValueChange: (String) -> Unit = {},
     onKeyEvent: () -> Unit = {},
     clearName: () -> Unit = {},
@@ -44,7 +46,7 @@ fun ListArticleHeader(
     Column(modifier = modifier.padding(8.dp)) {
         Row(modifier = modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             SearchName(
-                //searchUiState = searchUiState,
+                searchUiState = searchUiState,
                 onValueChange = onValueChange,
                 onKeyEvent = {  },
                 clearName = clearName
@@ -56,21 +58,23 @@ fun ListArticleHeader(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchName(
-    //searchUiState: SearchUiState = SearchUiState(),
+    searchUiState: SearchUiState = SearchUiState(),
     onValueChange: (String) -> Unit = {},
     onKeyEvent: () -> Unit,
     clearName: () -> Unit,
     modifier: Modifier = Modifier
 ){
-    var text by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(TextFieldValue(""))
-    }
+    /*var text by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue(searchUiState.name))
+    }*/
+
+    var text by remember { mutableStateOf(searchUiState.name) }
 
     OutlinedTextField(
-        value = text,
+        value = searchUiState.name,
         onValueChange = {
             text = it
-            onValueChange(it.text)
+            onValueChange(text)
         },
         label = { Text(stringResource(R.string.item_name_req)) },
 
@@ -91,7 +95,7 @@ fun SearchName(
             ),
 
         trailingIcon = {
-            IconButton(onClick = { clearName }) {
+            IconButton(onClick = clearName ) {
                 Icon(
                     Icons.Default.Clear,
                     contentDescription = "clear text"

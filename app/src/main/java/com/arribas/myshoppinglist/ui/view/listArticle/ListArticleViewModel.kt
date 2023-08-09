@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -30,8 +31,10 @@ class ListArticleViewModel(
     private val articleRepository: ArticleRepository,
     private val articleShopRepository: ArticleShopRepository): ViewModel() {
 
-    var searchUiState by mutableStateOf(SearchUiState())
-        private set
+    private val _searchUiState = MutableStateFlow(SearchUiState())
+    var searchUiState: StateFlow<SearchUiState> = _searchUiState
+
+
 
     private val _listUiState = MutableStateFlow(ListUiState())
     var listUiState: StateFlow<ListUiState> = _listUiState
@@ -44,7 +47,7 @@ class ListArticleViewModel(
 
     fun getData(){
         viewModelScope.launch{
-            articleRepository.getItemsByName(searchUiState.name).collect { list ->
+            articleRepository.getItemsByName(_searchUiState.value.name).collect { list ->
                 _listUiState.value = ListUiState(
                     itemList = list,
                     itemCount = list.count(),
@@ -56,26 +59,39 @@ class ListArticleViewModel(
 
     fun updateItem(article: Article) {
         viewModelScope.launch(Dispatchers.IO) {
-            articleRepository.updateItem(article.copy(shopCheked = true))
+            //println("article: $article")
+            if(article.shopCheked){
+                val articleShop = articleShopRepository.getItemByName(article.name)
 
-            val count: Int = articleShopRepository.count()
+                if(articleShop.first() != null) {
+                    articleShopRepository.deleteItem(articleShop.first()!!)
+                }
 
-            val articleShop = ArticleShop(
-                name = article.name,
-                order = count + 1
-            )
+            }else{
+                val count: Int = articleShopRepository.count()
 
-            articleShopRepository.insertItem(articleShop)
+                val articleShop = ArticleShop(
+                    name = article.name,
+                    order = count + 1
+                )
+
+                articleShopRepository.insertItem(articleShop)
+            }
+
+            articleRepository.updateItem(article.copy(shopCheked = !article.shopCheked))
         }
     }
 
     fun search(_name: String){
-        searchUiState = searchUiState.copy(name = _name)
+
+        println("article $_name")
+        _searchUiState.value = _searchUiState.value.copy(name = _name)
         getData()
     }
 
     fun clearName(){
-        searchUiState = searchUiState.copy(name = "")
+        println("article clearName")
+        _searchUiState.value = _searchUiState.value.copy(name = "")
         getData()
     }
 

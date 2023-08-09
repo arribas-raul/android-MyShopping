@@ -43,11 +43,12 @@ fun ListArticleScreen(
     modifier: Modifier = Modifier){
 
     val listUiState by viewModel.listUiState.collectAsState()
+    val searchUiState by viewModel.searchUiState.collectAsState()
     val dialogState: DialogUiState by viewModel.dialogState.collectAsState()
 
     Column {
         ListArticleHeader(
-            //searchUiState = searchUiState,
+            searchUiState = searchUiState,
             onValueChange = { viewModel.search(it) },
             clearName = viewModel::clearName
         )
@@ -154,6 +155,12 @@ private fun InventoryItem(
                     .weight(0.3f)
                     .padding(end = 10.dp)
             )*/
+            if(item.shopCheked) {
+                Image(
+                    painter = painterResource(R.drawable.ic_check),
+                    contentDescription = stringResource(R.string.update)
+                )
+            }
 
             Text(
                 text = item.name,
