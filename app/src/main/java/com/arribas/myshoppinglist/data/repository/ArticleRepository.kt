@@ -18,6 +18,7 @@ package com.arribas.myshoppinglist.data.repository
 
 import com.arribas.myshoppinglist.data.dao.ArticleDao
 import com.arribas.myshoppinglist.data.model.Article
+import com.arribas.myshoppinglist.data.model.QArticle
 import kotlinx.coroutines.flow.Flow
 
 interface ArticleRepositoryInterface {
@@ -33,7 +34,7 @@ interface ArticleRepositoryInterface {
 
     fun getItemByName(name: String): Flow<Article?>
 
-    fun getItemsByName(name: String): Flow<List<Article>>
+    fun getItemsByName(name: String): Flow<List<QArticle>>
 
     /**
      * Insert item in the data source
@@ -58,7 +59,7 @@ class ArticleRepository(private val articleDao: ArticleDao) : ArticleRepositoryI
 
     override fun getItemByName(name: String): Flow<Article?> = articleDao.getItemByName(name)
 
-    override fun getItemsByName(name: String): Flow<List<Article>> = articleDao.getItemsByName(name)
+    override fun getItemsByName(name: String): Flow<List<QArticle>> = articleDao.getItemsByName(name)
 
     override suspend fun insertItem(item: Article) = articleDao.insert(item)
 

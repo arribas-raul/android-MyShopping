@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.arribas.myshoppinglist.data.model.Article
+import com.arribas.myshoppinglist.data.model.QArticle
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -26,8 +27,18 @@ interface ArticleDao {
     @Query("SELECT * from article WHERE name = :name")
     fun getItemByName(name: String): Flow<Article>
 
-    @Query("SELECT * from article WHERE name like '%' || :name || '%' ORDER BY name ASC")
-    fun getItemsByName(name: String): Flow<List<Article>>
+    @Query("SELECT a.*, " +
+
+            "(select group_concat(c.name, ',') as category " +
+            "from category as c " +
+            "join article_category as ac on ac.category_id = c.id " +
+            "where ac.article_id = a.id " +
+            "order by c.name) as category " +
+
+            "FROM article as a " +
+            "WHERE a.name like '%' || :name || '%' " +
+            "ORDER BY a.name ASC")
+    fun getItemsByName(name: String): Flow<List<QArticle>>
 
     @Query("SELECT * from article WHERE shopCheked = 0 ORDER BY name ASC")
     fun getAllItems(): Flow<List<Article>>

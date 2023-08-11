@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -29,7 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arribas.myshoppinglist.R
-import com.arribas.myshoppinglist.data.model.Article
+import com.arribas.myshoppinglist.data.model.QArticle
 import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
@@ -71,10 +73,10 @@ fun ListArticleScreen(
 
 @Composable
 fun ListArticleBody(
-    itemList: List<Article>,
+    itemList: List<QArticle>,
     navigateToItemUpdate: (Int) -> Unit,
-    deleteItem: (Article) -> Unit,
-    updateItem: (Article) -> Unit,
+    deleteItem: (QArticle) -> Unit,
+    updateItem: (QArticle) -> Unit,
     modifier: Modifier = Modifier){
 
     Column(
@@ -100,10 +102,10 @@ fun ListArticleBody(
 
 @Composable
 private fun InventoryList(
-    itemList: List<Article>,
-    onItemClick: (Article) -> Unit,
-    onDeleteClick: (Article) -> Unit,
-    onCheckClick: (Article) -> Unit,
+    itemList: List<QArticle>,
+    onItemClick: (QArticle) -> Unit,
+    onDeleteClick: (QArticle) -> Unit,
+    onCheckClick: (QArticle) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -126,10 +128,10 @@ private fun InventoryList(
 
 @Composable
 private fun InventoryItem(
-    item: Article,
-    onItemClick: (Article) -> Unit,
-    onDeleteClick: (Article) -> Unit,
-    onCheckClick: (Article) -> Unit,
+    item: QArticle,
+    onItemClick: (QArticle) -> Unit,
+    onDeleteClick: (QArticle) -> Unit,
+    onCheckClick: (QArticle) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -155,21 +157,49 @@ private fun InventoryItem(
                     .weight(0.3f)
                     .padding(end = 10.dp)
             )*/
+
             if(item.shopCheked) {
                 Image(
                     painter = painterResource(R.drawable.ic_check),
-                    contentDescription = stringResource(R.string.update)
+                    contentDescription = stringResource(R.string.update),
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
                 )
             }
 
-            Text(
-                text = item.name,
-                modifier = Modifier
-                    .weight(2f)
-                    .align(Alignment.CenterVertically),
-                style = MaterialTheme.typography.bodyLarge,
-                color = Color.Black
-            )
+            Column(modifier = Modifier
+                .weight(2f)
+                .align(Alignment.CenterVertically)) {
+
+                Text(
+                    text = item.name,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.Black
+                )
+
+                LazyRow(modifier = modifier.padding(top = 5.dp, bottom = 5.dp), horizontalArrangement = Arrangement.spacedBy(space = 3.dp)) {
+                    val categories: List<String>? = item.category?.split(",")
+                    if (categories != null) {
+                        if(categories.isNotEmpty()) {
+                            items(categories) { category ->
+                                Text(
+                                    text = category,
+                                    style = MaterialTheme.typography.titleSmall,
+                                    color = Color.Black,
+                                    modifier = Modifier
+                                        .background(
+                                            color = Color.LightGray,
+                                            shape = RoundedCornerShape(size = 10.dp)
+                                        )
+                                        .padding(start = 8.dp, end = 8.dp), // add inner padding
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+
 
             IconButton(
                 onClick = { onItemClick(item) },
@@ -210,9 +240,10 @@ fun ListArticleHeaderPreview() {
 @Preview(showBackground = true)
 @Composable
 fun ListArticleItemPreview() {
-    val article = Article(
+    val article = QArticle(
         id = 1,
         name = "Bolsa de patatas",
+        category = "Fruta, Carne",
         shopCheked = false
     )
 
