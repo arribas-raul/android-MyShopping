@@ -81,7 +81,14 @@ class DetailViewModel(
 
             if(articleCategorys.isNotEmpty()){
                 if(articleCategorys[0].category_id !== articleUiState.category){
-                    articleCategoryRepository.deleteItem(articleCategorys[0])
+
+                    articleCategoryRepository.deleteItem(
+                        ArticleCategory(
+                            id = articleCategorys[0].id,
+                            article_id = articleCategorys[0].article_id,
+                            category_id = articleCategorys[0].category_id)
+                    )
+
                     articleCategoryRepository.insertItem(
                         ArticleCategory(
                             id = 0,

@@ -44,11 +44,13 @@ class ListArticleViewModel(
         }
     }
 
-    fun updateItem(_Q_article: QArticle) {
+    fun updateItem(qArticle: QArticle) {
+        article = qArticle
+
         viewModelScope.launch(Dispatchers.IO) {
             //println("article: $article")
-            if(_Q_article.shopCheked){
-                val articleShop = articleShopRepository.getItemByName(_Q_article.name)
+            if(qArticle.shopCheked){
+                val articleShop = articleShopRepository.getItemByName(qArticle.name)
 
                 if(articleShop.first() != null) {
                     articleShopRepository.deleteItem(articleShop.first()!!)
@@ -58,19 +60,16 @@ class ListArticleViewModel(
                 val count: Int = articleShopRepository.count()
 
                 val articleShop = ArticleShop(
-                    name = _Q_article.name,
+                    name = qArticle.name,
                     order = count + 1
                 )
 
                 articleShopRepository.insertItem(articleShop)
             }
 
-            val article = Article(
-                id = article.id,
-                name = article.name,
-                shopCheked = !article.shopCheked)
-
-            articleRepository.updateItem(article)
+            articleRepository.updateItem(
+                qArticleToArticle(
+                    article.copy(shopCheked = !article.shopCheked)))
         }
     }
 
@@ -88,7 +87,7 @@ class ListArticleViewModel(
 
     fun onDialogDelete(article: QArticle){
         onOpenDialogClicked(
-            _Q_article = article,
+            qArticle = article,
             tag = DIALOG_UI_TAG.TAG_DELETE
         )
     }
@@ -96,13 +95,7 @@ class ListArticleViewModel(
     /**Private functions***********************/
     private fun deleteItem() {
         viewModelScope.launch {
-
-            val article = Article(
-                id = article.id,
-                name = article.name,
-                shopCheked = !article.shopCheked)
-
-            articleRepository.deleteItem(article)
+            articleRepository.deleteItem(qArticleToArticle(article))
         }
     }
 
@@ -110,9 +103,9 @@ class ListArticleViewModel(
     private val _dialogState = MutableStateFlow(DialogUiState())
     val dialogState: StateFlow<DialogUiState> = _dialogState.asStateFlow()
 
-    fun onOpenDialogClicked(_Q_article: QArticle? = null, tag: DIALOG_UI_TAG) {
-        if(_Q_article !== null) {
-            article = _Q_article
+    private fun onOpenDialogClicked(qArticle: QArticle? = null, tag: DIALOG_UI_TAG) {
+        if(qArticle !== null) {
+            article = qArticle
         }
 
         val _dialog: DialogUiState
@@ -144,6 +137,13 @@ class ListArticleViewModel(
 
     fun onDialogDismiss() {
         _dialogState.value = DialogUiState(isShow = false)
+    }
+
+    fun qArticleToArticle(qArticle: QArticle): Article{
+        return Article(
+            id = qArticle.id,
+            name = qArticle.name,
+            shopCheked = qArticle.shopCheked)
     }
 }
 

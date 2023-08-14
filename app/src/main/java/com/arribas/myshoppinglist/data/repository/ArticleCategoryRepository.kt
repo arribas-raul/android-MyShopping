@@ -21,6 +21,7 @@ import com.arribas.myshoppinglist.data.dao.CategoryDao
 import com.arribas.myshoppinglist.data.model.Article
 import com.arribas.myshoppinglist.data.model.ArticleCategory
 import com.arribas.myshoppinglist.data.model.Category
+import com.arribas.myshoppinglist.data.model.QArticleCategory
 import kotlinx.coroutines.flow.Flow
 
 interface ArticleCategoryRepositoryInterface {
@@ -29,7 +30,7 @@ interface ArticleCategoryRepositoryInterface {
      */
     fun getItem(id: Int): Flow<ArticleCategory?>
 
-    fun getByArticle(article_id: Int): List<ArticleCategory>
+    fun getByArticle(article_id: Int): List<QArticleCategory>
 
     /**
      * Insert item in the data source
@@ -51,7 +52,7 @@ class ArticleCategoryRepository(private val articleCategoryDao: ArticleCategoryD
 
     override fun getItem(id: Int): Flow<ArticleCategory?> = articleCategoryDao.getItem(id)
 
-    override fun getByArticle(article_id: Int): List<ArticleCategory> = articleCategoryDao.getByArticle(article_id)
+    override fun getByArticle(article_id: Int): List<QArticleCategory> = articleCategoryDao.getByArticle(article_id)
 
     override suspend fun insertItem(item: ArticleCategory) = articleCategoryDao.insert(item)
 
