@@ -97,6 +97,14 @@ class DetailViewModel(
                         )
                     )
                 }
+            }else{
+                articleCategoryRepository.insertItem(
+                    ArticleCategory(
+                        id = 0,
+                        article_id = itemId,
+                        category_id = articleUiState.category
+                    )
+                )
             }
         }
     }
