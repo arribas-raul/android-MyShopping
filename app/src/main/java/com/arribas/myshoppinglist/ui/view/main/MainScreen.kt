@@ -77,6 +77,15 @@ fun MainScreen(
                 navigationItemContentList = navigationItemContentList,
                 modifier = modifier
             )
+        },
+
+        drawerContent = {
+            DrawerHeader()
+            DrawerBody(navController = navController, closeNavDrawer = {
+                scope.launch {
+                    scaffoldState.drawerState.close()
+                }
+            })
         }
     ) { innerPadding ->
         Row(modifier = modifier
