@@ -77,13 +77,15 @@ class NewViewModel(
             val newArticle = articleRepository.insertItem(articleUiState.toItem())
 
             newArticle.let{id ->
-                articleCategoryRepository.insertItem(
-                    ArticleCategory(
-                        id = 0,
-                        article_id = id.toInt(),
-                        category_id = articleUiState.category
+                if(articleUiState.category > 0) {
+                    articleCategoryRepository.insertItem(
+                        ArticleCategory(
+                            id = 0,
+                            article_id = id.toInt(),
+                            category_id = articleUiState.category
+                        )
                     )
-                )
+                }
             }
 
             articleUiState = ArticleUiState()
