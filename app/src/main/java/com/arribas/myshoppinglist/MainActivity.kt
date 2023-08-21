@@ -27,10 +27,13 @@ class MainActivity : ComponentActivity() {
                 )*/
 
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(colorResource(R.color.my_background))
                 ) {
-                    NavigationDrawer()
+                    NavigationDrawer(modifier = Modifier
+                        .fillMaxSize()
+                        .background(colorResource(R.color.my_background)))
                 }
             }
         }
