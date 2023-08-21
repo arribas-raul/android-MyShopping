@@ -1,4 +1,4 @@
-package com.arribas.myshoppinglist.ui.view
+package com.arribas.myshoppinglist.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

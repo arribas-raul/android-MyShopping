@@ -1,15 +1,12 @@
-package com.arribas.myshoppinglist.ui.view
+package com.arribas.myshoppinglist.ui.navigation.menudrawer
 
-import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -20,15 +17,15 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arribas.myshoppinglist.R
-import com.arribas.myshoppinglist.data.MainTag
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(
+fun MyTopBar(
     title: String,
     canNavigateBack: Boolean = false,
     navigateUp: () -> Unit = {},
-    tag: MainTag,
+    tag: NavTag,
+    onClickDrawer: () -> Unit,
     modifier: Modifier = Modifier){
 
     TopAppBar(
@@ -50,9 +47,7 @@ fun TopBar(
                     )
                 }
             }else{
-                IconButton(
-                    onClick = { }
-                ) {
+                IconButton(onClick = onClickDrawer){
                     Icon(
                         imageVector = Icons.Rounded.Menu,
                         contentDescription = "Drawer Icon"
@@ -78,9 +73,11 @@ fun TopBar(
 
 @Preview(showBackground = true)
 @Composable
-fun TopBarMainPreview() {
-    TopBar(
+fun MyTopBarPreview() {
+    MyTopBar(
         title = "Lista de la compra",
         canNavigateBack = true,
-        tag = MainTag.NEW_ITEM)
+        tag = NavTag.NEW_ITEM,
+        onClickDrawer = {}
+    )
 }

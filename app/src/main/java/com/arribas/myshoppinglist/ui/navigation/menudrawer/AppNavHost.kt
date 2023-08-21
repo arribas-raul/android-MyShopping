@@ -14,58 +14,71 @@
  * limitations under the License.
  */
 
-package com.arribas.myshoppinglist.ui.navigation
+package com.arribas.myshoppinglist.ui.navigation.menudrawer
 
-import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.arribas.myshoppinglist.R
 import com.arribas.myshoppinglist.ui.view.detailArticle.DetailScreen
-import com.arribas.myshoppinglist.ui.view.main.MainDestination
-import com.arribas.myshoppinglist.ui.view.main.MainScreen
-import com.arribas.myshoppinglist.ui.viewModel.MainViewModel
+import com.arribas.myshoppinglist.ui.view.detailArticle.NewScreen
+import com.arribas.myshoppinglist.ui.view.listArticle.ListArticleScreen
+import com.arribas.myshoppinglist.ui.view.listArticle.ListArticleShopScreen
 
 /**
  * Provides Navigation graph for the application.
  */
 @Composable
-fun AppNavHost(
+fun MyAppNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
+    onItemClick: (NavTag) -> Unit,
 ) {
-    val mainViewModel = MainViewModel()
+    //val mainViewModel = MainViewModel()
 
     NavHost(
         navController = navController,
-        startDestination = MainDestination.route,
+        startDestination = Routes.ShopListScreen.route,
         modifier = modifier
     ) {
         composable(
-            route = MainDestination.route
+            route = Routes.ShopListScreen.route
         ){
-            MainScreen(
-                navController = navController,
-                viewModel = mainViewModel,
-                modifier = modifier
+            ListArticleShopScreen(
+                navigateToItemUpdate = {}
             )
         }
-/*
+
         composable(
-            route = DetailDestination.routeWithArgs,
-            arguments = listOf(navArgument(DetailDestination.itemIdArg) {
+            route = Routes.ArticleListScreen.route
+        ){
+            ListArticleScreen(
+                navigateToItemUpdate = {
+                    onItemClick(NavTag.DETAIL_ITEM)
+                    navController.navigate("${Routes.ArticleDetailScreen.route}/${it}")
+                }
+            )
+        }
+
+        composable(
+            route = Routes.ArticleNewScreen.route
+        ){
+            NewScreen()
+        }
+
+        composable(
+            route = Routes.ArticleDetailScreen.routeWithArgs,
+            arguments = listOf(navArgument(Routes.ArticleDetailScreen.itemIdArg) {
                 type = NavType.IntType
             })
         ){
             DetailScreen(
                 navigateBack = { navController.popBackStack() },
-                modifier = modifier
+                modifier = modifier,
             )
-        }*/
+        }
     }
 }

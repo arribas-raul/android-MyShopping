@@ -11,6 +11,7 @@ import com.arribas.myshoppinglist.data.repository.ArticleCategoryRepository
 import com.arribas.myshoppinglist.data.repository.ArticleRepository
 import com.arribas.myshoppinglist.data.utils.DIALOG_UI_TAG
 import com.arribas.myshoppinglist.data.utils.DialogUiState
+import com.arribas.myshoppinglist.ui.navigation.menudrawer.Routes
 import com.arribas.myshoppinglist.ui.view.listArticle.ArticleUiState
 import com.arribas.myshoppinglist.ui.view.listArticle.isValid
 import com.arribas.myshoppinglist.ui.view.listArticle.toArticleUiState
@@ -34,7 +35,7 @@ class DetailViewModel(
     private val articleCategoryRepository: ArticleCategoryRepository
     ) : ViewModel() {
 
-    private val itemId: Int = checkNotNull(savedStateHandle[DetailDestination.itemIdArg])
+    private val itemId: Int = checkNotNull(savedStateHandle[Routes.ArticleDetailScreen.itemIdArg])
 
     var articleUiState by mutableStateOf(ArticleUiState())
         private set

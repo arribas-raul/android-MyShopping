@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">My Shopping List</string>
 
+    <string name="shop_list_title">Lista de la compra</string>
+    <string name="article_list_title">Lista de la artículos</string>
+    <string name="article_new_title">Nuevo artículo</string>
+    <string name="article_detail_title">Detalle artículo</string>
+
     <string name="delete">Delete</string>
     <string name="update">Update</string>
     <string name="delete_question">Are you sure you want to delete?</string>

@@ -33,8 +33,8 @@ import com.arribas.myshoppinglist.data.MainDataProvider
 import com.arribas.myshoppinglist.data.MainTag
 import com.arribas.myshoppinglist.data.NavigationMainItemContent
 import com.arribas.myshoppinglist.ui.navigation.NavigationDestination
+import com.arribas.myshoppinglist.ui.navigation.menudrawer.Routes
 import com.arribas.myshoppinglist.ui.view.TopBar
-import com.arribas.myshoppinglist.ui.view.detailArticle.DetailDestination
 import com.arribas.myshoppinglist.ui.view.detailArticle.NewScreen
 import com.arribas.myshoppinglist.ui.view.listArticle.ListArticleScreen
 import com.arribas.myshoppinglist.ui.view.listArticle.ListArticleShopScreen
@@ -64,7 +64,8 @@ fun MainScreen(
                     MainTag.ITEM_LIST -> "Lista de productos"
                     MainTag.NEW_ITEM  -> "Nuevo producto"
                 },
-                tag = uiState.currentTab
+                tag = uiState.currentTab,
+                onClickDrawer = {}
             )
         },
 
@@ -77,16 +78,8 @@ fun MainScreen(
                 navigationItemContentList = navigationItemContentList,
                 modifier = modifier
             )
-        },
-
-        drawerContent = {
-            DrawerHeader()
-            DrawerBody(navController = navController, closeNavDrawer = {
-                scope.launch {
-                    scaffoldState.drawerState.close()
-                }
-            })
         }
+
     ) { innerPadding ->
         Row(modifier = modifier
             .wrapContentWidth()
@@ -96,7 +89,7 @@ fun MainScreen(
                 MainTag.SHOP_LIST -> {
                     ListArticleShopScreen(
                         navigateToItemUpdate = {
-                            navController.navigate("${DetailDestination.route}/${it}")
+                            navController.navigate("${Routes.ArticleDetailScreen.route}/${it}")
                         }
                     )
                 }
@@ -104,7 +97,7 @@ fun MainScreen(
                 MainTag.ITEM_LIST -> {
                     ListArticleScreen(
                         navigateToItemUpdate = {
-                            navController.navigate("${DetailDestination.route}/${it}"){
+                            navController.navigate("${Routes.ArticleDetailScreen.route}/${it}"){
                                 launchSingleTop = true
                             }
                         }
@@ -168,7 +161,8 @@ fun TopBarMainPreview() {
     TopBar(
         title = "Lista de la compra",
         modifier = Modifier.background(Color.Green),
-        tag = MainTag.NEW_ITEM
+        tag = MainTag.NEW_ITEM,
+        onClickDrawer = {}
     )
 }
 

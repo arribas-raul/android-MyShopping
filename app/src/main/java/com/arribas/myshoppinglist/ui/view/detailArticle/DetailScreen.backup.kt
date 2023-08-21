@@ -29,7 +29,15 @@ import com.arribas.myshoppinglist.ui.view.general.TextFieldAlertDialog
 import com.arribas.myshoppinglist.ui.view.listArticle.ArticleUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+/*
+object DetailDestination : NavigationDestination {
+    const val itemIdArg = "itemId"
 
+    override val route = "detail"
+    val routeWithArgs = "$route/{$itemIdArg}"
+
+    override val titleRes = R.string.item_detail_title
+}
 
 @Composable
 fun DetailScreen(
@@ -43,22 +51,22 @@ fun DetailScreen(
     val categoryDialogState: TextFieldDialogUiState by categoryViewModel.dialogState.collectAsState()
     val listCategoryUiState by categoryViewModel.listUiState.collectAsState()
 
-    DetailBody(
-        articleUiState = viewModel.articleUiState,
+    DetailForm(
+        navigateBack = { navigateBack() },
+        updateUiState = { viewModel.updateUiState(it) },
 
-        onItemValueChange = {
-            viewModel.updateUiState(it)
-        },
-
-        onSaveClick = {
+        updateItem = {
             coroutineScope.launch(Dispatchers.IO) {
                 viewModel.updateItem()
                 //navigateBack()
             }
         },
-        onDeleteClick = viewModel::onDialogDelete,
+
+        deleteItem = viewModel::onDialogDelete,
+        articleUiState = viewModel.articleUiState,
         listCategoryUiState = listCategoryUiState,
-        onCategoryClick = categoryViewModel::openDialog
+        onCategoryClick = categoryViewModel::openDialog,
+        modifier = modifier
     )
 
     SimpleAlertDialog(
@@ -131,4 +139,4 @@ fun DetailScreenPreview() {
     MyShoppingListTheme {
         DetailForm(articleUiState = articleUiState )
     }
-}
+}*/
