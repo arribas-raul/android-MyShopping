@@ -10,7 +10,7 @@ import com.arribas.myshoppinglist.AppApplication
 import com.arribas.myshoppinglist.ui.view.Category.CategoryViewModel
 import com.arribas.myshoppinglist.ui.view.detailArticle.DetailViewModel
 import com.arribas.myshoppinglist.ui.view.newArticle.NewViewModel
-import com.arribas.myshoppinglist.ui.viewModel.ListArticleViewModel
+import com.arribas.myshoppinglist.ui.view.listArticle.ListArticleViewModel
 import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.ListArticleShopViewModel
 
 /**
@@ -28,7 +28,8 @@ object AppViewModelProvider {
         initializer {
             ListArticleViewModel(
                 AppApplication().container.articleRepository,
-                AppApplication().container.articleShopRepository
+                AppApplication().container.articleShopRepository,
+                AppApplication().container.articleCategoryRepository
             )
         }
 

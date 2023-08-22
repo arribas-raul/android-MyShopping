@@ -2,14 +2,9 @@ package com.arribas.myshoppinglist.ui.view.Category
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.arribas.myshoppinglist.data.model.Article
 import com.arribas.myshoppinglist.data.model.Category
 import com.arribas.myshoppinglist.data.repository.CategoryRepository
-import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.data.utils.TextFieldDialogUiState
-import com.arribas.myshoppinglist.ui.view.listArticle.ArticleUiState
-import com.arribas.myshoppinglist.ui.view.listArticle.isValid
-import com.arribas.myshoppinglist.ui.viewModel.ListUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

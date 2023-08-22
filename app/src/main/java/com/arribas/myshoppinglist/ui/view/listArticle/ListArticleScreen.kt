@@ -36,7 +36,6 @@ import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
 import com.arribas.myshoppinglist.ui.view.AppViewModelProvider
-import com.arribas.myshoppinglist.ui.viewModel.ListArticleViewModel
 
 @Composable
 fun ListArticleScreen(

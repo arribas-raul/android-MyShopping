@@ -115,7 +115,24 @@ class DetailViewModel(
 
     /**Private functions****************************/
     suspend private fun deleteItem() {
-        articleRepository.deleteItem(articleUiState.toItem())
+        viewModelScope.launch(Dispatchers.IO) {
+            val articleCategorys =
+                articleCategoryRepository.getByArticle(articleUiState.toItem().id)
+
+            if (articleCategorys.isNotEmpty()) {
+                articleCategorys.forEach { articleCategory ->
+                    articleCategoryRepository.deleteItem(
+                        ArticleCategory(
+                            id = articleCategory.id,
+                            article_id = articleCategory.article_id,
+                            category_id = articleCategory.category_id
+                        )
+                    )
+                }
+            }
+
+            articleRepository.deleteItem(articleUiState.toItem())
+        }
     }
 
     /**AlertDialog functions****************************************/

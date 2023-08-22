@@ -169,10 +169,10 @@ fun DetailBody(
             )
         }
 
-        if(articleUiState.id > 0) {
+        //if(articleUiState.id > 0) {
             Button(
                 onClick = onDeleteClick,
-                enabled = false,
+                enabled = articleUiState.id > 0,
                 colors = ButtonDefaults.buttonColors(colorResource(R.color.my_danger)),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -183,7 +183,7 @@ fun DetailBody(
                     color = colorResource(R.color.white)
                 )
             }
-        }
+        //}
     }
 }
 

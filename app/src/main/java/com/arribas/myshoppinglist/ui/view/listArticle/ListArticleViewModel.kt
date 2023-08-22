@@ -1,10 +1,12 @@
-package com.arribas.myshoppinglist.ui.viewModel
+package com.arribas.myshoppinglist.ui.view.listArticle
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arribas.myshoppinglist.data.model.Article
+import com.arribas.myshoppinglist.data.model.ArticleCategory
 import com.arribas.myshoppinglist.data.model.ArticleShop
 import com.arribas.myshoppinglist.data.model.QArticle
+import com.arribas.myshoppinglist.data.repository.ArticleCategoryRepository
 import com.arribas.myshoppinglist.data.repository.ArticleRepository
 import com.arribas.myshoppinglist.data.repository.ArticleShopRepository
 import com.arribas.myshoppinglist.data.utils.DIALOG_UI_TAG
@@ -18,7 +20,9 @@ import kotlinx.coroutines.launch
 
 class ListArticleViewModel(
     private val articleRepository: ArticleRepository,
-    private val articleShopRepository: ArticleShopRepository): ViewModel() {
+    private val articleShopRepository: ArticleShopRepository,
+    private val articleCategoryRepository: ArticleCategoryRepository
+): ViewModel() {
 
     private val _searchUiState = MutableStateFlow(SearchUiState())
     var searchUiState: StateFlow<SearchUiState> = _searchUiState
@@ -94,7 +98,21 @@ class ListArticleViewModel(
 
     /**Private functions***********************/
     private fun deleteItem() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
+            val articleCategorys = articleCategoryRepository.getByArticle(article.id)
+
+            if(articleCategorys.isNotEmpty()){
+                articleCategorys.forEach {
+                    articleCategory->
+                        articleCategoryRepository.deleteItem(
+                            ArticleCategory(
+                                id = articleCategory.id,
+                                article_id = articleCategory.article_id,
+                                category_id = articleCategory.category_id)
+                        )
+                }
+            }
+
             articleRepository.deleteItem(qArticleToArticle(article))
         }
     }
