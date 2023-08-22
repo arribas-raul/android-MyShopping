@@ -1,25 +1,24 @@
-package com.arribas.myshoppinglist.ui.navigation.menudrawer
+package com.arribas.myshoppinglist.ui.navigation.route
 
 import com.arribas.myshoppinglist.R
-import com.arribas.myshoppinglist.ui.navigation.NavigationDestination
 
 sealed class Routes{
-    object ShopListScreen : NavigationDestination {
+    object ShopListScreen: Route {
         override val route = "shop_list"
         override val titleRes = R.string.shop_list_title
     }
 
-    object ArticleListScreen : NavigationDestination {
+    object ArticleListScreen: Route {
         override val route = "article_list"
         override val titleRes = R.string.article_list_title
     }
 
-    object ArticleNewScreen : NavigationDestination {
+    object ArticleNewScreen: Route {
         override val route = "article_new"
         override val titleRes = R.string.article_new_title
     }
 
-    object ArticleDetailScreen : NavigationDestination {
+    object ArticleDetailScreen: Route {
         const val itemIdArg = "itemId"
 
         override val route = "article_detail"
@@ -27,5 +26,4 @@ sealed class Routes{
 
         override val titleRes = R.string.article_detail_title
     }
-
 }

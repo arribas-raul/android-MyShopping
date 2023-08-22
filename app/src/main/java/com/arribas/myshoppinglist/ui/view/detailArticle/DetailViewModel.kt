@@ -11,7 +11,7 @@ import com.arribas.myshoppinglist.data.repository.ArticleCategoryRepository
 import com.arribas.myshoppinglist.data.repository.ArticleRepository
 import com.arribas.myshoppinglist.data.utils.DIALOG_UI_TAG
 import com.arribas.myshoppinglist.data.utils.DialogUiState
-import com.arribas.myshoppinglist.ui.navigation.menudrawer.Routes
+import com.arribas.myshoppinglist.ui.navigation.route.Routes
 import com.arribas.myshoppinglist.ui.view.listArticle.ArticleUiState
 import com.arribas.myshoppinglist.ui.view.listArticle.isValid
 import com.arribas.myshoppinglist.ui.view.listArticle.toArticleUiState
@@ -21,7 +21,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch

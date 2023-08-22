@@ -1,36 +1,37 @@
-package com.arribas.myshoppinglist.ui.navigation.menudrawer
+package com.arribas.myshoppinglist.ui.navigation.navigationDrawer
 
 import com.arribas.myshoppinglist.R
+import com.arribas.myshoppinglist.ui.navigation.route.RouteEnum
 
-object MainDataProvider {
-    fun getMenuData(): List<NavigationMainItemContent>{
+object NavigationDrawerProvider {
+    fun getData(): List<ItemNavigationDrawer>{
         return listOf(
-            NavigationMainItemContent(
-                type = NavTag.SHOP_LIST,
+            ItemNavigationDrawer(
+                type = RouteEnum.SHOP_LIST,
                 text = "Lista de la compra",
                 icon = R.drawable.ic_shopping_cart,
                 menuLeftVisible = true,
                 menuBottomVisible = true
             ),
 
-            NavigationMainItemContent(
-                type = NavTag.ITEM_LIST,
+            ItemNavigationDrawer(
+                type = RouteEnum.ITEM_LIST,
                 text = "Lista de productos",
                 icon = R.drawable.ic_view_list,
                 menuLeftVisible = true,
                 menuBottomVisible = true
             ),
 
-            NavigationMainItemContent(
-                type = NavTag.NEW_ITEM,
+            ItemNavigationDrawer(
+                type = RouteEnum.NEW_ITEM,
                 text = "Nuevo producto",
                 icon = R.drawable.ic_create,
                 menuLeftVisible = true,
                 menuBottomVisible = true
             ),
 
-            NavigationMainItemContent(
-                type = NavTag.DETAIL_ITEM,
+            ItemNavigationDrawer(
+                type = RouteEnum.DETAIL_ITEM,
                 text = "Detalle producto",
                 icon = R.drawable.ic_create
             )

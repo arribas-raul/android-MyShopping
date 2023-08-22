@@ -1,4 +1,4 @@
-package com.arribas.myshoppinglist.ui.navigation.menudrawer
+package com.arribas.myshoppinglist.ui.view.general
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -17,6 +17,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arribas.myshoppinglist.R
+import com.arribas.myshoppinglist.ui.navigation.route.RouteEnum
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -24,7 +25,7 @@ fun MyTopBar(
     title: String,
     canNavigateBack: Boolean = false,
     navigateUp: () -> Unit = {},
-    tag: NavTag,
+    tag: RouteEnum,
     onClickDrawer: () -> Unit,
     modifier: Modifier = Modifier){
 
@@ -77,7 +78,7 @@ fun MyTopBarPreview() {
     MyTopBar(
         title = "Lista de la compra",
         canNavigateBack = true,
-        tag = NavTag.NEW_ITEM,
+        tag = RouteEnum.NEW_ITEM,
         onClickDrawer = {}
     )
 }

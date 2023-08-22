@@ -1,10 +1,9 @@
-package com.arribas.myshoppinglist.ui.navigation.menudrawer
+package com.arribas.myshoppinglist.ui.navigation.navigationDrawer
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -17,13 +16,13 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.arribas.myshoppinglist.R
-import com.arribas.myshoppinglist.data.MainTag
+import com.arribas.myshoppinglist.ui.navigation.route.RouteEnum
 
 @Composable
 fun MyBottomBar(
-    currentTab: NavTag,
-    onTabPressed: ((NavTag) -> Unit) = {},
-    navigationItemContentList: List<NavigationMainItemContent>,
+    currentTab: RouteEnum,
+    onTabPressed: ((RouteEnum) -> Unit) = {},
+    navigationItemContentList: List<ItemNavigationDrawer>,
     //modifier: Modifier = Modifier
 ) {
     NavigationBar(
