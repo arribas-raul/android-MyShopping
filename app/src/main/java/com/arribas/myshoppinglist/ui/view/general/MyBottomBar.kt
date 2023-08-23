@@ -1,4 +1,4 @@
-package com.arribas.myshoppinglist.ui.navigation.navigationDrawer
+package com.arribas.myshoppinglist.ui.view.general
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,6 +16,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.arribas.myshoppinglist.R
+import com.arribas.myshoppinglist.ui.navigation.navigationDrawer.ItemNavigationDrawer
 import com.arribas.myshoppinglist.ui.navigation.route.RouteEnum
 
 @Composable
@@ -31,34 +32,33 @@ fun MyBottomBar(
     ) {
 
         for (navItem in navigationItemContentList) {
-            if(!navItem.menuBottomVisible){
-                continue
+            if (navItem.menuBottomVisible) {
+
+                NavigationBarItem(
+                    selected = currentTab == navItem.type,
+                    onClick = { onTabPressed(navItem.type) },
+
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = colorResource(R.color.black),
+                        selectedTextColor = MaterialTheme.colorScheme.onPrimary,
+                        indicatorColor = colorResource(R.color.my_secondary),
+                        unselectedIconColor = MaterialTheme.colorScheme.onPrimary,
+                        unselectedTextColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+
+                    icon = {
+                        Image(
+                            painter = painterResource(navItem.icon),
+                            contentDescription = navItem.text,
+                            colorFilter = ColorFilter.tint(Color.White)
+                        )
+                    },
+
+                    modifier = Modifier
+                        .background(colorResource(R.color.my_primary))
+                        .padding(0.dp)
+                )
             }
-
-            NavigationBarItem(
-                selected = currentTab == navItem.type,
-                onClick = { onTabPressed(navItem.type) },
-
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor= colorResource(R.color.black),
-                    selectedTextColor = MaterialTheme.colorScheme.onPrimary,
-                    indicatorColor= colorResource(R.color.my_secondary),
-                    unselectedIconColor= MaterialTheme.colorScheme.onPrimary,
-                    unselectedTextColor = MaterialTheme.colorScheme.onPrimary
-                ),
-
-                icon = {
-                    Image(
-                        painter = painterResource(navItem.icon),
-                        contentDescription = navItem.text,
-                        colorFilter = ColorFilter.tint(Color.White)
-                    )
-                },
-
-                modifier = Modifier
-                    .background(colorResource(R.color.my_primary))
-                    .padding(0.dp)
-            )
         }
     }
 }

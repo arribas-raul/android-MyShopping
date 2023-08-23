@@ -1,4 +1,4 @@
-package com.arribas.myshoppinglist.ui.view.Category
+package com.arribas.myshoppinglist.ui.view.category
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -1,4 +1,4 @@
-package com.arribas.myshoppinglist.ui.view.listArticle
+package com.arribas.myshoppinglist.ui.view.shoplistList
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -36,7 +36,7 @@ class ListArticleViewModel(
         getData()
     }
 
-    fun getData(){
+    private fun getData(){
         viewModelScope.launch{
             articleRepository.getItemsByName(_searchUiState.value.name).collect { list ->
                 _listUiState.value = ListUiState(

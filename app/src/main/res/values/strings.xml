@@ -5,6 +5,7 @@
     <string name="article_list_title">Lista de la artículos</string>
     <string name="article_new_title">Nuevo artículo</string>
     <string name="article_detail_title">Detalle artículo</string>
+    <string name="list_list_title">Lista de la listas</string>
 
     <string name="delete">Delete</string>
     <string name="update">Update</string>

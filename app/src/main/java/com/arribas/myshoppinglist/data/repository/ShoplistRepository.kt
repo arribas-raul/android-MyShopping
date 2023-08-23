@@ -17,6 +17,8 @@
 package com.arribas.myshoppinglist.data.repository
 
 import com.arribas.myshoppinglist.data.dao.ShoplistDao
+import com.arribas.myshoppinglist.data.model.Article
+import com.arribas.myshoppinglist.data.model.QArticle
 import com.arribas.myshoppinglist.data.model.Shoplist
 import kotlinx.coroutines.flow.Flow
 
@@ -30,6 +32,8 @@ interface ShoplistRepositoryInterface {
      * Retrieve an item from the given data source that matches with the [id].
      */
     fun getItem(id: Int): Flow<Shoplist?>
+
+    fun getItemsByName(name: String): Flow<List<Shoplist>>
 
     /**
      * Insert item in the data source
@@ -51,6 +55,8 @@ class ShoplistRepository(private val shoplistDao: ShoplistDao) : ShoplistReposit
     override fun getAllItems(): Flow<List<Shoplist>> = shoplistDao.getAllItems()
 
     override fun getItem(id: Int): Flow<Shoplist?> = shoplistDao.getItem(id)
+
+    override fun getItemsByName(name: String): Flow<List<Shoplist>> = shoplistDao.getItemByName(name)
 
     override suspend fun insertItem(item: Shoplist) = shoplistDao.insert(item)
 

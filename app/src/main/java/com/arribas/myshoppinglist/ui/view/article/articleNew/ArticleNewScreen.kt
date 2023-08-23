@@ -1,4 +1,4 @@
-package com.arribas.myshoppinglist.ui.view.detailArticle
+package com.arribas.myshoppinglist.ui.view.article.articleNew
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -10,20 +10,19 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.data.utils.TextFieldDialogUiState
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
+import com.arribas.myshoppinglist.ui.view.AppViewModelProvider
+import com.arribas.myshoppinglist.ui.view.category.CategoryViewModel
+import com.arribas.myshoppinglist.ui.view.category.ListCategoryUiState
 import com.arribas.myshoppinglist.ui.view.general.DetailBody
 import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
-import com.arribas.myshoppinglist.ui.view.AppViewModelProvider
-import com.arribas.myshoppinglist.ui.view.Category.CategoryViewModel
 import com.arribas.myshoppinglist.ui.view.general.TextFieldAlertDialog
-import com.arribas.myshoppinglist.ui.view.listArticle.ArticleUiState
+import com.arribas.myshoppinglist.ui.view.article.articleList.ArticleUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-
 @Composable
-fun DetailScreen(
-    navigateBack: () -> Unit,
-    viewModel: DetailViewModel = viewModel(factory = AppViewModelProvider.Factory),
+fun ArticleNewScreen(
+    viewModel: NewViewModel = viewModel(factory = AppViewModelProvider.Factory),
     categoryViewModel: CategoryViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier
 ) {
@@ -32,38 +31,26 @@ fun DetailScreen(
     val categoryDialogState: TextFieldDialogUiState by categoryViewModel.dialogState.collectAsState()
     val listCategoryUiState by categoryViewModel.listUiState.collectAsState()
 
-    DetailBody(
+    NewForm(
+        updateUiState = { viewModel.updateUiState(it) },
+
+        saveItem = {
+            coroutineScope.launch(Dispatchers.IO) {
+                viewModel.saveItem()
+            }
+        },
+
         articleUiState = viewModel.articleUiState,
-
-        onItemValueChange = {
-            viewModel.updateUiState(it)
-        },
-
-        onSaveClick = {
-            coroutineScope.launch(Dispatchers.IO) {
-                viewModel.updateItem()
-                //navigateBack()
-            }
-        },
-        onDeleteClick = {
-            coroutineScope.launch(Dispatchers.IO) {
-                viewModel.onDialogDelete()
-                //navigateBack()
-            }
-        },
         listCategoryUiState = listCategoryUiState,
-        onCategoryClick = categoryViewModel::openDialog
+        onCategoryClick = categoryViewModel::openDialog,
+
+        modifier = modifier
     )
 
     SimpleAlertDialog(
         dialogState = dialogState,
         onDismiss = viewModel::onDialogDismiss,
-        onConfirm = {
-            coroutineScope.launch {
-                viewModel.onDialogConfirm()
-                navigateBack()
-            }
-        }
+        onConfirm = viewModel::onDialogConfirm
     )
 
     TextFieldAlertDialog(
@@ -75,12 +62,30 @@ fun DetailScreen(
     )
 }
 
+@Composable
+fun NewForm(
+    updateUiState: (ArticleUiState) -> Unit = {},
+    saveItem: () -> Unit = {},
+    onCategoryClick: () -> Unit = {},
+    articleUiState: ArticleUiState,
+    listCategoryUiState: ListCategoryUiState = ListCategoryUiState(),
+    modifier: Modifier = Modifier) {
+
+    DetailBody(
+        articleUiState = articleUiState,
+        onItemValueChange = { updateUiState(it) },
+        onSaveClick = saveItem,
+        listCategoryUiState = listCategoryUiState,
+        onCategoryClick = onCategoryClick
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
-fun DetailScreenPreview() {
-    val articleUiState = ArticleUiState(name = "Bolsa de patatas")
+fun NewScreenPreview() {
+    val articleUiState = ArticleUiState()
 
     MyShoppingListTheme {
-        //DetailScreen(articleUiState = articleUiState )
+        NewForm(articleUiState = articleUiState )
     }
 }

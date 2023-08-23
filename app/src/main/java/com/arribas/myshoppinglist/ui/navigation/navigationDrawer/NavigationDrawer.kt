@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.arribas.myshoppinglist.R
-import com.arribas.myshoppinglist.ui.navigation.onSelectItemNavDrawer
+import com.arribas.myshoppinglist.ui.view.onSelectItemNavDrawer
 import kotlinx.coroutines.CoroutineScope
 
 
@@ -82,24 +82,22 @@ fun DrawerBody(
     Spacer(modifier = modifier)
 
     items.forEach { item ->
-        if(!item.menuLeftVisible){
-            return
+        if(item.menuLeftVisible) {
+            NavigationDrawerItem(
+                label = { Text(text = item.text) },
+                selected = item == selectedItem,
+                onClick = { onItemClick(item) },
+
+                icon = {
+                    Image(
+                        painter = painterResource(item.icon),
+                        contentDescription = item.text,
+                        colorFilter = ColorFilter.tint(Color.White)
+                    )
+                },
+
+                modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+            )
         }
-
-        NavigationDrawerItem(
-            label = { Text( text = item.text ) },
-            selected = item == selectedItem,
-            onClick = { onItemClick(item) },
-
-            icon = {
-                Image(
-                    painter = painterResource(item.icon),
-                    contentDescription = item.text,
-                    colorFilter = ColorFilter.tint(Color.White)
-                )
-            },
-
-            modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-        )
     }
 }

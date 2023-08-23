@@ -1,4 +1,4 @@
-package com.arribas.myshoppinglist.ui.view.listArticle
+package com.arribas.myshoppinglist.ui.view.article.articleList
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -36,6 +36,8 @@ import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
 import com.arribas.myshoppinglist.ui.view.AppViewModelProvider
+import com.arribas.myshoppinglist.ui.view.shoplistList.ListArticleHeader
+import com.arribas.myshoppinglist.ui.view.shoplistList.ListArticleViewModel
 
 @Composable
 fun ListArticleScreen(

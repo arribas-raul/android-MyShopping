@@ -78,7 +78,7 @@ fun MyTopBarPreview() {
     MyTopBar(
         title = "Lista de la compra",
         canNavigateBack = true,
-        tag = RouteEnum.NEW_ITEM,
+        tag = RouteEnum.ARTICLE_NEW,
         onClickDrawer = {}
     )
 }

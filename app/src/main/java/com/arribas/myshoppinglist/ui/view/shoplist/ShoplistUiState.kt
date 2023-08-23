@@ -1,0 +1,28 @@
+package com.arribas.myshoppinglist.ui.view.shoplist
+
+import com.arribas.myshoppinglist.data.model.Shoplist
+
+data class ShoplistUiState(
+    val id: Int = 0,
+    val name: String = "",
+    val type: String = ""
+)
+
+fun ShoplistUiState.toItem(): Shoplist = Shoplist(
+    id = id,
+    name = name,
+    type = type
+)
+
+/**
+ * Extension function to convert [Item] to [ItemUiState]
+ */
+fun Shoplist.toShopListUiState(actionEnabled: Boolean = false): ShoplistUiState = ShoplistUiState(
+    id = id,
+    name = name,
+    type = type
+)
+
+fun ShoplistUiState.isValid() : Boolean {
+    return name.isNotBlank() && type.isNotBlank()
+}

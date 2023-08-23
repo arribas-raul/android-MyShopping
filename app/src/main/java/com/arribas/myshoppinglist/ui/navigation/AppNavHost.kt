@@ -10,10 +10,11 @@ import androidx.navigation.navArgument
 import com.arribas.myshoppinglist.ui.navigation.navigationDrawer.ItemNavigationDrawer
 import com.arribas.myshoppinglist.ui.navigation.route.RouteEnum
 import com.arribas.myshoppinglist.ui.navigation.route.Routes
-import com.arribas.myshoppinglist.ui.view.detailArticle.DetailScreen
-import com.arribas.myshoppinglist.ui.view.detailArticle.NewScreen
-import com.arribas.myshoppinglist.ui.view.listArticle.ListArticleScreen
-import com.arribas.myshoppinglist.ui.view.listArticle.ListArticleShopScreen
+import com.arribas.myshoppinglist.ui.view.article.articleDetail.ArticleDetailScreen
+import com.arribas.myshoppinglist.ui.view.article.articleList.ListArticleScreen
+import com.arribas.myshoppinglist.ui.view.article.articleNew.ArticleNewScreen
+import com.arribas.myshoppinglist.ui.view.listArticleShop.ListArticleShopScreen
+import com.arribas.myshoppinglist.ui.view.shoplist.shoplistList.ShoplistListScreen
 
 /**
  * Provides Navigation graph for the application.
@@ -28,11 +29,11 @@ fun MyAppNavHost(
 
     NavHost(
         navController = navController,
-        startDestination = Routes.ShopListScreen.route,
+        startDestination = Routes.ShopListScreen.route.toString(),
         modifier = modifier
     ) {
         composable(
-            route = Routes.ShopListScreen.route
+            route = Routes.ShopListScreen.route.toString()
         ){
             ListArticleShopScreen(
                 navigateToItemUpdate = {}
@@ -40,20 +41,20 @@ fun MyAppNavHost(
         }
 
         composable(
-            route = Routes.ArticleListScreen.route
+            route = Routes.ArticleListScreen.route.toString()
         ){
             ListArticleScreen(
                 navigateToItemUpdate = {
-                    onItemClick(RouteEnum.DETAIL_ITEM)
+                    onItemClick(RouteEnum.ARTICLE_DETAIL)
                     navController.navigate("${Routes.ArticleDetailScreen.route}/${it}")
                 }
             )
         }
 
         composable(
-            route = Routes.ArticleNewScreen.route
+            route = Routes.ArticleNewScreen.route.toString()
         ){
-            NewScreen()
+            ArticleNewScreen()
         }
 
         composable(
@@ -62,10 +63,16 @@ fun MyAppNavHost(
                 type = NavType.IntType
             })
         ){
-            DetailScreen(
+            ArticleDetailScreen(
                 navigateBack = { navController.popBackStack() },
                 modifier = modifier,
             )
+        }
+
+        composable(
+            route = Routes.ShoplistListScreen.route.toString()
+        ){
+            ShoplistListScreen()
         }
     }
 }
@@ -75,9 +82,10 @@ fun navigate(
     navController: NavHostController
 ){
     when(item.type){
-        RouteEnum.SHOP_LIST    -> navController.navigate(Routes.ShopListScreen.route)
-        RouteEnum.ITEM_LIST    -> navController.navigate(Routes.ArticleListScreen.route)
-        RouteEnum.NEW_ITEM     -> navController.navigate(Routes.ArticleNewScreen.route)
-        RouteEnum.DETAIL_ITEM  -> navController.navigate(Routes.ArticleDetailScreen.routeWithArgs)
+        RouteEnum.SHOP_LIST       -> navController.navigate(Routes.ShopListScreen.route.toString())
+        RouteEnum.ARTICLE_LIST    -> navController.navigate(Routes.ArticleListScreen.route.toString())
+        RouteEnum.ARTICLE_NEW     -> navController.navigate(Routes.ArticleNewScreen.route.toString())
+        RouteEnum.ARTICLE_DETAIL  -> navController.navigate(Routes.ArticleDetailScreen.routeWithArgs)
+        RouteEnum.SHOPLIST_LIST   -> navController.navigate(Routes.ShoplistListScreen.route.toString())
     }
 }

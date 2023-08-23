@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.arribas.myshoppinglist.ui.view.newArticle
+package com.arribas.myshoppinglist.ui.view.article.articleNew
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,10 +25,9 @@ import com.arribas.myshoppinglist.data.repository.ArticleCategoryRepository
 import com.arribas.myshoppinglist.data.repository.ArticleRepository
 import com.arribas.myshoppinglist.data.utils.DIALOG_UI_TAG
 import com.arribas.myshoppinglist.data.utils.DialogUiState
-import com.arribas.myshoppinglist.data.utils.TextFieldDialogUiState
-import com.arribas.myshoppinglist.ui.view.listArticle.ArticleUiState
-import com.arribas.myshoppinglist.ui.view.listArticle.isValid
-import com.arribas.myshoppinglist.ui.view.listArticle.toItem
+import com.arribas.myshoppinglist.ui.view.article.articleList.ArticleUiState
+import com.arribas.myshoppinglist.ui.view.article.articleList.isValid
+import com.arribas.myshoppinglist.ui.view.article.articleList.toItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

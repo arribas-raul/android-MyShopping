@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
-import com.arribas.myshoppinglist.ui.navigation.App
+import com.arribas.myshoppinglist.ui.view.App
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

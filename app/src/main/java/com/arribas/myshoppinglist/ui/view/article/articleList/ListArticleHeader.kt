@@ -1,4 +1,4 @@
-package com.arribas.myshoppinglist.ui.view.listArticle
+package com.arribas.myshoppinglist.ui.view.shoplistList
 
 import android.view.KeyEvent
 import androidx.compose.foundation.layout.Column

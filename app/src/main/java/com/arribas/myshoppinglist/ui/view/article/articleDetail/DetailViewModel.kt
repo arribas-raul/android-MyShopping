@@ -1,4 +1,4 @@
-package com.arribas.myshoppinglist.ui.view.detailArticle
+package com.arribas.myshoppinglist.ui.view.article.articleDetail
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -12,10 +12,10 @@ import com.arribas.myshoppinglist.data.repository.ArticleRepository
 import com.arribas.myshoppinglist.data.utils.DIALOG_UI_TAG
 import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.ui.navigation.route.Routes
-import com.arribas.myshoppinglist.ui.view.listArticle.ArticleUiState
-import com.arribas.myshoppinglist.ui.view.listArticle.isValid
-import com.arribas.myshoppinglist.ui.view.listArticle.toArticleUiState
-import com.arribas.myshoppinglist.ui.view.listArticle.toItem
+import com.arribas.myshoppinglist.ui.view.article.articleList.ArticleUiState
+import com.arribas.myshoppinglist.ui.view.article.articleList.isValid
+import com.arribas.myshoppinglist.ui.view.article.articleList.toArticleUiState
+import com.arribas.myshoppinglist.ui.view.article.articleList.toItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

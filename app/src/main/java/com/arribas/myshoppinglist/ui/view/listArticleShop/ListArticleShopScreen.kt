@@ -1,4 +1,4 @@
-package com.arribas.myshoppinglist.ui.view.listArticle
+package com.arribas.myshoppinglist.ui.view.listArticleShop
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -35,7 +35,6 @@ import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.AppViewModelProvider
 import com.arribas.myshoppinglist.ui.view.general.CircleButton
 import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
-import com.arribas.myshoppinglist.ui.view.listArticleShop.HeaderArticleShopList
 import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.ListArticleShopUiState
 import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.ListArticleShopViewModel
 import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.SearchListArticleUiState

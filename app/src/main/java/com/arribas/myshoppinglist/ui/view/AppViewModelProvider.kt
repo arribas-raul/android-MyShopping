@@ -7,10 +7,12 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.arribas.myshoppinglist.AppApplication
-import com.arribas.myshoppinglist.ui.view.Category.CategoryViewModel
-import com.arribas.myshoppinglist.ui.view.detailArticle.DetailViewModel
-import com.arribas.myshoppinglist.ui.view.newArticle.NewViewModel
-import com.arribas.myshoppinglist.ui.view.listArticle.ListArticleViewModel
+import com.arribas.myshoppinglist.ui.view.category.CategoryViewModel
+import com.arribas.myshoppinglist.ui.view.article.articleDetail.DetailViewModel
+import com.arribas.myshoppinglist.ui.view.article.articleNew.NewViewModel
+import com.arribas.myshoppinglist.ui.view.shoplist.shoplistDetail.ShoplistDetailViewModel
+import com.arribas.myshoppinglist.ui.view.shoplistList.ListArticleViewModel
+import com.arribas.myshoppinglist.ui.view.shoplist.shoplistList.ShoplistListViewModel
 import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.ListArticleShopViewModel
 
 /**
@@ -51,6 +53,18 @@ object AppViewModelProvider {
         initializer {
             CategoryViewModel(
                 AppApplication().container.categoryRepository
+            )
+        }
+
+        initializer {
+            ShoplistListViewModel(
+                AppApplication().container.shoplistRepository
+            )
+        }
+
+        initializer {
+            ShoplistDetailViewModel(
+                AppApplication().container.shoplistRepository
             )
         }
     }

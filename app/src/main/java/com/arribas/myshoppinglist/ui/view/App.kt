@@ -1,4 +1,4 @@
-package com.arribas.myshoppinglist.ui.navigation
+package com.arribas.myshoppinglist.ui.view
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -18,12 +18,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.arribas.myshoppinglist.ui.navigation.MyAppNavHost
+import com.arribas.myshoppinglist.ui.navigation.navigate
 import com.arribas.myshoppinglist.ui.navigation.navigationDrawer.ItemNavigationDrawer
-import com.arribas.myshoppinglist.ui.navigation.navigationDrawer.MyBottomBar
+import com.arribas.myshoppinglist.ui.view.general.MyBottomBar
 import com.arribas.myshoppinglist.ui.navigation.navigationDrawer.NavigationDrawer
 import com.arribas.myshoppinglist.ui.navigation.navigationDrawer.NavigationDrawerProvider
 import com.arribas.myshoppinglist.ui.navigation.route.RouteEnum
-import com.arribas.myshoppinglist.ui.navigation.route.Routes
 import com.arribas.myshoppinglist.ui.view.general.MyTopBar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -86,6 +87,7 @@ fun App(modifier: Modifier = Modifier){
                 selectedItem = lastSelectedItem
                 navController.popBackStack()
             },
+
             modifier = modifier
         )
     }
