@@ -1,7 +1,6 @@
 package com.arribas.myshoppinglist.ui.view.shoplist.shoplistDetail
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,7 +14,6 @@ import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
@@ -23,44 +21,75 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arribas.myshoppinglist.R
-import com.arribas.myshoppinglist.ui.view.AppViewModelProvider
+import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.ui.view.general.EditText
-import kotlinx.coroutines.launch
+import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
+import com.arribas.myshoppinglist.ui.view.shoplist.ShoplistUiState
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ShoplistBottomSheet(
-    viewModel: ShoplistDetailViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    viewModel: ShoplistDetailViewModel,
     modifier: Modifier = Modifier,
     sheetState: ModalBottomSheetState,
     showModalSheet: MutableState<Boolean>
 ){
+    val dialogState: DialogUiState by viewModel.dialogState.collectAsState()
+
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel
+            .toastMessage
+            .collect { message ->
+                Toast.makeText(
+                    context,
+                    message,
+                    Toast.LENGTH_SHORT,
+                ).show()
+            }
+    }
+
     ModalBottomSheetLayout(
         sheetState = sheetState,
+
         sheetContent = {
-            ShoplistBottomSheetContent()
+            ShoplistBottomSheetContent(
+                shoplistUiState = viewModel.shoplistUiState,
+                onValueChange = { viewModel.onChange(it) },
+                onClick = {
+                    viewModel.onSave()
+                }
+            )
         }
-    ) {
-        ShoplistModalSheetWithAnchor(
-            sheetState,
-            showModalSheet
-        )
-    }
+    ) {}
+
+    SimpleAlertDialog(
+        dialogState = dialogState,
+        onDismiss = viewModel::onDialogDismiss,
+        onConfirm = viewModel::onDialogConfirm
+    )
 }
 
 @Composable
-fun ShoplistBottomSheetContent( ){
+fun ShoplistBottomSheetContent(
+    shoplistUiState: ShoplistUiState,
+    onValueChange: (ShoplistUiState) -> Unit,
+    onClick: (ShoplistUiState) -> Unit
+){
     Surface(
         modifier = Modifier.height(250.dp),
         color = colorResource(R.color.my_primary)
@@ -82,16 +111,24 @@ fun ShoplistBottomSheetContent( ){
 
             EditText(
                 title = "Nombre",
-                name = "",
-                onValueChange = {  },
+                value = shoplistUiState.name,
+
+                onValueChange = {
+                    onValueChange( shoplistUiState.copy(name = it))
+                },
+
                 onKeyEvent = {  },
                 modifier = Modifier.padding(horizontal = 10.dp)
             )
 
             EditText(
                 title = "Tipo",
-                name = "",
-                onValueChange = {  },
+                value = shoplistUiState.type,
+
+                onValueChange = {
+                    onValueChange( shoplistUiState.copy(type = it))
+                },
+
                 onKeyEvent = {  },
                 modifier = Modifier.padding(horizontal = 10.dp)
             )
@@ -101,7 +138,7 @@ fun ShoplistBottomSheetContent( ){
             )
 
             Button(
-                onClick = {  },
+                onClick = { onClick(shoplistUiState) },
                 enabled = true,
                 colors = ButtonDefaults.buttonColors(colorResource(R.color.my_secondary)),
                 shape = RoundedCornerShape(size = 4.dp),
@@ -121,31 +158,5 @@ fun ShoplistBottomSheetContent( ){
                 )
             }
         }
-    }
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-fun ShoplistModalSheetWithAnchor(
-    sheetState: ModalBottomSheetState,
-    showModalSheet: MutableState<Boolean>
-) {
-    val scope = rememberCoroutineScope()
-
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Icon(
-            imageVector = Icons.Default.KeyboardArrowUp,
-            contentDescription = "",
-            modifier = Modifier
-                .align(alignment = Alignment.BottomCenter)
-                .clickable {
-                    showModalSheet.value = !showModalSheet.value
-                    scope.launch {
-                        sheetState.show()
-                    }
-                }
-        )
     }
 }

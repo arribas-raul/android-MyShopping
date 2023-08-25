@@ -24,11 +24,14 @@ interface ShoplistDao {
     @Query("SELECT * from shoplist WHERE id = :id")
     fun getItem(id: Int): Flow<Shoplist>
 
+    @Query("SELECT * from shoplist WHERE name = :name")
+    fun getItemByName(name: String): Flow<Shoplist?>
+
     @Query(" SELECT * " +
             "FROM shoplist " +
             "WHERE name like '%' || :name || '%' " +
             "   OR type like '%' || :name || '%' ")
-    fun getItemByName(name: String): Flow<List<Shoplist>>
+    fun getItemsByName(name: String): Flow<List<Shoplist>>
 
     @Query("SELECT * from shoplist ORDER BY name ASC")
     fun getAllItems(): Flow<List<Shoplist>>

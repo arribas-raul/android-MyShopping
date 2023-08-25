@@ -17,7 +17,7 @@ fun ShoplistUiState.toItem(): Shoplist = Shoplist(
 /**
  * Extension function to convert [Item] to [ItemUiState]
  */
-fun Shoplist.toShopListUiState(actionEnabled: Boolean = false): ShoplistUiState = ShoplistUiState(
+fun Shoplist.toShopListUiState(): ShoplistUiState = ShoplistUiState(
     id = id,
     name = name,
     type = type

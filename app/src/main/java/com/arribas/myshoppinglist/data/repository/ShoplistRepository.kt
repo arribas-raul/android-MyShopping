@@ -32,6 +32,7 @@ interface ShoplistRepositoryInterface {
      * Retrieve an item from the given data source that matches with the [id].
      */
     fun getItem(id: Int): Flow<Shoplist?>
+    fun getItemByName(name: String): Flow<Shoplist?>
 
     fun getItemsByName(name: String): Flow<List<Shoplist>>
 
@@ -56,7 +57,9 @@ class ShoplistRepository(private val shoplistDao: ShoplistDao) : ShoplistReposit
 
     override fun getItem(id: Int): Flow<Shoplist?> = shoplistDao.getItem(id)
 
-    override fun getItemsByName(name: String): Flow<List<Shoplist>> = shoplistDao.getItemByName(name)
+    override fun getItemByName(name: String): Flow<Shoplist?> = shoplistDao.getItemByName(name)
+
+    override fun getItemsByName(name: String): Flow<List<Shoplist>> = shoplistDao.getItemsByName(name)
 
     override suspend fun insertItem(item: Shoplist) = shoplistDao.insert(item)
 

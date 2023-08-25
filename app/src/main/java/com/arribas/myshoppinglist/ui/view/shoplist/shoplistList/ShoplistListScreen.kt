@@ -1,5 +1,7 @@
 package com.arribas.myshoppinglist.ui.view.shoplist.shoplistList
 
+import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -12,7 +14,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
@@ -23,7 +27,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -31,6 +37,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -39,21 +46,27 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arribas.myshoppinglist.R
 import com.arribas.myshoppinglist.data.model.Shoplist
+import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.AppViewModelProvider
 import com.arribas.myshoppinglist.ui.view.general.FloatingButton
+import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
 import com.arribas.myshoppinglist.ui.view.shoplist.shoplistDetail.ShoplistBottomSheet
+import com.arribas.myshoppinglist.ui.view.shoplist.shoplistDetail.ShoplistDetailViewModel
+import com.arribas.myshoppinglist.ui.view.shoplist.toShopListUiState
 import com.arribas.myshoppinglist.ui.view.shoplistList.SearchName
 import kotlinx.coroutines.launch
 
+@SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun ShoplistListScreen(
-    viewModel: ShoplistListViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    listViewModel: ShoplistListViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    detailViewModel: ShoplistDetailViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier
 ){
-    val listUiState by viewModel.listUiState.collectAsState()
-    val searchUiState by viewModel.searchUiState.collectAsState()
+    val listUiState by listViewModel.listUiState.collectAsState()
+    val searchUiState by listViewModel.searchUiState.collectAsState()
 
     val scope = rememberCoroutineScope()
 
@@ -61,18 +74,41 @@ fun ShoplistListScreen(
         mutableStateOf(false)
     }
 
+    val dialogState: DialogUiState by listViewModel.dialogState.collectAsState()
+
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
     )
+
+    val listState = rememberLazyListState()
+    val fabVisibility by derivedStateOf {
+        listState.firstVisibleItemIndex == 0
+    }
+
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        listViewModel
+            .toastMessage
+            .collect { message ->
+                Toast.makeText(
+                    context,
+                    message,
+                    Toast.LENGTH_SHORT,
+                ).show()
+            }
+    }
 
     Scaffold(
         floatingActionButton = {
             FloatingButton(
                 onClick = { showModalSheet.value = true
-
                     scope.launch {
+                        detailViewModel.clearUiState()
                         sheetState.show()
-                    }}
+                    }
+                },
+                fabVisibility = fabVisibility,
             )
         },
         modifier = modifier
@@ -83,7 +119,6 @@ fun ShoplistListScreen(
                 .fillMaxSize()
                 .background(colorResource(R.color.my_background))
         ) {
-
             Column(
                 modifier = modifier
                     .fillMaxWidth()
@@ -92,21 +127,37 @@ fun ShoplistListScreen(
 
                 SearchName(
                     searchUiState = searchUiState,
-                    onValueChange = { viewModel.search(it) },
+                    onValueChange = { listViewModel.search(it) },
                     onKeyEvent = { },
-                    clearName = viewModel::clearName
+                    clearName = listViewModel::clearName
                 )
 
                 ShopListBody(
                     itemList = listUiState.itemList,
-                    deleteItem = { viewModel.onDialogDelete(it) },
-                    updateItem = { viewModel.updateItem(it) }
+                    onDeleteItem = { listViewModel.onDialogDelete(it) },
+
+                    onClickItem  = {
+                        detailViewModel.updateUiState(it.toShopListUiState())
+
+                        scope.launch {
+                            sheetState.show()
+                        }
+                    },
+
+                    lazyState = listState
                 )
             }
         }
     }
 
+    SimpleAlertDialog(
+        dialogState = dialogState,
+        onDismiss = listViewModel::onDialogDismiss,
+        onConfirm = listViewModel::onDialogConfirm
+    )
+
     ShoplistBottomSheet(
+        viewModel = detailViewModel,
         sheetState = sheetState,
         showModalSheet = showModalSheet
     )
@@ -115,8 +166,9 @@ fun ShoplistListScreen(
 @Composable
 fun ShopListBody(
     itemList: List<Shoplist>,
-    deleteItem: (Shoplist) -> Unit,
-    updateItem: (Shoplist) -> Unit,
+    onDeleteItem: (Shoplist) -> Unit,
+    onClickItem: (Shoplist) -> Unit,
+    lazyState: LazyListState,
     modifier: Modifier = Modifier){
 
     Column(
@@ -134,15 +186,16 @@ fun ShopListBody(
             LazyColumn(
                 modifier = modifier,
                 verticalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(vertical = 8.dp, horizontal = 8.dp)
+                contentPadding = PaddingValues(vertical = 8.dp, horizontal = 8.dp),
+                state = lazyState,
             )
             {
                 items(items = itemList, key = { it.id }) { item ->
                     ShoplistListItem(
                         item = item,
-                        onItemClick = { },
-                        onDeleteClick = { deleteItem(it) },
-                        onCheckClick = { updateItem(it) },
+                        onItemClick = { onClickItem(it) },
+                        onDeleteClick = { onDeleteItem(it) },
+                        onCheckClick = { onClickItem(it) },
                         modifier = Modifier
                     )
                 }
