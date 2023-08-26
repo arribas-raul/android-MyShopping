@@ -10,7 +10,7 @@
     <string name="delete">Delete</string>
     <string name="update">Update</string>
     <string name="delete_question">Are you sure you want to delete?</string>
-    <string name="no_item_description">No articles in the list</string>
+    <string name="no_item_description">No hay items en esta lista</string>
     <string name="edit_item_title">Edit Item</string>
     <string name="item">Item</string>
     <string name="item_detail_title">Item Details</string>

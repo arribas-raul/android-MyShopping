@@ -51,6 +51,7 @@ import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.AppViewModelProvider
 import com.arribas.myshoppinglist.ui.view.general.FloatingButton
 import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
+import com.arribas.myshoppinglist.ui.view.shoplist.ShoplistUiState
 import com.arribas.myshoppinglist.ui.view.shoplist.shoplistDetail.ShoplistBottomSheet
 import com.arribas.myshoppinglist.ui.view.shoplist.shoplistDetail.ShoplistDetailViewModel
 import com.arribas.myshoppinglist.ui.view.shoplist.toShopListUiState
@@ -65,27 +66,26 @@ fun ShoplistListScreen(
     detailViewModel: ShoplistDetailViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier
 ){
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+
     val listUiState by listViewModel.listUiState.collectAsState()
     val searchUiState by listViewModel.searchUiState.collectAsState()
-
-    val scope = rememberCoroutineScope()
+    val dialogState: DialogUiState by listViewModel.dialogState.collectAsState()
 
     val showModalSheet = rememberSaveable {
         mutableStateOf(false)
     }
-
-    val dialogState: DialogUiState by listViewModel.dialogState.collectAsState()
 
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
     )
 
     val listState = rememberLazyListState()
+
     val fabVisibility by derivedStateOf {
         listState.firstVisibleItemIndex == 0
     }
-
-    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         listViewModel
@@ -108,10 +108,12 @@ fun ShoplistListScreen(
                         sheetState.show()
                     }
                 },
+
                 fabVisibility = fabVisibility,
             )
         },
         modifier = modifier
+
     ) { padding ->
         Column(
             modifier = modifier

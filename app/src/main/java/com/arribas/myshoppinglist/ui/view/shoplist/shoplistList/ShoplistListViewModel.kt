@@ -5,14 +5,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.arribas.myshoppinglist.data.model.ArticleCategory
-import com.arribas.myshoppinglist.data.model.QArticle
 import com.arribas.myshoppinglist.data.model.Shoplist
 import com.arribas.myshoppinglist.data.repository.ShoplistRepository
 import com.arribas.myshoppinglist.data.utils.DIALOG_UI_TAG
 import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.ui.view.shoplist.ShoplistUiState
 import com.arribas.myshoppinglist.ui.view.shoplist.toItem
+import com.arribas.myshoppinglist.ui.view.shoplist.toShopListUiState
 import com.arribas.myshoppinglist.ui.view.shoplistList.SearchUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -37,22 +36,20 @@ class ShoplistListViewModel(
     private val _dialogState = MutableStateFlow(DialogUiState())
     val dialogState: StateFlow<DialogUiState> = _dialogState.asStateFlow()
 
-    lateinit var shoplist: Shoplist
-
     var shoplistUiState by mutableStateOf(ShoplistUiState())
         private set
 
     private val _toastMessage = MutableSharedFlow<String>()
     val toastMessage = _toastMessage.asSharedFlow()
 
+    init{
+        getData()
+    }
+
     fun sendMessage(message: String) {
         viewModelScope.launch {
             _toastMessage.emit(message)
         }
-    }
-
-    init{
-        getData()
     }
 
     fun search(_name: String){
@@ -66,50 +63,29 @@ class ShoplistListViewModel(
     }
 
     fun onDialogDelete(shoplist: Shoplist){
+        this.shoplistUiState = shoplist.toShopListUiState()
+
         onOpenDialogClicked(
-            shoplist = shoplist,
             tag = DIALOG_UI_TAG.TAG_DELETE
         )
     }
 
-    fun onUpdateItem(shoplist: Shoplist){
-        this.shoplistUiState.copy(id = shoplist.id, name = shoplist.name, type = shoplist.type)
-    }
-
-    fun updateItem(shoplist: Shoplist) {
-        /*article = qArticle
-
-        viewModelScope.launch(Dispatchers.IO) {
-            //println("article: $article")
-            if(qArticle.shopCheked){
-                val articleShop = articleShopRepository.getItemByName(qArticle.name)
-
-                if(articleShop.first() != null) {
-                    articleShopRepository.deleteItem(articleShop.first()!!)
-                }
-
-            }else{
-                val count: Int = articleShopRepository.count()
-
-                val articleShop = ArticleShop(
-                    name = qArticle.name,
-                    order = count + 1
-                )
-
-                articleShopRepository.insertItem(articleShop)
-            }
-
-            articleRepository.updateItem(
-                qArticleToArticle(
-                    article.copy(shopCheked = !article.shopCheked)))
-        }*/
-    }
-
-    private fun onOpenDialogClicked(shoplist: Shoplist? = null, tag: DIALOG_UI_TAG) {
-        if(shoplist !== null) {
-            this.shoplist = shoplist
+    /**AlertDialog functions****************************************/
+    fun onDialogConfirm() {
+        when(_dialogState.value.tag) {
+            DIALOG_UI_TAG.TAG_DELETE  -> deleteItem()
+            else -> {}
         }
 
+        _dialogState.value = DialogUiState(isShow = false)
+    }
+
+    fun onDialogDismiss() {
+        _dialogState.value = DialogUiState(isShow = false)
+    }
+
+    /**Private functions************************************************/
+    private fun onOpenDialogClicked(tag: DIALOG_UI_TAG) {
         val _dialog: DialogUiState
 
         when(tag) {
@@ -129,16 +105,13 @@ class ShoplistListViewModel(
     }
 
     private fun deleteItem() {
-        if(shoplist == null){
-            return
-        }
 
         viewModelScope.launch(Dispatchers.IO) {
             //val articleCategorys = articleCategoryRepository.getByArticle(article.id)
             //TODO:: Delete articles to list
 
             try {
-                shoplistRepository.deleteItem(shoplist!!)
+                shoplistRepository.deleteItem(shoplistUiState.toItem())
 
                 sendMessage("Item borrado correctamente")
 
@@ -148,18 +121,6 @@ class ShoplistListViewModel(
         }
     }
 
-    fun onDialogConfirm() {
-        when(_dialogState.value.tag) {
-            DIALOG_UI_TAG.TAG_DELETE  -> deleteItem()
-            else -> {}
-        }
-
-        _dialogState.value = DialogUiState(isShow = false)
-    }
-
-    fun onDialogDismiss() {
-        _dialogState.value = DialogUiState(isShow = false)
-    }
 
     private fun getData(){
         viewModelScope.launch {
