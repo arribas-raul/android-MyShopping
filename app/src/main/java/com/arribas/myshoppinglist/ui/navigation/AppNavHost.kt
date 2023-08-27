@@ -14,6 +14,7 @@ import com.arribas.myshoppinglist.ui.view.article.articleDetail.ArticleDetailScr
 import com.arribas.myshoppinglist.ui.view.article.articleList.ListArticleScreen
 import com.arribas.myshoppinglist.ui.view.article.articleNew.ArticleNewScreen
 import com.arribas.myshoppinglist.ui.view.listArticleShop.ListArticleShopScreen
+import com.arribas.myshoppinglist.ui.view.shoplist.shoplistDetail.ShoplistDetailScreen
 import com.arribas.myshoppinglist.ui.view.shoplist.shoplistList.ShoplistListScreen
 
 /**
@@ -72,7 +73,30 @@ fun MyAppNavHost(
         composable(
             route = Routes.ShoplistListScreen.route.toString()
         ){
-            ShoplistListScreen()
+            ShoplistListScreen(
+                navigateToItemUpdate = {
+                    onItemClick(RouteEnum.SHOPLIST_DETAIL)
+                    navController.navigate("${Routes.ShoplistDetailScreen.route}/${it}")
+                }
+            )
+        }
+
+        composable(
+            route = Routes.ShoplistMainDetailScreen.route.toString()
+        ){
+            ShoplistDetailScreen()
+        }
+
+        composable(
+            route = Routes.ShoplistDetailScreen.routeWithArgs,
+            arguments = listOf(navArgument(Routes.ShoplistDetailScreen.itemIdArg) {
+                type = NavType.IntType
+            })
+        ){
+            ShoplistDetailScreen(
+                navigateBack = { navController.popBackStack() },
+                modifier = modifier,
+            )
         }
     }
 }
@@ -87,5 +111,7 @@ fun navigate(
         RouteEnum.ARTICLE_NEW     -> navController.navigate(Routes.ArticleNewScreen.route.toString())
         RouteEnum.ARTICLE_DETAIL  -> navController.navigate(Routes.ArticleDetailScreen.routeWithArgs)
         RouteEnum.SHOPLIST_LIST   -> navController.navigate(Routes.ShoplistListScreen.route.toString())
+        RouteEnum.SHOPLIST_MAIN_DETAIL -> navController.navigate(Routes.ShoplistMainDetailScreen.route.toString())
+        RouteEnum.SHOPLIST_DETAIL   -> navController.navigate(Routes.ShoplistDetailScreen.route.toString())
     }
 }

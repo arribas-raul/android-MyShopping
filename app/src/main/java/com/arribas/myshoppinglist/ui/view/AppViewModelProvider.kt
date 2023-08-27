@@ -10,10 +10,11 @@ import com.arribas.myshoppinglist.AppApplication
 import com.arribas.myshoppinglist.ui.view.category.CategoryViewModel
 import com.arribas.myshoppinglist.ui.view.article.articleDetail.DetailViewModel
 import com.arribas.myshoppinglist.ui.view.article.articleNew.NewViewModel
-import com.arribas.myshoppinglist.ui.view.shoplist.shoplistDetail.ShoplistDetailViewModel
+import com.arribas.myshoppinglist.ui.view.shoplist.shoplistBottomSheet.ShoplistBottomSheetViewModel
 import com.arribas.myshoppinglist.ui.view.shoplistList.ListArticleViewModel
 import com.arribas.myshoppinglist.ui.view.shoplist.shoplistList.ShoplistListViewModel
 import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.ListArticleShopViewModel
+import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.ShoplistDetailViewModel
 
 /**
  * Provides Factory to create instance of ViewModel for the entire Inventory app
@@ -63,8 +64,16 @@ object AppViewModelProvider {
         }
 
         initializer {
-            ShoplistDetailViewModel(
+            ShoplistBottomSheetViewModel(
                 AppApplication().container.shoplistRepository
+            )
+        }
+
+        initializer {
+            ShoplistDetailViewModel(
+                this.createSavedStateHandle(),
+                AppApplication().container.shoplistRepository,
+                AppApplication().container.shoplistArticleRepository
             )
         }
     }

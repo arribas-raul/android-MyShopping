@@ -1,4 +1,4 @@
-package com.arribas.myshoppinglist.ui.view.shoplist.shoplistDetail
+package com.arribas.myshoppinglist.ui.view.shoplist.shoplistBottomSheet
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
@@ -42,7 +42,7 @@ import com.arribas.myshoppinglist.ui.view.shoplist.ShoplistUiState
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ShoplistBottomSheet(
-    viewModel: ShoplistDetailViewModel,
+    viewModel: ShoplistBottomSheetViewModel,
     modifier: Modifier = Modifier,
     sheetState: ModalBottomSheetState,
     showModalSheet: MutableState<Boolean>

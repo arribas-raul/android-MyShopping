@@ -51,26 +51,26 @@ import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.AppViewModelProvider
 import com.arribas.myshoppinglist.ui.view.general.FloatingButton
 import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
-import com.arribas.myshoppinglist.ui.view.shoplist.ShoplistUiState
-import com.arribas.myshoppinglist.ui.view.shoplist.shoplistDetail.ShoplistBottomSheet
-import com.arribas.myshoppinglist.ui.view.shoplist.shoplistDetail.ShoplistDetailViewModel
+import com.arribas.myshoppinglist.ui.view.general.filter.GeneralFilter
+import com.arribas.myshoppinglist.ui.view.shoplist.shoplistBottomSheet.ShoplistBottomSheet
+import com.arribas.myshoppinglist.ui.view.shoplist.shoplistBottomSheet.ShoplistBottomSheetViewModel
 import com.arribas.myshoppinglist.ui.view.shoplist.toShopListUiState
-import com.arribas.myshoppinglist.ui.view.shoplistList.SearchName
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun ShoplistListScreen(
+    navigateToItemUpdate: (Int) -> Unit,
     listViewModel: ShoplistListViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    detailViewModel: ShoplistDetailViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    detailViewModel: ShoplistBottomSheetViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier
 ){
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
     val listUiState by listViewModel.listUiState.collectAsState()
-    val searchUiState by listViewModel.searchUiState.collectAsState()
+    val filterUiState by listViewModel.filterUiState.collectAsState()
     val dialogState: DialogUiState by listViewModel.dialogState.collectAsState()
 
     val showModalSheet = rememberSaveable {
@@ -104,7 +104,7 @@ fun ShoplistListScreen(
             FloatingButton(
                 onClick = { showModalSheet.value = true
                     scope.launch {
-                        detailViewModel.clearUiState()
+                        detailViewModel.onClearUiState()
                         sheetState.show()
                     }
                 },
@@ -127,11 +127,11 @@ fun ShoplistListScreen(
                     .padding(horizontal = 8.dp)
             ) {
 
-                SearchName(
-                    searchUiState = searchUiState,
-                    onValueChange = { listViewModel.search(it) },
+                GeneralFilter(
+                    filterUiState = filterUiState,
+                    onValueChange = { listViewModel.onSearch(it) },
                     onKeyEvent = { },
-                    clearName = listViewModel::clearName
+                    clearName = listViewModel::onClearName
                 )
 
                 ShopListBody(
@@ -139,12 +139,14 @@ fun ShoplistListScreen(
                     onDeleteItem = { listViewModel.onDialogDelete(it) },
 
                     onClickItem  = {
-                        detailViewModel.updateUiState(it.toShopListUiState())
+                        detailViewModel.onUpdateUiState(it.toShopListUiState())
 
                         scope.launch {
                             sheetState.show()
                         }
                     },
+
+                    onEditClick  = { navigateToItemUpdate(it) },
 
                     lazyState = listState
                 )
@@ -170,6 +172,7 @@ fun ShopListBody(
     itemList: List<Shoplist>,
     onDeleteItem: (Shoplist) -> Unit,
     onClickItem: (Shoplist) -> Unit,
+    onEditClick: (Int) -> Unit,
     lazyState: LazyListState,
     modifier: Modifier = Modifier){
 
@@ -197,7 +200,7 @@ fun ShopListBody(
                         item = item,
                         onItemClick = { onClickItem(it) },
                         onDeleteClick = { onDeleteItem(it) },
-                        onCheckClick = { onClickItem(it) },
+                        onEditClick = { onEditClick(it.id) },
                         modifier = Modifier
                     )
                 }
@@ -211,7 +214,7 @@ private fun ShoplistListItem(
     item: Shoplist,
     onItemClick: (Shoplist) -> Unit,
     onDeleteClick: (Shoplist) -> Unit,
-    onCheckClick: (Shoplist) -> Unit,
+    onEditClick: (Shoplist) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -219,7 +222,7 @@ private fun ShoplistListItem(
     ) {
         Row(modifier = Modifier
             .fillMaxWidth()
-            .clickable { onCheckClick(item) }
+            .clickable { onEditClick(item) }
             .background(colorResource(R.color.white))
             .padding(8.dp)
         ) {
@@ -269,14 +272,11 @@ private fun ShoplistListItem(
     }
 }
 
-
-
-
 @Preview(showBackground = true)
 @Composable
 fun ShoplistPreview() {
     MyShoppingListTheme {
-        ShoplistListScreen()
+        ShoplistListScreen( navigateToItemUpdate = {} )
     }
 }
 
@@ -294,7 +294,7 @@ fun ShoplistListItemPreview() {
             item = shoplist,
             onItemClick = {},
             onDeleteClick = {},
-            onCheckClick = {}
+            onEditClick = {}
         )
     }
 }

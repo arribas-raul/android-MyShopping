@@ -22,4 +22,12 @@ interface ShoplistArticleDao {
 
     @Query("SELECT * from shoplist_article WHERE id = :id")
     fun getItem(id: Int): Flow<ShoplistArticle>
+
+    @Query("SELECT * " +
+            "FROM shoplist_article " +
+            "WHERE shoplist_id = :list_id " +
+            "ORDER BY `order`")
+    fun getItemsByList(list_id: Int): Flow<List<ShoplistArticle>>
+
+
 }

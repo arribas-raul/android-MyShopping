@@ -41,7 +41,21 @@ object NavigationDrawerProvider {
                 text = "Lista de listas",
                 icon = R.drawable.ic_view_list,
                 menuLeftVisible = true
-            )
+            ),
+
+            ItemNavigationDrawer(
+                type = RouteEnum.SHOPLIST_MAIN_DETAIL,
+                text = "Lista de objetos",
+                icon = R.drawable.ic_view_list,
+                menuLeftVisible = true,
+                menuBottomVisible = true
+            ),
+
+            ItemNavigationDrawer(
+                type = RouteEnum.SHOPLIST_DETAIL,
+                text = "Lista de objetos",
+                icon = R.drawable.ic_view_list
+            ),
         )
     }
 }

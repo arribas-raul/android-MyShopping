@@ -28,6 +28,8 @@ interface ShoplistArticleRepositoryInterface {
      */
     fun getItem(id: Int): Flow<ShoplistArticle?>
 
+    fun getItemsByList(list_id: Int): Flow<List<ShoplistArticle>>
+
     /**
      * Insert item in the data source
      */
@@ -47,6 +49,8 @@ interface ShoplistArticleRepositoryInterface {
 class ShoplistArticleRepository(private val shoplistArticleDao: ShoplistArticleDao) : ShoplistArticleRepositoryInterface {
 
     override fun getItem(id: Int): Flow<ShoplistArticle?> = shoplistArticleDao.getItem(id)
+
+    override fun getItemsByList(list_id: Int): Flow<List<ShoplistArticle>> = shoplistArticleDao.getItemsByList(list_id)
 
     override suspend fun insertItem(item: ShoplistArticle) = shoplistArticleDao.insert(item)
 

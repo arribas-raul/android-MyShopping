@@ -9,10 +9,10 @@ import com.arribas.myshoppinglist.data.model.Shoplist
 import com.arribas.myshoppinglist.data.repository.ShoplistRepository
 import com.arribas.myshoppinglist.data.utils.DIALOG_UI_TAG
 import com.arribas.myshoppinglist.data.utils.DialogUiState
+import com.arribas.myshoppinglist.ui.view.general.filter.GeneralFilterUiState
 import com.arribas.myshoppinglist.ui.view.shoplist.ShoplistUiState
 import com.arribas.myshoppinglist.ui.view.shoplist.toItem
 import com.arribas.myshoppinglist.ui.view.shoplist.toShopListUiState
-import com.arribas.myshoppinglist.ui.view.shoplistList.SearchUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,8 +26,8 @@ class ShoplistListViewModel(
     private val shoplistRepository: ShoplistRepository
 ): ViewModel() {
 
-    private val _searchUiState = MutableStateFlow(SearchUiState())
-    var searchUiState: StateFlow<SearchUiState> = _searchUiState
+    private val _filterUiState = MutableStateFlow(GeneralFilterUiState())
+    var filterUiState: StateFlow<GeneralFilterUiState> = _filterUiState
 
     private val _listUiState = MutableStateFlow(ShoplisListUiState())
     val listUiState: StateFlow<ShoplisListUiState> = _listUiState
@@ -46,31 +46,26 @@ class ShoplistListViewModel(
         getData()
     }
 
-    fun sendMessage(message: String) {
-        viewModelScope.launch {
-            _toastMessage.emit(message)
-        }
-    }
+    fun onSearch(_name: String){
+        _filterUiState.value = _filterUiState.value.copy(name = _name)
 
-    fun search(_name: String){
-        _searchUiState.value = _searchUiState.value.copy(name = _name)
         getData()
     }
 
-    fun clearName(){
-        _searchUiState.value = _searchUiState.value.copy(name = "")
+    fun onClearName(){
+        _filterUiState.value = _filterUiState.value.copy(name = "")
         getData()
     }
 
+    /**AlertDialog functions****************************************/
     fun onDialogDelete(shoplist: Shoplist){
         this.shoplistUiState = shoplist.toShopListUiState()
 
-        onOpenDialogClicked(
+        openDialogClicked(
             tag = DIALOG_UI_TAG.TAG_DELETE
         )
     }
 
-    /**AlertDialog functions****************************************/
     fun onDialogConfirm() {
         when(_dialogState.value.tag) {
             DIALOG_UI_TAG.TAG_DELETE  -> deleteItem()
@@ -85,7 +80,7 @@ class ShoplistListViewModel(
     }
 
     /**Private functions************************************************/
-    private fun onOpenDialogClicked(tag: DIALOG_UI_TAG) {
+    private fun openDialogClicked(tag: DIALOG_UI_TAG) {
         val _dialog: DialogUiState
 
         when(tag) {
@@ -105,7 +100,6 @@ class ShoplistListViewModel(
     }
 
     private fun deleteItem() {
-
         viewModelScope.launch(Dispatchers.IO) {
             //val articleCategorys = articleCategoryRepository.getByArticle(article.id)
             //TODO:: Delete articles to list
@@ -121,10 +115,9 @@ class ShoplistListViewModel(
         }
     }
 
-
     private fun getData(){
         viewModelScope.launch {
-            shoplistRepository.getItemsByName(searchUiState.value.name).collect {
+            shoplistRepository.getItemsByName(filterUiState.value.name).collect {
                 list ->
                     _listUiState.value = ShoplisListUiState(
                         itemList = list,
@@ -133,14 +126,17 @@ class ShoplistListViewModel(
             }
         }
     }
+
+    /**Toast functions++++++*/
+    private fun sendMessage(message: String) {
+        viewModelScope.launch {
+            _toastMessage.emit(message)
+        }
+    }
 }
 
 data class ShoplisListUiState(
     var itemList: List<Shoplist> = listOf(),
     val itemCount: Int = 0,
     val filterName: String = ""
-)
-
-data class ShoplistFilter(
-    val name: String = ""
 )
