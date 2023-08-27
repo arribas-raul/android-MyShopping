@@ -36,11 +36,13 @@ import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
 import com.arribas.myshoppinglist.ui.view.AppViewModelProvider
+import com.arribas.myshoppinglist.ui.view.app.AppUiState
 import com.arribas.myshoppinglist.ui.view.shoplistList.ListArticleHeader
 import com.arribas.myshoppinglist.ui.view.shoplistList.ListArticleViewModel
 
 @Composable
 fun ListArticleScreen(
+    appUiState: AppUiState = AppUiState(),
     navigateToItemUpdate: (Int) -> Unit,
     viewModel: ListArticleViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier){
@@ -48,6 +50,8 @@ fun ListArticleScreen(
     val listUiState by viewModel.listUiState.collectAsState()
     val searchUiState by viewModel.searchUiState.collectAsState()
     val dialogState: DialogUiState by viewModel.dialogState.collectAsState()
+
+    //appUiState.title = stringResource(R.string.article_list_title)
 
     Column {
         ListArticleHeader(

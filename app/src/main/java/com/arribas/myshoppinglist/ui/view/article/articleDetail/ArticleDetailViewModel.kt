@@ -12,6 +12,7 @@ import com.arribas.myshoppinglist.data.repository.ArticleRepository
 import com.arribas.myshoppinglist.data.utils.DIALOG_UI_TAG
 import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.ui.navigation.route.Routes
+import com.arribas.myshoppinglist.ui.view.app.AppObject
 import com.arribas.myshoppinglist.ui.view.app.AppUiState
 import com.arribas.myshoppinglist.ui.view.article.articleList.ArticleUiState
 import com.arribas.myshoppinglist.ui.view.article.articleList.isValid
@@ -39,6 +40,9 @@ class ArticleDetailViewModel(
 
     var articleUiState by mutableStateOf(ArticleUiState())
         private set
+
+    private val _appUiState = MutableStateFlow(AppUiState())
+    val appUiState: StateFlow<AppUiState> = _appUiState
 
     init {
         try {

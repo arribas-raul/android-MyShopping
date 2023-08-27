@@ -62,6 +62,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun ShoplistListScreen(
+    appUiState: AppUiState = AppUiState(),
     navigateToItemUpdate: (Int) -> Unit,
     listViewModel: ShoplistListViewModel = viewModel(factory = AppViewModelProvider.Factory),
     detailViewModel: ShoplistBottomSheetViewModel = viewModel(factory = AppViewModelProvider.Factory),
@@ -87,6 +88,8 @@ fun ShoplistListScreen(
     val fabVisibility by derivedStateOf {
         listState.firstVisibleItemIndex == 0
     }
+
+    //appUiState.title = stringResource(R.string.shoplist_list_title)
 
     LaunchedEffect(Unit) {
         listViewModel

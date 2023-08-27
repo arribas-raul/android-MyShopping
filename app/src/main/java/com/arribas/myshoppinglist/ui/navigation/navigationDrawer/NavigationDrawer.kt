@@ -1,5 +1,6 @@
 package com.arribas.myshoppinglist.ui.navigation.navigationDrawer
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.arribas.myshoppinglist.R
+import com.arribas.myshoppinglist.ui.view.app.AppUiState
 import com.arribas.myshoppinglist.ui.view.onSelectItemNavDrawer
 import kotlinx.coroutines.CoroutineScope
 
@@ -29,6 +31,8 @@ import kotlinx.coroutines.CoroutineScope
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavigationDrawer(
+    context: Context,
+    appUiState: AppUiState,
     items: List<ItemNavigationDrawer>,
     selectedItem: ItemNavigationDrawer,
     onSelectedItem: (ItemNavigationDrawer)-> Unit,
@@ -45,8 +49,14 @@ fun NavigationDrawer(
 
             onItemClick = {
                 onSelectedItem(it)
+
                 onSelectItemNavDrawer(
-                    it, drawerState, scope, navController)
+                    context,
+                    appUiState,
+                    it,
+                    drawerState,
+                    scope,
+                    navController)
             },
 
             modifier = Modifier.padding(top = 20.dp)

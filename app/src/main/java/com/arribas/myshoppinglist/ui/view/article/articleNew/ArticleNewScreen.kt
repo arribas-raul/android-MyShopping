@@ -5,12 +5,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.arribas.myshoppinglist.R
 import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.data.utils.TextFieldDialogUiState
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.AppViewModelProvider
+import com.arribas.myshoppinglist.ui.view.app.AppUiState
 import com.arribas.myshoppinglist.ui.view.category.CategoryViewModel
 import com.arribas.myshoppinglist.ui.view.category.ListCategoryUiState
 import com.arribas.myshoppinglist.ui.view.general.DetailBody
@@ -22,6 +25,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ArticleNewScreen(
+    appUiState: AppUiState = AppUiState(),
     viewModel: NewViewModel = viewModel(factory = AppViewModelProvider.Factory),
     categoryViewModel: CategoryViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier
@@ -30,6 +34,8 @@ fun ArticleNewScreen(
     val dialogState: DialogUiState by viewModel.dialogState.collectAsState()
     val categoryDialogState: TextFieldDialogUiState by categoryViewModel.dialogState.collectAsState()
     val listCategoryUiState by categoryViewModel.listUiState.collectAsState()
+
+    //appUiState.title = stringResource(R.string.article_new_title)
 
     NewForm(
         updateUiState = { viewModel.updateUiState(it) },

@@ -1,5 +1,6 @@
 package com.arribas.myshoppinglist.ui.navigation
 
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -15,6 +16,7 @@ import com.arribas.myshoppinglist.R
 import com.arribas.myshoppinglist.ui.navigation.navigationDrawer.ItemNavigationDrawer
 import com.arribas.myshoppinglist.ui.navigation.route.RouteEnum
 import com.arribas.myshoppinglist.ui.navigation.route.Routes
+import com.arribas.myshoppinglist.ui.view.app.AppUiState
 import com.arribas.myshoppinglist.ui.view.app.AppViewModel
 import com.arribas.myshoppinglist.ui.view.article.articleDetail.ArticleDetailScreen
 import com.arribas.myshoppinglist.ui.view.article.articleList.ListArticleScreen
@@ -33,9 +35,7 @@ fun MyAppNavHost(
     modifier: Modifier = Modifier,
     onItemClick: (RouteEnum) -> Unit,
 ) {
-    //val mainViewModel = MainViewModel()
     val appUiState by appViewModel.appUiState.collectAsState()
-
     val context = LocalContext.current
 
     NavHost(
@@ -47,9 +47,8 @@ fun MyAppNavHost(
         composable(
             route = Routes.ShopListScreen.route.toString()
         ){
-            appUiState.title = context.getString(R.string.shoplist_detail_title)
-
             ListArticleShopScreen(
+                appUiState = appUiState,
                 navigateToItemUpdate = {}
             )
         }
@@ -57,12 +56,14 @@ fun MyAppNavHost(
         composable(
             route = Routes.ArticleListScreen.route.toString()
         ){
-            appUiState.title = context.getString(R.string.article_list_title)
-
             ListArticleScreen(
+                appUiState = appUiState,
                 navigateToItemUpdate = {
                     onItemClick(RouteEnum.ARTICLE_DETAIL)
+
                     navController.navigate("${Routes.ArticleDetailScreen.route}/${it}")
+
+                    appUiState.title = context.getString(R.string.article_detail_title)
                 }
             )
         }
@@ -70,9 +71,7 @@ fun MyAppNavHost(
         composable(
             route = Routes.ArticleNewScreen.route.toString()
         ){
-            appUiState.title = context.getString(R.string.article_new_title)
-
-            ArticleNewScreen()
+            ArticleNewScreen(appUiState = appUiState,)
         }
 
         composable(
@@ -81,9 +80,8 @@ fun MyAppNavHost(
                 type = NavType.IntType
             })
         ){
-            appUiState.title = context.getString(R.string.article_detail_title)
-
             ArticleDetailScreen(
+                appUiState = appUiState,
                 navigateBack = { navController.popBackStack() },
                 modifier = modifier,
             )
@@ -92,12 +90,12 @@ fun MyAppNavHost(
         composable(
             route = Routes.ShoplistListScreen.route.toString()
         ){
-            appUiState.title = context.getString(R.string.shoplist_list_title)
-
             ShoplistListScreen(
+                appUiState = appUiState,
                 navigateToItemUpdate = {
                     onItemClick(RouteEnum.SHOPLIST_DETAIL)
                     navController.navigate("${Routes.ShoplistDetailScreen.route}/${it}")
+                    appUiState.title = context.getString(R.string.shoplist_detail_title)
                 }
             )
         }
@@ -105,9 +103,7 @@ fun MyAppNavHost(
         composable(
             route = Routes.ShoplistMainDetailScreen.route.toString()
         ){
-            appUiState.title = context.getString(R.string.shoplist_detail_title)
-
-            ShoplistDetailScreen()
+            ShoplistDetailScreen(appUiState = appUiState)
         }
 
         composable(
@@ -116,9 +112,8 @@ fun MyAppNavHost(
                 type = NavType.IntType
             })
         ){
-            appUiState.title = context.getString(R.string.shoplist_detail_title)
-
             ShoplistDetailScreen(
+                appUiState = appUiState,
                 navigateBack = { navController.popBackStack() },
                 modifier = modifier,
             )
@@ -127,16 +122,39 @@ fun MyAppNavHost(
 }
 
 fun navigate(
+    appUiState: AppUiState,
+    context: Context,
     item: ItemNavigationDrawer,
     navController: NavHostController
 ){
     when(item.type){
-        RouteEnum.SHOP_LIST       -> navController.navigate(Routes.ShopListScreen.route.toString())
-        RouteEnum.ARTICLE_LIST    -> navController.navigate(Routes.ArticleListScreen.route.toString())
-        RouteEnum.ARTICLE_NEW     -> navController.navigate(Routes.ArticleNewScreen.route.toString())
-        RouteEnum.ARTICLE_DETAIL  -> navController.navigate(Routes.ArticleDetailScreen.routeWithArgs)
-        RouteEnum.SHOPLIST_LIST   -> navController.navigate(Routes.ShoplistListScreen.route.toString())
-        RouteEnum.SHOPLIST_MAIN_DETAIL -> navController.navigate(Routes.ShoplistMainDetailScreen.route.toString())
-        RouteEnum.SHOPLIST_DETAIL   -> navController.navigate(Routes.ShoplistDetailScreen.route.toString())
+        RouteEnum.SHOP_LIST -> {
+            navController.navigate(Routes.ShopListScreen.route.toString())
+            appUiState.title = context.getString(R.string.shoplist_list_title)
+        }
+        RouteEnum.ARTICLE_LIST    -> {
+            navController.navigate(Routes.ArticleListScreen.route.toString())
+            appUiState.title = context.getString(R.string.article_list_title)
+        }
+        RouteEnum.ARTICLE_NEW     -> {
+            navController.navigate(Routes.ArticleNewScreen.route.toString())
+            appUiState.title = context.getString(R.string.article_new_title)
+        }
+        RouteEnum.ARTICLE_DETAIL  -> {
+            navController.navigate(Routes.ArticleDetailScreen.routeWithArgs)
+            appUiState.title = context.getString(R.string.article_detail_title)
+        }
+        RouteEnum.SHOPLIST_LIST   -> {
+            navController.navigate(Routes.ShoplistListScreen.route.toString())
+            appUiState.title = context.getString(R.string.shoplist_list_title)
+        }
+        RouteEnum.SHOPLIST_MAIN_DETAIL -> {
+            navController.navigate(Routes.ShoplistMainDetailScreen.route.toString())
+            appUiState.title = context.getString(R.string.shoplist_detail_title)
+        }
+        RouteEnum.SHOPLIST_DETAIL   -> {
+            navController.navigate(Routes.ShoplistDetailScreen.route.toString())
+            appUiState.title = context.getString(R.string.shoplist_detail_title)
+        }
     }
 }

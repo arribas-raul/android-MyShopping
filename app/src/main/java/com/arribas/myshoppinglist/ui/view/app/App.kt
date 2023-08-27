@@ -1,5 +1,6 @@
 package com.arribas.myshoppinglist.ui.view
 
+import android.content.Context
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -17,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -27,6 +29,7 @@ import com.arribas.myshoppinglist.ui.view.general.MyBottomBar
 import com.arribas.myshoppinglist.ui.navigation.navigationDrawer.NavigationDrawer
 import com.arribas.myshoppinglist.ui.navigation.navigationDrawer.NavigationDrawerProvider
 import com.arribas.myshoppinglist.ui.navigation.route.RouteEnum
+import com.arribas.myshoppinglist.ui.view.app.AppUiState
 import com.arribas.myshoppinglist.ui.view.app.AppViewModel
 import com.arribas.myshoppinglist.ui.view.general.MyTopBar
 import kotlinx.coroutines.CoroutineScope
@@ -53,12 +56,16 @@ fun App(
 
     val appUiState by appViewModel.appUiState.collectAsState()
 
+    val context = LocalContext.current
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         gesturesEnabled = drawerState.isOpen,
 
         drawerContent = {
             NavigationDrawer(
+                context = context,
+                appUiState = appUiState,
                 items = items,
                 selectedItem = selectedItem,
                 onSelectedItem = { selectedItem = it },
@@ -83,24 +90,23 @@ fun App(
                 selectedItem = items.find { item -> item.type == routeEnum }!!
 
                 onSelectItemNavDrawer(
-                    selectedItem, drawerState, scope, navController)
-
-                //appUiState.title = selectedItem.text
+                    context,
+                    appUiState,
+                    selectedItem,
+                    drawerState,
+                    scope,
+                    navController)
             },
 
             onSelectItem = {
                 val routeEnum: RouteEnum = it
 
                 lastSelectedItem = selectedItem
-
                 selectedItem = items.find { item -> item.type == routeEnum }!!
-
-                //appUiState.title = selectedItem.text
             },
 
             navigateUp = {
                 selectedItem = lastSelectedItem
-                appUiState.title = selectedItem.text
                 navController.popBackStack()
             },
 
@@ -158,6 +164,8 @@ fun Content(
 
 @OptIn(ExperimentalMaterial3Api::class)
 fun onSelectItemNavDrawer(
+    context: Context,
+    appUiState: AppUiState,
     selectedItem: ItemNavigationDrawer,
     drawerState: DrawerState,
     scope: CoroutineScope,
@@ -166,6 +174,8 @@ fun onSelectItemNavDrawer(
     scope.launch { drawerState.close() }
 
     navigate(
+        context = context,
+        appUiState = appUiState,
         item = selectedItem,
         navController = navController
     )

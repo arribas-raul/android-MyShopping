@@ -5,8 +5,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.arribas.myshoppinglist.R
 import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.data.utils.TextFieldDialogUiState
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
@@ -23,6 +25,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ArticleDetailScreen(
+    appUiState: AppUiState,
     navigateBack: () -> Unit,
     viewModel: ArticleDetailViewModel = viewModel(factory = AppViewModelProvider.Factory),
     categoryViewModel: CategoryViewModel = viewModel(factory = AppViewModelProvider.Factory),
@@ -33,6 +36,8 @@ fun ArticleDetailScreen(
     val categoryDialogState: TextFieldDialogUiState by categoryViewModel.dialogState.collectAsState()
     val listCategoryUiState by categoryViewModel.listUiState.collectAsState()
 
+    //appUiState.title =
+//appUiState.copy(title = stringResource(R.string.article_detail_title))
     DetailBody(
         articleUiState = viewModel.articleUiState,
 
