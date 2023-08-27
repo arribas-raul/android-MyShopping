@@ -1,5 +1,7 @@
 package com.arribas.myshoppinglist.ui.viewModel.listArticleShop
 
+import android.app.Application
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -14,6 +16,8 @@ import com.arribas.myshoppinglist.data.repository.ShoplistArticleRepository
 import com.arribas.myshoppinglist.data.repository.ShoplistRepository
 import com.arribas.myshoppinglist.data.utils.DIALOG_UI_TAG
 import com.arribas.myshoppinglist.data.utils.DialogUiState
+import com.arribas.myshoppinglist.data.utils.PreferencesEnum
+import com.arribas.myshoppinglist.data.utils.PreferencesManager
 import com.arribas.myshoppinglist.ui.navigation.route.Routes
 import com.arribas.myshoppinglist.ui.view.article.articleList.toArticleUiState
 import com.arribas.myshoppinglist.ui.view.shoplist.ShoplistUiState
@@ -29,12 +33,13 @@ import kotlinx.coroutines.launch
 
 class ShoplistDetailViewModel(
     savedStateHandle: SavedStateHandle,
+    private val context: Context,
     private val shoplistRepository: ShoplistRepository,
     private val shoplistArticleRepository: ShoplistArticleRepository
 ) : ViewModel() {
 
     //private val itemId: Int = checkNotNull(savedStateHandle[Routes.ShoplistDetailScreen.itemIdArg])
-    private val itemId: Int = savedStateHandle[Routes.ShoplistDetailScreen.itemIdArg] ?: 0
+    private var itemId: Int = savedStateHandle[Routes.ShoplistDetailScreen.itemIdArg] ?: 0
 
     var shoplistUiState by mutableStateOf(ShoplistUiState())
         private set
@@ -99,7 +104,9 @@ class ShoplistDetailViewModel(
         viewModelScope.launch{
             try {
                 if(itemId == 0){
-                    //TODO::Recuperar lista de shared preferences
+                    itemId = PreferencesManager(context)
+                        .getData(PreferencesEnum.MAIN_LIST.toString(), "0")
+                        .toInt()
                 }
 
                 if(itemId == 0){

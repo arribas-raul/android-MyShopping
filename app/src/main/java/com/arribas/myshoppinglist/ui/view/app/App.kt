@@ -31,10 +31,10 @@ import com.arribas.myshoppinglist.ui.navigation.navigationDrawer.NavigationDrawe
 import com.arribas.myshoppinglist.ui.navigation.route.RouteEnum
 import com.arribas.myshoppinglist.ui.view.app.AppUiState
 import com.arribas.myshoppinglist.ui.view.app.AppViewModel
-import com.arribas.myshoppinglist.ui.view.general.MyTopBar
+import com.arribas.myshoppinglist.ui.view.app.topBar.AppBarState
+import com.arribas.myshoppinglist.ui.view.app.topBar.MyTopBar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-
 
 
 
@@ -76,7 +76,7 @@ fun App(
         }
     ) {
         Content(
-            appViewModel = appViewModel,
+            appUiState = appUiState,
             title = appUiState.title,
             items = items,
             navController = navController,
@@ -119,7 +119,7 @@ fun App(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Content(
-    appViewModel: AppViewModel,
+    appUiState: AppUiState,
     title: String,
     navController: NavHostController,
     items: List<ItemNavigationDrawer>,
@@ -131,14 +131,18 @@ fun Content(
     modifier: Modifier = Modifier
 ){
 
+    var appBarState by remember {
+        mutableStateOf(AppBarState())
+    }
+
     Scaffold(
         topBar = {
             MyTopBar(
                 title = title,
+                appBarState = appBarState,
                 canNavigateBack = !selectedItem.menuLeftVisible,
                 navigateUp = navigateUp,
-                onClickDrawer = onClick,
-                tag = RouteEnum.SHOP_LIST
+                onClickDrawer = onClick
             )
         },
 
@@ -154,7 +158,8 @@ fun Content(
             .wrapContentWidth()
             .padding(padding)) {
             MyAppNavHost(
-                appViewModel = appViewModel,
+                appUiState = appUiState,
+                appBarState = appBarState,
                 navController = navController,
                 onItemClick = { onSelectItem(it) }
             )

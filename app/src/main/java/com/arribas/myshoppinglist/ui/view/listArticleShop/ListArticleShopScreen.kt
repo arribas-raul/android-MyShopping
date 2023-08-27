@@ -9,11 +9,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,7 +38,7 @@ import com.arribas.myshoppinglist.data.model.ArticleShop
 import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.AppViewModelProvider
-import com.arribas.myshoppinglist.ui.view.app.AppUiState
+import com.arribas.myshoppinglist.ui.view.app.topBar.AppBarState
 import com.arribas.myshoppinglist.ui.view.general.CircleButton
 import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
 import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.ListArticleShopUiState
@@ -46,16 +51,30 @@ import org.burnoutcrew.reorderable.reorderable
 
 @Composable
 fun ListArticleShopScreen(
-    appUiState: AppUiState = AppUiState(),
+    onComposing: (AppBarState) -> Unit,
     navigateToItemUpdate: (Int) -> Unit,
     viewModel: ListArticleShopViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier){
 
-    //appUiState.title = stringResource(R.string.shoplist_detail_title)
-
     val listUiState by viewModel.listUiState.collectAsState()
     val searchUiState by viewModel.searchListArticleUiState.collectAsState()
     val dialogState: DialogUiState by viewModel.dialogState.collectAsState()
+
+    LaunchedEffect(key1 = true) {
+        onComposing(
+            AppBarState(
+                actions = {
+                    IconButton(onClick = {}) {
+                        Icon(
+                            imageVector = Icons.Rounded.Search,
+                            contentDescription = "",
+                            tint = Color.White,
+                        )
+                    }
+                }
+            )
+        )
+    }
 
     ListArticleShopBody(
         listUiState = listUiState,

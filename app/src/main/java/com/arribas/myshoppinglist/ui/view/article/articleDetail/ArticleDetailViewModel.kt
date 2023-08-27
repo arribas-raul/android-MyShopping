@@ -1,5 +1,6 @@
 package com.arribas.myshoppinglist.ui.view.article.articleDetail
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -40,9 +41,6 @@ class ArticleDetailViewModel(
 
     var articleUiState by mutableStateOf(ArticleUiState())
         private set
-
-    private val _appUiState = MutableStateFlow(AppUiState())
-    val appUiState: StateFlow<AppUiState> = _appUiState
 
     init {
         try {

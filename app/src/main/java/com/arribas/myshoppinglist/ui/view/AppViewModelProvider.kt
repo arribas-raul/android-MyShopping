@@ -77,6 +77,7 @@ object AppViewModelProvider {
         initializer {
             ShoplistDetailViewModel(
                 this.createSavedStateHandle(),
+                AppApplication().applicationContext,
                 AppApplication().container.shoplistRepository,
                 AppApplication().container.shoplistArticleRepository
             )

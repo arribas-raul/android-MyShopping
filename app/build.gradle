@@ -66,6 +66,7 @@ dependencies {
     implementation "androidx.compose.material:material:1.2.0-beta02"
 
     implementation "org.burnoutcrew.composereorderable:reorderable:0.9.6"
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
 
     implementation "androidx.room:room-runtime:$room_version"
     ksp "androidx.room:room-compiler:$room_version"

@@ -49,7 +49,7 @@ import com.arribas.myshoppinglist.data.model.Shoplist
 import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.AppViewModelProvider
-import com.arribas.myshoppinglist.ui.view.app.AppUiState
+import com.arribas.myshoppinglist.ui.view.app.topBar.AppBarState
 import com.arribas.myshoppinglist.ui.view.general.FloatingButton
 import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
 import com.arribas.myshoppinglist.ui.view.general.filter.GeneralFilter
@@ -62,8 +62,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun ShoplistListScreen(
-    appUiState: AppUiState = AppUiState(),
-    navigateToItemUpdate: (Int) -> Unit,
+    onComposing: (AppBarState) -> Unit = {},
+    navigateToItemUpdate: (Shoplist) -> Unit,
     listViewModel: ShoplistListViewModel = viewModel(factory = AppViewModelProvider.Factory),
     detailViewModel: ShoplistBottomSheetViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier
@@ -89,7 +89,15 @@ fun ShoplistListScreen(
         listState.firstVisibleItemIndex == 0
     }
 
-    //appUiState.title = stringResource(R.string.shoplist_list_title)
+    LaunchedEffect(key1 = true) {
+        onComposing(
+            AppBarState(
+                actions = {
+
+                }
+            )
+        )
+    }
 
     LaunchedEffect(Unit) {
         listViewModel
@@ -176,7 +184,7 @@ fun ShopListBody(
     itemList: List<Shoplist>,
     onDeleteItem: (Shoplist) -> Unit,
     onClickItem: (Shoplist) -> Unit,
-    onEditClick: (Int) -> Unit,
+    onEditClick: (Shoplist) -> Unit,
     lazyState: LazyListState,
     modifier: Modifier = Modifier){
 
@@ -204,7 +212,7 @@ fun ShopListBody(
                         item = item,
                         onItemClick = { onClickItem(it) },
                         onDeleteClick = { onDeleteItem(it) },
-                        onEditClick = { onEditClick(it.id) },
+                        onEditClick = { onEditClick(it) },
                         modifier = Modifier
                     )
                 }

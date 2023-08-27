@@ -1,21 +1,21 @@
 package com.arribas.myshoppinglist.ui.view.article.articleDetail
 
+import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.arribas.myshoppinglist.R
 import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.data.utils.TextFieldDialogUiState
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.general.DetailBody
 import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
 import com.arribas.myshoppinglist.ui.view.AppViewModelProvider
-import com.arribas.myshoppinglist.ui.view.app.AppUiState
+import com.arribas.myshoppinglist.ui.view.app.topBar.AppBarState
 import com.arribas.myshoppinglist.ui.view.category.CategoryViewModel
 import com.arribas.myshoppinglist.ui.view.general.TextFieldAlertDialog
 import com.arribas.myshoppinglist.ui.view.article.articleList.ArticleUiState
@@ -23,9 +23,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun ArticleDetailScreen(
-    appUiState: AppUiState,
+    onComposing: (AppBarState) -> Unit,
     navigateBack: () -> Unit,
     viewModel: ArticleDetailViewModel = viewModel(factory = AppViewModelProvider.Factory),
     categoryViewModel: CategoryViewModel = viewModel(factory = AppViewModelProvider.Factory),
@@ -36,8 +37,16 @@ fun ArticleDetailScreen(
     val categoryDialogState: TextFieldDialogUiState by categoryViewModel.dialogState.collectAsState()
     val listCategoryUiState by categoryViewModel.listUiState.collectAsState()
 
-    //appUiState.title =
-//appUiState.copy(title = stringResource(R.string.article_detail_title))
+    LaunchedEffect(key1 = true) {
+        onComposing(
+            AppBarState(
+                actions = {
+
+                }
+            )
+        )
+    }
+
     DetailBody(
         articleUiState = viewModel.articleUiState,
 
@@ -51,12 +60,14 @@ fun ArticleDetailScreen(
                 //navigateBack()
             }
         },
+
         onDeleteClick = {
             coroutineScope.launch(Dispatchers.IO) {
                 viewModel.onDialogDelete()
                 //navigateBack()
             }
         },
+
         listCategoryUiState = listCategoryUiState,
         onCategoryClick = categoryViewModel::openDialog
     )

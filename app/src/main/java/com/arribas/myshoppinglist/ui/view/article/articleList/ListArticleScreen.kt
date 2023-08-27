@@ -14,11 +14,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.List
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -36,14 +40,14 @@ import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
 import com.arribas.myshoppinglist.ui.view.AppViewModelProvider
-import com.arribas.myshoppinglist.ui.view.app.AppUiState
+import com.arribas.myshoppinglist.ui.view.app.topBar.AppBarState
 import com.arribas.myshoppinglist.ui.view.shoplistList.ListArticleHeader
 import com.arribas.myshoppinglist.ui.view.shoplistList.ListArticleViewModel
 
 @Composable
 fun ListArticleScreen(
-    appUiState: AppUiState = AppUiState(),
-    navigateToItemUpdate: (Int) -> Unit,
+    onComposing: (AppBarState) -> Unit,
+    navigateToItemUpdate: (QArticle) -> Unit,
     viewModel: ListArticleViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier){
 
@@ -51,7 +55,21 @@ fun ListArticleScreen(
     val searchUiState by viewModel.searchUiState.collectAsState()
     val dialogState: DialogUiState by viewModel.dialogState.collectAsState()
 
-    //appUiState.title = stringResource(R.string.article_list_title)
+    LaunchedEffect(key1 = true) {
+        onComposing(
+            AppBarState(
+                actions = {
+                    IconButton(onClick = {}) {
+                        Icon(
+                            imageVector = Icons.Rounded.List,
+                            contentDescription = "",
+                            tint = Color.White,
+                        )
+                    }
+                }
+            )
+        )
+    }
 
     Column {
         ListArticleHeader(
@@ -79,7 +97,7 @@ fun ListArticleScreen(
 @Composable
 fun ListArticleBody(
     itemList: List<QArticle>,
-    navigateToItemUpdate: (Int) -> Unit,
+    navigateToItemUpdate: (QArticle) -> Unit,
     deleteItem: (QArticle) -> Unit,
     updateItem: (QArticle) -> Unit,
     modifier: Modifier = Modifier){
@@ -97,7 +115,7 @@ fun ListArticleBody(
         } else {
             InventoryList(
                 itemList = itemList,
-                onItemClick = { navigateToItemUpdate(it.id) },
+                onItemClick = { navigateToItemUpdate(it) },
                 onDeleteClick = { deleteItem(it) },
                 onCheckClick =  { updateItem(it) }
             )
