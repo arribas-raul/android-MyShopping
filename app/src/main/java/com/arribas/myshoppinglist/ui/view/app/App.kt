@@ -10,12 +10,14 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.arribas.myshoppinglist.ui.navigation.MyAppNavHost
@@ -25,6 +27,7 @@ import com.arribas.myshoppinglist.ui.view.general.MyBottomBar
 import com.arribas.myshoppinglist.ui.navigation.navigationDrawer.NavigationDrawer
 import com.arribas.myshoppinglist.ui.navigation.navigationDrawer.NavigationDrawerProvider
 import com.arribas.myshoppinglist.ui.navigation.route.RouteEnum
+import com.arribas.myshoppinglist.ui.view.app.AppViewModel
 import com.arribas.myshoppinglist.ui.view.general.MyTopBar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -34,7 +37,11 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun App(modifier: Modifier = Modifier){
+fun App(
+    appViewModel: AppViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    modifier: Modifier = Modifier
+){
+
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
@@ -43,6 +50,8 @@ fun App(modifier: Modifier = Modifier){
 
     var lastSelectedItem by remember { mutableStateOf(items[0]) }
     var selectedItem by remember { mutableStateOf(items[0]) }
+
+    val appUiState by appViewModel.appUiState.collectAsState()
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -60,7 +69,8 @@ fun App(modifier: Modifier = Modifier){
         }
     ) {
         Content(
-            title = selectedItem.text,
+            appViewModel = appViewModel,
+            title = appUiState.title,
             items = items,
             navController = navController,
             selectedItem = selectedItem,
@@ -74,17 +84,23 @@ fun App(modifier: Modifier = Modifier){
 
                 onSelectItemNavDrawer(
                     selectedItem, drawerState, scope, navController)
+
+                //appUiState.title = selectedItem.text
             },
 
             onSelectItem = {
                 val routeEnum: RouteEnum = it
 
                 lastSelectedItem = selectedItem
+
                 selectedItem = items.find { item -> item.type == routeEnum }!!
+
+                //appUiState.title = selectedItem.text
             },
 
             navigateUp = {
                 selectedItem = lastSelectedItem
+                appUiState.title = selectedItem.text
                 navController.popBackStack()
             },
 
@@ -97,6 +113,7 @@ fun App(modifier: Modifier = Modifier){
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Content(
+    appViewModel: AppViewModel,
     title: String,
     navController: NavHostController,
     items: List<ItemNavigationDrawer>,
@@ -107,6 +124,7 @@ fun Content(
     navigateUp: () -> Unit,
     modifier: Modifier = Modifier
 ){
+
     Scaffold(
         topBar = {
             MyTopBar(
@@ -130,6 +148,7 @@ fun Content(
             .wrapContentWidth()
             .padding(padding)) {
             MyAppNavHost(
+                appViewModel = appViewModel,
                 navController = navController,
                 onItemClick = { onSelectItem(it) }
             )

@@ -99,7 +99,7 @@ class ShoplistDetailViewModel(
         viewModelScope.launch{
             try {
                 if(itemId == 0){
-                    //TODO::Recuperar lista de shared preferendes
+                    //TODO::Recuperar lista de shared preferences
                 }
 
                 if(itemId == 0){

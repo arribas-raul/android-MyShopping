@@ -12,6 +12,7 @@ import com.arribas.myshoppinglist.data.repository.ArticleRepository
 import com.arribas.myshoppinglist.data.utils.DIALOG_UI_TAG
 import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.ui.navigation.route.Routes
+import com.arribas.myshoppinglist.ui.view.app.AppUiState
 import com.arribas.myshoppinglist.ui.view.article.articleList.ArticleUiState
 import com.arribas.myshoppinglist.ui.view.article.articleList.isValid
 import com.arribas.myshoppinglist.ui.view.article.articleList.toArticleUiState
@@ -28,7 +29,7 @@ import kotlinx.coroutines.launch
 /**
  * View Model to validate and insert items in the Room database.
  */
-class DetailViewModel(
+class ArticleDetailViewModel(
     savedStateHandle: SavedStateHandle,
     private val articleRepository: ArticleRepository,
     private val articleCategoryRepository: ArticleCategoryRepository

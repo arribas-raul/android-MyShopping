@@ -7,8 +7,9 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.arribas.myshoppinglist.AppApplication
+import com.arribas.myshoppinglist.ui.view.app.AppViewModel
 import com.arribas.myshoppinglist.ui.view.category.CategoryViewModel
-import com.arribas.myshoppinglist.ui.view.article.articleDetail.DetailViewModel
+import com.arribas.myshoppinglist.ui.view.article.articleDetail.ArticleDetailViewModel
 import com.arribas.myshoppinglist.ui.view.article.articleNew.NewViewModel
 import com.arribas.myshoppinglist.ui.view.shoplist.shoplistBottomSheet.ShoplistBottomSheetViewModel
 import com.arribas.myshoppinglist.ui.view.shoplistList.ListArticleViewModel
@@ -21,6 +22,10 @@ import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.ShoplistDetailVie
  */
 object AppViewModelProvider {
     val Factory = viewModelFactory {
+        initializer {
+            AppViewModel(AppApplication())
+        }
+
         initializer {
             ListArticleShopViewModel(
                 AppApplication().container.articleRepository,
@@ -44,7 +49,7 @@ object AppViewModelProvider {
         }
 
         initializer {
-            DetailViewModel(
+            ArticleDetailViewModel(
                 this.createSavedStateHandle(),
                 AppApplication().container.articleRepository,
                 AppApplication().container.articleCategoryRepository,

@@ -13,6 +13,7 @@ import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.general.DetailBody
 import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
 import com.arribas.myshoppinglist.ui.view.AppViewModelProvider
+import com.arribas.myshoppinglist.ui.view.app.AppUiState
 import com.arribas.myshoppinglist.ui.view.category.CategoryViewModel
 import com.arribas.myshoppinglist.ui.view.general.TextFieldAlertDialog
 import com.arribas.myshoppinglist.ui.view.article.articleList.ArticleUiState
@@ -23,7 +24,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ArticleDetailScreen(
     navigateBack: () -> Unit,
-    viewModel: DetailViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    viewModel: ArticleDetailViewModel = viewModel(factory = AppViewModelProvider.Factory),
     categoryViewModel: CategoryViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier
 ) {

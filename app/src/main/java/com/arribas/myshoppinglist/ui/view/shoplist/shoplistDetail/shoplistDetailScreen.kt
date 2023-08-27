@@ -16,3 +16,4 @@ fun ShoplistDetailScreen(
 ){
     Text(text = "lista")
 }
+
