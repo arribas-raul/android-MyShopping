@@ -2,6 +2,7 @@ package com.arribas.myshoppinglist.ui.view.general.filter
 
 import android.view.KeyEvent
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -22,8 +23,8 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.dp
 import com.arribas.myshoppinglist.R
-import com.arribas.myshoppinglist.ui.view.shoplistList.SearchUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,6 +74,7 @@ fun GeneralFilter(
 
         modifier = Modifier
             .fillMaxWidth()
+            .padding(horizontal = 10.dp)
             .onKeyEvent {
                 if (it.nativeKeyEvent.keyCode == KeyEvent.KEYCODE_ENTER) {
                     onKeyEvent()

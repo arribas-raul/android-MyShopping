@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arribas.myshoppinglist.R
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
+import com.arribas.myshoppinglist.ui.view.article.articleList.SearchUiState
 
 @Composable
 fun ListArticleHeader(

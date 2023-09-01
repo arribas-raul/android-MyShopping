@@ -15,6 +15,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -51,7 +52,7 @@ fun App(
     val navController = rememberNavController()
     val items = NavigationDrawerProvider.getData()
 
-    var lastSelectedItem by remember { mutableStateOf(items[0]) }
+    //var lastSelectedItem by remember { mutableStateOf(items[0]) }
     var selectedItem by remember { mutableStateOf(items[0]) }
 
     val appUiState by appViewModel.appUiState.collectAsState()
@@ -86,7 +87,9 @@ fun App(
             onItemClick = {
                 val routeEnum: RouteEnum = it
 
-                lastSelectedItem = selectedItem
+                //lastSelectedItem = selectedItem
+                appUiState.lastSelectedItems.add(selectedItem)
+
                 selectedItem = items.find { item -> item.type == routeEnum }!!
 
                 onSelectItemNavDrawer(
@@ -101,12 +104,14 @@ fun App(
             onSelectItem = {
                 val routeEnum: RouteEnum = it
 
-                lastSelectedItem = selectedItem
+                appUiState.lastSelectedItems.add(selectedItem)
+
                 selectedItem = items.find { item -> item.type == routeEnum }!!
             },
 
             navigateUp = {
-                selectedItem = lastSelectedItem
+                selectedItem = appUiState.lastSelectedItems.last()
+                appUiState.lastSelectedItems.removeLast()
                 navController.popBackStack()
             },
 

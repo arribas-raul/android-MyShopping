@@ -4,6 +4,7 @@ import com.arribas.myshoppinglist.R
 
 enum class RouteEnum {
     SHOP_LIST,
+    ARTICLE_MAIN_LIST,
     ARTICLE_LIST,
     ARTICLE_NEW,
     ARTICLE_DETAIL,
@@ -17,9 +18,18 @@ sealed class Routes{
         override val titleRes = R.string.shop_list_title
     }
 
+    object ArticleMainListScreen: Route {
+        override val route = RouteEnum.ARTICLE_MAIN_LIST
+        override val titleRes = R.string.article_list_title
+    }
+
     object ArticleListScreen: Route {
+        const val itemIdArg = "itemId"
+
         override val route = RouteEnum.ARTICLE_LIST
         override val titleRes = R.string.article_list_title
+
+        val routeWithArgs = "$route/{$itemIdArg}"
     }
 
     object ArticleNewScreen: Route {
@@ -50,8 +60,9 @@ sealed class Routes{
         const val itemIdArg = "itemId"
 
         override val route = RouteEnum.SHOPLIST_DETAIL
+        override val titleRes = R.string.shoplist_detail_title
+
         val routeWithArgs = "$route/{$itemIdArg}"
 
-        override val titleRes = R.string.shoplist_detail_title
     }
 }

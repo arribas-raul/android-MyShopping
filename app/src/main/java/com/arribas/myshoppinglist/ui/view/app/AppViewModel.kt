@@ -5,6 +5,9 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import com.arribas.myshoppinglist.R
+import com.arribas.myshoppinglist.data.model.QArticle
+import com.arribas.myshoppinglist.ui.navigation.navigationDrawer.ItemNavigationDrawer
+import com.arribas.myshoppinglist.ui.view.article.articleList.ListUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -20,5 +23,6 @@ class AppViewModel(private val context: Context) : ViewModel() {
 
 data class AppUiState(
     var title: String = "",
+    var lastSelectedItems: MutableList<ItemNavigationDrawer> = arrayListOf()
 )
 

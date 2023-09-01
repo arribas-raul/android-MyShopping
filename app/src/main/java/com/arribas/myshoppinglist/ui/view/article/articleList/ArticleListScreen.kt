@@ -42,11 +42,11 @@ import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
 import com.arribas.myshoppinglist.ui.view.AppViewModelProvider
 import com.arribas.myshoppinglist.ui.view.app.topBar.AppBarState
 import com.arribas.myshoppinglist.ui.view.shoplistList.ListArticleHeader
-import com.arribas.myshoppinglist.ui.view.shoplistList.ListArticleViewModel
 
 @Composable
-fun ListArticleScreen(
+fun ArticleListScreen(
     onComposing: (AppBarState) -> Unit,
+    navigateBack: () -> Unit,
     navigateToItemUpdate: (QArticle) -> Unit,
     viewModel: ListArticleViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier){

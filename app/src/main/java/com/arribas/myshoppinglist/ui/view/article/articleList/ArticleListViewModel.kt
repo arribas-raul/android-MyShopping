@@ -1,5 +1,6 @@
-package com.arribas.myshoppinglist.ui.view.shoplistList
+package com.arribas.myshoppinglist.ui.view.article.articleList
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arribas.myshoppinglist.data.model.Article
@@ -11,6 +12,7 @@ import com.arribas.myshoppinglist.data.repository.ArticleRepository
 import com.arribas.myshoppinglist.data.repository.ArticleShopRepository
 import com.arribas.myshoppinglist.data.utils.DIALOG_UI_TAG
 import com.arribas.myshoppinglist.data.utils.DialogUiState
+import com.arribas.myshoppinglist.ui.navigation.route.Routes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,11 +21,13 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class ListArticleViewModel(
+    savedStateHandle: SavedStateHandle,
     private val articleRepository: ArticleRepository,
     private val articleShopRepository: ArticleShopRepository,
     private val articleCategoryRepository: ArticleCategoryRepository
 ): ViewModel() {
 
+    private var itemId: Int = savedStateHandle[Routes.ArticleListScreen.itemIdArg] ?: 0
     private val _searchUiState = MutableStateFlow(SearchUiState())
     var searchUiState: StateFlow<SearchUiState> = _searchUiState
 

@@ -15,11 +15,19 @@ object NavigationDrawerProvider {
             ),
 
             ItemNavigationDrawer(
-                type = RouteEnum.ARTICLE_LIST,
+                type = RouteEnum.ARTICLE_MAIN_LIST,
                 text = "Lista de productos",
                 icon = R.drawable.ic_view_list,
                 menuLeftVisible = true,
                 menuBottomVisible = true
+            ),
+
+            ItemNavigationDrawer(
+                type = RouteEnum.ARTICLE_LIST,
+                text = "Lista de productos",
+                icon = R.drawable.ic_view_list,
+                menuLeftVisible = false,
+                menuBottomVisible = false
             ),
 
             ItemNavigationDrawer(

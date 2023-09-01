@@ -1,6 +1,5 @@
-package com.arribas.myshoppinglist.ui.viewModel.listArticleShop
+package com.arribas.myshoppinglist.ui.view.shoplist.shoplistDetail
 
-import android.app.Application
 import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -9,9 +8,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arribas.myshoppinglist.data.model.ArticleShop
-import com.arribas.myshoppinglist.data.repository.ArticleCategoryRepository
-import com.arribas.myshoppinglist.data.repository.ArticleRepository
-import com.arribas.myshoppinglist.data.repository.ArticleShopRepository
 import com.arribas.myshoppinglist.data.repository.ShoplistArticleRepository
 import com.arribas.myshoppinglist.data.repository.ShoplistRepository
 import com.arribas.myshoppinglist.data.utils.DIALOG_UI_TAG
@@ -19,7 +15,7 @@ import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.data.utils.PreferencesEnum
 import com.arribas.myshoppinglist.data.utils.PreferencesManager
 import com.arribas.myshoppinglist.ui.navigation.route.Routes
-import com.arribas.myshoppinglist.ui.view.article.articleList.toArticleUiState
+import com.arribas.myshoppinglist.ui.view.general.filter.GeneralFilterUiState
 import com.arribas.myshoppinglist.ui.view.shoplist.ShoplistUiState
 import com.arribas.myshoppinglist.ui.view.shoplist.toShopListUiState
 import kotlinx.coroutines.Dispatchers
@@ -47,11 +43,11 @@ class ShoplistDetailViewModel(
     private val _dialogState = MutableStateFlow(DialogUiState())
     val dialogState: StateFlow<DialogUiState> = _dialogState
 
-    private val _listUiState = MutableStateFlow(ListArticleShopUiState())
-    var listUiState: StateFlow<ListArticleShopUiState> = _listUiState
+    private val _listUiState = MutableStateFlow(ShoplistDetailUiState())
+    var listUiState: StateFlow<ShoplistDetailUiState> = _listUiState
 
-    private val _searchListArticleUiState = MutableStateFlow(SearchListArticleUiState())
-    var searchListArticleUiState: StateFlow<SearchListArticleUiState> = _searchListArticleUiState
+    private val _filterUiState = MutableStateFlow(GeneralFilterUiState())
+    var filterUiState: StateFlow<GeneralFilterUiState> = _filterUiState
 
     lateinit var article: ArticleShop
 
@@ -82,10 +78,14 @@ class ShoplistDetailViewModel(
     */
     }
 
-    fun onCheckFilter(_searchUiFilter: SearchListArticleUiState){
-        //_searchListArticleUiState = _searchListArticleUiState.copy(check = _searchUiFilter.check)
-        _searchListArticleUiState.value = _searchUiFilter
+    fun onSearch(_name: String){
+        _filterUiState.value = _filterUiState.value.copy(name = _name)
 
+        getData()
+    }
+
+    fun onClearName(){
+        _filterUiState.value = _filterUiState.value.copy(name = "")
         getData()
     }
 
@@ -246,7 +246,16 @@ class ShoplistDetailViewModel(
         _dialogState.value = _dialog
     }
 }
-/*
+
+data class ShoplistDetailUiState(
+    var itemList: List<ArticleShop> = listOf(),
+    val itemCount: Int = 0,
+    val itemSelectCount: Int = 0
+){
+    fun getTotalItemText(): String {
+        return "Total Items ${itemCount} - Select Items ${itemSelectCount}"
+    }
+}/*
 data class ListArticleShopUiState(
     var itemList: List<ArticleShop> = listOf(),
     val itemCount: Int = 0,

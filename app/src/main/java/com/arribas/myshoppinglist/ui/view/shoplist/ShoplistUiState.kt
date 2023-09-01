@@ -6,7 +6,11 @@ data class ShoplistUiState(
     val id: Int = 0,
     val name: String = "",
     val type: String = ""
-)
+){
+    fun existElement(): Boolean{
+        return id > 0
+    }
+}
 
 fun ShoplistUiState.toItem(): Shoplist = Shoplist(
     id = id,
@@ -26,3 +30,4 @@ fun Shoplist.toShopListUiState(): ShoplistUiState = ShoplistUiState(
 fun ShoplistUiState.isValid() : Boolean {
     return name.isNotBlank() && type.isNotBlank()
 }
+

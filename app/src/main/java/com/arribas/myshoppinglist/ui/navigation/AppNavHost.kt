@@ -15,7 +15,7 @@ import com.arribas.myshoppinglist.ui.navigation.route.Routes
 import com.arribas.myshoppinglist.ui.view.app.AppUiState
 import com.arribas.myshoppinglist.ui.view.app.topBar.AppBarState
 import com.arribas.myshoppinglist.ui.view.article.articleDetail.ArticleDetailScreen
-import com.arribas.myshoppinglist.ui.view.article.articleList.ListArticleScreen
+import com.arribas.myshoppinglist.ui.view.article.articleList.ArticleListScreen
 import com.arribas.myshoppinglist.ui.view.article.articleNew.ArticleNewScreen
 import com.arribas.myshoppinglist.ui.view.listArticleShop.ListArticleShopScreen
 import com.arribas.myshoppinglist.ui.view.shoplist.shoplistDetail.ShoplistDetailScreen
@@ -50,13 +50,63 @@ fun MyAppNavHost(
             )
         }
 
-        composable(
+        /*composable(
             route = Routes.ArticleListScreen.route.toString(),
         ){
             ListArticleScreen(
                 onComposing = {
                     appBarState.actions = it.actions
                 },
+                navigateToItemUpdate = {
+                    onItemClick(RouteEnum.ARTICLE_DETAIL)
+
+                    navController.navigate(
+                        route = "${Routes.ArticleDetailScreen.route}/${it.id}"
+                    )
+
+                    appUiState.title = it.name
+                }
+            )
+        }*/
+
+        composable(
+            route = Routes.ArticleMainListScreen.route.toString(),
+        ){
+            ArticleListScreen(
+                onComposing = {
+                    appBarState.actions = it.actions
+                },
+
+                navigateBack = { navController.popBackStack() },
+
+                navigateToItemUpdate = {
+                    onItemClick(RouteEnum.ARTICLE_DETAIL)
+
+                    navController.navigate(
+                        route = "${Routes.ArticleDetailScreen.route}/${it.id}"
+                    )
+
+                    appUiState.title = it.name
+                }
+            )
+        }
+
+        composable(
+            route = Routes.ArticleListScreen.routeWithArgs,
+
+            arguments = listOf(
+                navArgument(Routes.ArticleListScreen.itemIdArg) {
+                    type = NavType.IntType
+                }
+            )
+        ){
+            ArticleListScreen(
+                onComposing = {
+                    appBarState.actions = it.actions
+                },
+
+                navigateBack = { navController.popBackStack() },
+
                 navigateToItemUpdate = {
                     onItemClick(RouteEnum.ARTICLE_DETAIL)
 
@@ -120,6 +170,14 @@ fun MyAppNavHost(
                 onComposing = {
                     appBarState.actions = it.actions
                 },
+
+                navigateToItemUpdate = {
+                    onItemClick(RouteEnum.ARTICLE_LIST)
+
+                    navController.navigate(
+                        route = "${Routes.ArticleListScreen.route}/${it.id}"
+                    )
+                },
             )
         }
 
@@ -134,6 +192,15 @@ fun MyAppNavHost(
                     appBarState.actions = it.actions
                 },
                 navigateBack = { navController.popBackStack() },
+
+                navigateToItemUpdate = {
+                    onItemClick(RouteEnum.ARTICLE_LIST)
+
+                    navController.navigate(
+                        route = "${Routes.ArticleListScreen.route}/${it.id}"
+                    )
+                },
+
                 modifier = modifier,
             )
         }
@@ -151,8 +218,12 @@ fun navigate(
             navController.navigate(Routes.ShopListScreen.route.toString())
             appUiState.title = context.getString(R.string.shoplist_list_title)
         }
+        RouteEnum.ARTICLE_MAIN_LIST    -> {
+            navController.navigate(Routes.ArticleMainListScreen.route.toString())
+            appUiState.title = context.getString(R.string.article_list_title)
+        }
         RouteEnum.ARTICLE_LIST    -> {
-            navController.navigate(Routes.ArticleListScreen.route.toString())
+            navController.navigate(Routes.ArticleListScreen.routeWithArgs)
             appUiState.title = context.getString(R.string.article_list_title)
         }
         RouteEnum.ARTICLE_NEW     -> {
