@@ -110,6 +110,7 @@ class ShoplistDetailViewModel(
                 }
 
                 if(itemId == 0){
+                    shoplistUiState.copy(id = 0)
                     //TODO: Mostrar mensaje de que no hay lista
                 }else {
                     viewModelScope.launch(Dispatchers.IO) {
