@@ -87,9 +87,6 @@ fun App(
             onItemClick = {
                 val routeEnum: RouteEnum = it
 
-                //lastSelectedItem = selectedItem
-                appUiState.lastSelectedItems.add(selectedItem)
-
                 selectedItem = items.find { item -> item.type == routeEnum }!!
 
                 onSelectItemNavDrawer(
@@ -104,14 +101,17 @@ fun App(
             onSelectItem = {
                 val routeEnum: RouteEnum = it
 
-                appUiState.lastSelectedItems.add(selectedItem)
-
                 selectedItem = items.find { item -> item.type == routeEnum }!!
+
+                appUiState.lastSelectedItems.add(selectedItem)
             },
 
             navigateUp = {
-                selectedItem = appUiState.lastSelectedItems.last()
+
                 appUiState.lastSelectedItems.removeLast()
+                selectedItem = appUiState.lastSelectedItems.last()
+                appUiState.title = appUiState.actualTitle()
+
                 navController.popBackStack()
             },
 
@@ -145,7 +145,7 @@ fun Content(
             MyTopBar(
                 title = title,
                 appBarState = appBarState,
-                canNavigateBack = !selectedItem.menuLeftVisible,
+                canNavigateBack = !selectedItem.menuLeftVisible || appUiState.isLastItem(),
                 navigateUp = navigateUp,
                 onClickDrawer = onClick
             )
@@ -158,6 +158,7 @@ fun Content(
                 navigationItemContentList = items
             )
         }
+
     ) { padding ->
         Row(modifier = modifier
             .wrapContentWidth()
@@ -182,6 +183,9 @@ fun onSelectItemNavDrawer(
     navController: NavHostController
 ){
     scope.launch { drawerState.close() }
+
+    appUiState.lastSelectedItems.clear()
+    appUiState.addItem(selectedItem)
 
     navigate(
         context = context,

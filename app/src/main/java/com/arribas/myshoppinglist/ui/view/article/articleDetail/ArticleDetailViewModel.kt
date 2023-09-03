@@ -1,6 +1,5 @@
 package com.arribas.myshoppinglist.ui.view.article.articleDetail
 
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -13,8 +12,6 @@ import com.arribas.myshoppinglist.data.repository.ArticleRepository
 import com.arribas.myshoppinglist.data.utils.DIALOG_UI_TAG
 import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.ui.navigation.route.Routes
-import com.arribas.myshoppinglist.ui.view.app.AppObject
-import com.arribas.myshoppinglist.ui.view.app.AppUiState
 import com.arribas.myshoppinglist.ui.view.article.articleList.ArticleUiState
 import com.arribas.myshoppinglist.ui.view.article.articleList.isValid
 import com.arribas.myshoppinglist.ui.view.article.articleList.toArticleUiState

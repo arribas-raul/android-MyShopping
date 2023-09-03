@@ -45,6 +45,7 @@ import com.arribas.myshoppinglist.R
 import com.arribas.myshoppinglist.data.model.ArticleShop
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.AppViewModelProvider
+import com.arribas.myshoppinglist.ui.view.app.AppUiState
 import com.arribas.myshoppinglist.ui.view.app.topBar.AppBarState
 import com.arribas.myshoppinglist.ui.view.article.articleList.ArticleUiState
 import com.arribas.myshoppinglist.ui.view.general.CircleButton
@@ -67,6 +68,7 @@ fun ShoplistDetailScreen(
     navigateBack: (() -> Unit)? = null,
     listViewModel: ShoplistDetailViewModel = viewModel(factory = AppViewModelProvider.Factory),
     navigateToItemUpdate: (ShoplistUiState) -> Unit,
+    appUiState: AppUiState,
     modifier: Modifier = Modifier
 ) {
     val scope = rememberCoroutineScope()
@@ -78,6 +80,8 @@ fun ShoplistDetailScreen(
     val fabVisibility by derivedStateOf {
         listState.firstVisibleItemIndex == 0
     }
+
+    appUiState.lastSelectedItems.last().text = appUiState.title
 
     LaunchedEffect(key1 = true) {
         onComposing(
@@ -358,7 +362,7 @@ fun ShoplistDetailItemPreview() {
             item = article,
             onItemClick = {},
             onDeleteClick = {},
-            onCheckClick = {}
+            onCheckClick = {},
         )
     }
 }

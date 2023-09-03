@@ -15,19 +15,11 @@ object NavigationDrawerProvider {
             ),
 
             ItemNavigationDrawer(
-                type = RouteEnum.ARTICLE_MAIN_LIST,
+                type = RouteEnum.ARTICLE_LIST,
                 text = "Lista de productos",
                 icon = R.drawable.ic_view_list,
                 menuLeftVisible = true,
                 menuBottomVisible = true
-            ),
-
-            ItemNavigationDrawer(
-                type = RouteEnum.ARTICLE_LIST,
-                text = "Lista de productos",
-                icon = R.drawable.ic_view_list,
-                menuLeftVisible = false,
-                menuBottomVisible = false
             ),
 
             ItemNavigationDrawer(
@@ -52,17 +44,11 @@ object NavigationDrawerProvider {
             ),
 
             ItemNavigationDrawer(
-                type = RouteEnum.SHOPLIST_MAIN_DETAIL,
+                type = RouteEnum.SHOPLIST_DETAIL,
                 text = "Lista de objetos",
                 icon = R.drawable.ic_view_list,
                 menuLeftVisible = true,
                 menuBottomVisible = true
-            ),
-
-            ItemNavigationDrawer(
-                type = RouteEnum.SHOPLIST_DETAIL,
-                text = "Lista de objetos",
-                icon = R.drawable.ic_view_list
             ),
         )
     }

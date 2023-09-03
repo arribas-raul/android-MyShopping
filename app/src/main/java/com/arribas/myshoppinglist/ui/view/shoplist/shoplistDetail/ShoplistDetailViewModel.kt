@@ -35,7 +35,7 @@ class ShoplistDetailViewModel(
 ) : ViewModel() {
 
     //private val itemId: Int = checkNotNull(savedStateHandle[Routes.ShoplistDetailScreen.itemIdArg])
-    private var itemId: Int = savedStateHandle[Routes.ShoplistDetailScreen.itemIdArg] ?: 0
+    private var itemId: String? = savedStateHandle[Routes.ShoplistDetailScreen.itemIdArg]
 
     var shoplistUiState by mutableStateOf(ShoplistUiState())
         private set
@@ -103,24 +103,23 @@ class ShoplistDetailViewModel(
     private fun getData() {
         viewModelScope.launch{
             try {
-                if(itemId == 0){
+                if(itemId.isNullOrEmpty() ){
                     itemId = PreferencesManager(context)
                         .getData(PreferencesEnum.MAIN_LIST.toString(), "0")
-                        .toInt()
                 }
 
-                if(itemId == 0){
+                if(itemId.isNullOrEmpty()){
                     shoplistUiState.copy(id = 0)
                     //TODO: Mostrar mensaje de que no hay lista
                 }else {
                     viewModelScope.launch(Dispatchers.IO) {
                         delay(100)
-                        shoplistUiState = shoplistRepository.getItem(itemId)
+                        shoplistUiState = shoplistRepository.getItem(itemId!!.toInt())
                             .filterNotNull()
                             .first()
                             .toShopListUiState()
 
-                        val shoplistArticles = shoplistArticleRepository.getItemsByList(itemId)
+                        val shoplistArticles = shoplistArticleRepository.getItemsByList(itemId!!.toInt())
 
                         if (shoplistArticles.count() > 0) {
                             /*articleUiState =

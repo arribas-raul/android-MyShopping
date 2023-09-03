@@ -50,53 +50,13 @@ fun MyAppNavHost(
             )
         }
 
-        /*composable(
-            route = Routes.ArticleListScreen.route.toString(),
-        ){
-            ListArticleScreen(
-                onComposing = {
-                    appBarState.actions = it.actions
-                },
-                navigateToItemUpdate = {
-                    onItemClick(RouteEnum.ARTICLE_DETAIL)
-
-                    navController.navigate(
-                        route = "${Routes.ArticleDetailScreen.route}/${it.id}"
-                    )
-
-                    appUiState.title = it.name
-                }
-            )
-        }*/
-
-        composable(
-            route = Routes.ArticleMainListScreen.route.toString(),
-        ){
-            ArticleListScreen(
-                onComposing = {
-                    appBarState.actions = it.actions
-                },
-
-                navigateBack = { navController.popBackStack() },
-
-                navigateToItemUpdate = {
-                    onItemClick(RouteEnum.ARTICLE_DETAIL)
-
-                    navController.navigate(
-                        route = "${Routes.ArticleDetailScreen.route}/${it.id}"
-                    )
-
-                    appUiState.title = it.name
-                }
-            )
-        }
-
         composable(
             route = Routes.ArticleListScreen.routeWithArgs,
 
             arguments = listOf(
                 navArgument(Routes.ArticleListScreen.itemIdArg) {
-                    type = NavType.IntType
+                    type = NavType.StringType
+                    nullable = true
                 }
             )
         ){
@@ -137,11 +97,13 @@ fun MyAppNavHost(
                 }
             )
         ){
+
             ArticleDetailScreen(
                 onComposing = {
                     appBarState.actions = it.actions
                 },
-                navigateBack = { navController.popBackStack() },
+                navigateBack = {
+                    navController.popBackStack() },
                 modifier = modifier,
             )
         }
@@ -156,52 +118,41 @@ fun MyAppNavHost(
                 navigateToItemUpdate = {
                     onItemClick(RouteEnum.SHOPLIST_DETAIL)
 
-                    navController.navigate("${Routes.ShoplistDetailScreen.route}/${it.id}?name={name}")
-
+                    navController.navigate("${Routes.ShoplistDetailScreen.route}?${it.id}")
                     appUiState.title = it.name
                 }
             )
         }
 
         composable(
-            route = Routes.ShoplistMainDetailScreen.route.toString()
-        ){
-            ShoplistDetailScreen(
-                onComposing = {
-                    appBarState.actions = it.actions
-                },
-
-                navigateToItemUpdate = {
-                    onItemClick(RouteEnum.ARTICLE_LIST)
-
-                    navController.navigate(
-                        route = "${Routes.ArticleListScreen.route}/${it.id}"
-                    )
-                },
-            )
-        }
-
-        composable(
             route = Routes.ShoplistDetailScreen.routeWithArgs,
-            arguments = listOf(navArgument(Routes.ShoplistDetailScreen.itemIdArg) {
-                type = NavType.IntType
-            })
+
+            arguments = listOf(
+                navArgument(Routes.ShoplistDetailScreen.itemIdArg) {
+                    type = NavType.StringType
+                    nullable = true
+                }
+            )
         ){
             ShoplistDetailScreen(
                 onComposing = {
                     appBarState.actions = it.actions
                 },
+
                 navigateBack = { navController.popBackStack() },
 
                 navigateToItemUpdate = {
                     onItemClick(RouteEnum.ARTICLE_LIST)
 
                     navController.navigate(
-                        route = "${Routes.ArticleListScreen.route}/${it.id}"
+                        route = "${Routes.ArticleListScreen.route}?${it.id}"
                     )
-                },
 
-                modifier = modifier,
+                    appUiState.title = appUiState.actualTitle()
+                },
+                appUiState = appUiState,
+
+                modifier = modifier
             )
         }
     }
@@ -218,32 +169,24 @@ fun navigate(
             navController.navigate(Routes.ShopListScreen.route.toString())
             appUiState.title = context.getString(R.string.shoplist_list_title)
         }
-        RouteEnum.ARTICLE_MAIN_LIST    -> {
-            navController.navigate(Routes.ArticleMainListScreen.route.toString())
-            appUiState.title = context.getString(R.string.article_list_title)
-        }
-        RouteEnum.ARTICLE_LIST    -> {
+        RouteEnum.ARTICLE_LIST -> {
             navController.navigate(Routes.ArticleListScreen.routeWithArgs)
             appUiState.title = context.getString(R.string.article_list_title)
         }
-        RouteEnum.ARTICLE_NEW     -> {
+        RouteEnum.ARTICLE_NEW -> {
             navController.navigate(Routes.ArticleNewScreen.route.toString())
             appUiState.title = context.getString(R.string.article_new_title)
         }
-        RouteEnum.ARTICLE_DETAIL  -> {
+        RouteEnum.ARTICLE_DETAIL -> {
             navController.navigate(Routes.ArticleDetailScreen.routeWithArgs)
             appUiState.title = context.getString(R.string.article_detail_title)
         }
-        RouteEnum.SHOPLIST_LIST   -> {
+        RouteEnum.SHOPLIST_LIST -> {
             navController.navigate(Routes.ShoplistListScreen.route.toString())
             appUiState.title = context.getString(R.string.shoplist_list_title)
         }
-        RouteEnum.SHOPLIST_MAIN_DETAIL -> {
-            navController.navigate(Routes.ShoplistMainDetailScreen.route.toString())
-            appUiState.title = context.getString(R.string.shoplist_detail_title)
-        }
-        RouteEnum.SHOPLIST_DETAIL   -> {
-            navController.navigate(Routes.ShoplistDetailScreen.route.toString())
+        RouteEnum.SHOPLIST_DETAIL -> {
+            navController.navigate(Routes.ShoplistDetailScreen.routeWithArgs)
             appUiState.title = context.getString(R.string.shoplist_detail_title)
         }
     }

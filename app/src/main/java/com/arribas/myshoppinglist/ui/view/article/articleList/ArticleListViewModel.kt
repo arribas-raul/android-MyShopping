@@ -27,7 +27,7 @@ class ListArticleViewModel(
     private val articleCategoryRepository: ArticleCategoryRepository
 ): ViewModel() {
 
-    private var itemId: Int = savedStateHandle[Routes.ArticleListScreen.itemIdArg] ?: 0
+    private var itemId: String? = savedStateHandle[Routes.ArticleListScreen.itemIdArg]
     private val _searchUiState = MutableStateFlow(SearchUiState())
     var searchUiState: StateFlow<SearchUiState> = _searchUiState
 

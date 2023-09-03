@@ -50,6 +50,9 @@ fun NavigationDrawer(
             onItemClick = {
                 onSelectedItem(it)
 
+                appUiState.lastSelectedItems.clear()
+                appUiState.lastSelectedItems.add(it)
+
                 onSelectItemNavDrawer(
                     context,
                     appUiState,
