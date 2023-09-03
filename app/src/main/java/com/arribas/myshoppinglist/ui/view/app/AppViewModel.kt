@@ -8,6 +8,7 @@ import com.arribas.myshoppinglist.R
 import com.arribas.myshoppinglist.data.model.QArticle
 import com.arribas.myshoppinglist.ui.navigation.navigationDrawer.ItemNavigationDrawer
 import com.arribas.myshoppinglist.ui.navigation.navigationDrawer.NavigationDrawerProvider
+import com.arribas.myshoppinglist.ui.navigation.route.RouteEnum
 import com.arribas.myshoppinglist.ui.view.article.articleList.ListUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,9 +17,17 @@ class AppViewModel(context: Context) : ViewModel() {
 
     private val _appUiState = MutableStateFlow(AppUiState())
     val appUiState: StateFlow<AppUiState> = _appUiState
+    var menuItems: List<ItemNavigationDrawer>
 
     init{
         appUiState.value.title = context.resources.getString(R.string.shoplist_detail_title)
+        menuItems = NavigationDrawerProvider.getData()
+    }
+
+    fun findItem(routeEnum: RouteEnum): ItemNavigationDrawer{
+        val item: ItemNavigationDrawer? =  menuItems.find { item -> item.type == routeEnum }
+
+        return item ?: menuItems.first()
     }
 }
 

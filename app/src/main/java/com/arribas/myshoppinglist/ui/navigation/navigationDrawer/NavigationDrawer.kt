@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.arribas.myshoppinglist.R
 import com.arribas.myshoppinglist.ui.view.app.AppUiState
-import com.arribas.myshoppinglist.ui.view.onSelectItemNavDrawer
+import com.arribas.myshoppinglist.ui.view.app.onSelectItemNavDrawer
 import kotlinx.coroutines.CoroutineScope
 
 

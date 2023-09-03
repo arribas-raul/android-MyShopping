@@ -1,4 +1,4 @@
-package com.arribas.myshoppinglist.ui.view
+package com.arribas.myshoppinglist.ui.view.app
 
 import android.content.Context
 import androidx.compose.foundation.layout.Row
@@ -15,7 +15,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -28,10 +27,8 @@ import com.arribas.myshoppinglist.ui.navigation.navigate
 import com.arribas.myshoppinglist.ui.navigation.navigationDrawer.ItemNavigationDrawer
 import com.arribas.myshoppinglist.ui.view.general.MyBottomBar
 import com.arribas.myshoppinglist.ui.navigation.navigationDrawer.NavigationDrawer
-import com.arribas.myshoppinglist.ui.navigation.navigationDrawer.NavigationDrawerProvider
 import com.arribas.myshoppinglist.ui.navigation.route.RouteEnum
-import com.arribas.myshoppinglist.ui.view.app.AppUiState
-import com.arribas.myshoppinglist.ui.view.app.AppViewModel
+import com.arribas.myshoppinglist.ui.view.AppViewModelProvider
 import com.arribas.myshoppinglist.ui.view.app.topBar.AppBarState
 import com.arribas.myshoppinglist.ui.view.app.topBar.MyTopBar
 import kotlinx.coroutines.CoroutineScope
@@ -50,10 +47,7 @@ fun App(
     val scope = rememberCoroutineScope()
 
     val navController = rememberNavController()
-    val items = NavigationDrawerProvider.getData()
-
-    //var lastSelectedItem by remember { mutableStateOf(items[0]) }
-    var selectedItem by remember { mutableStateOf(items[0]) }
+    var selectedItem by remember { mutableStateOf(appViewModel.menuItems.first()) }
 
     val appUiState by appViewModel.appUiState.collectAsState()
 
@@ -67,7 +61,7 @@ fun App(
             NavigationDrawer(
                 context = context,
                 appUiState = appUiState,
-                items = items,
+                items = appViewModel.menuItems,
                 selectedItem = selectedItem,
                 onSelectedItem = { selectedItem = it },
                 drawerState = drawerState,
@@ -79,7 +73,7 @@ fun App(
         Content(
             appUiState = appUiState,
             title = appUiState.title,
-            items = items,
+            items = appViewModel.menuItems,
             navController = navController,
             selectedItem = selectedItem,
             onClick = { scope.launch { drawerState.open() } },
@@ -87,7 +81,8 @@ fun App(
             onItemClick = {
                 val routeEnum: RouteEnum = it
 
-                selectedItem = items.find { item -> item.type == routeEnum }!!
+                //selectedItem = appViewModel.menuItems.find { item -> item.type == routeEnum }!!
+                selectedItem = appViewModel.findItem(routeEnum)
 
                 onSelectItemNavDrawer(
                     context,
@@ -101,7 +96,8 @@ fun App(
             onSelectItem = {
                 val routeEnum: RouteEnum = it
 
-                selectedItem = items.find { item -> item.type == routeEnum }!!
+                //selectedItem = appViewModel.menuItems.find { item -> item.type == routeEnum }!!
+                selectedItem = appViewModel.findItem(routeEnum)
 
                 appUiState.lastSelectedItems.add(selectedItem)
             },
