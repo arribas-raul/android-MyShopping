@@ -1,15 +1,14 @@
 package com.arribas.myshoppinglist.ui.view.app
 
 import android.content.Context
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.arribas.myshoppinglist.R
-import com.arribas.myshoppinglist.data.model.QArticle
 import com.arribas.myshoppinglist.ui.navigation.navigationDrawer.ItemNavigationDrawer
 import com.arribas.myshoppinglist.ui.navigation.navigationDrawer.NavigationDrawerProvider
 import com.arribas.myshoppinglist.ui.navigation.route.RouteEnum
-import com.arribas.myshoppinglist.ui.view.article.articleList.ListUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -17,14 +16,31 @@ class AppViewModel(context: Context) : ViewModel() {
 
     private val _appUiState = MutableStateFlow(AppUiState())
     val appUiState: StateFlow<AppUiState> = _appUiState
+
     var menuItems: List<ItemNavigationDrawer>
 
+    var selectedItem by mutableStateOf(ItemNavigationDrawer())
+        private set
+
     init{
-        appUiState.value.title = context.resources.getString(R.string.shoplist_detail_title)
-        menuItems = NavigationDrawerProvider.getData()
+        //appUiState.value.title = context.resources.getString(R.string.shoplist_detail_title)
+        menuItems = NavigationDrawerProvider.getData(context)
+
+        appUiState.value.setup(menuItems.first())
+        selectedItem = menuItems.first()
     }
 
-    fun findItem(routeEnum: RouteEnum): ItemNavigationDrawer{
+    fun changeSelectedItem(item: ItemNavigationDrawer){
+        selectedItem = item
+        _appUiState.value.selectedItem = item
+    }
+
+    fun changeFindSelectedItem(routeEnum: RouteEnum){
+        changeSelectedItem(findItem(routeEnum))
+    }
+
+    /**Private functions******************************/
+    private fun findItem(routeEnum: RouteEnum): ItemNavigationDrawer{
         val item: ItemNavigationDrawer? = menuItems.find { item -> item.type == routeEnum }
 
         return item ?: menuItems.first()
@@ -33,10 +49,17 @@ class AppViewModel(context: Context) : ViewModel() {
 
 data class AppUiState(
     var title: String = "",
-    var lastSelectedItems: MutableList<ItemNavigationDrawer> = arrayListOf()
+    var lastSelectedItems: MutableList<ItemNavigationDrawer> = arrayListOf(),
+    var selectedItem: ItemNavigationDrawer = ItemNavigationDrawer()
 ){
-    init{
-        addItem(NavigationDrawerProvider.getData().first())
+    fun setup(item: ItemNavigationDrawer){
+        addItem(item)
+        title = item.text
+        selectedItem = item
+    }
+    fun addFirstItem(item: ItemNavigationDrawer) {
+        lastSelectedItems.clear()
+        lastSelectedItems.add(item)
     }
 
     fun isLastItem(): Boolean{

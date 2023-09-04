@@ -1,13 +1,11 @@
 package com.arribas.myshoppinglist.ui.navigation.navigationDrawer
 
-import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.NavigationDrawerItem
@@ -19,26 +17,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import com.arribas.myshoppinglist.R
-import com.arribas.myshoppinglist.ui.view.app.AppUiState
-import com.arribas.myshoppinglist.ui.view.app.onSelectItemNavDrawer
-import kotlinx.coroutines.CoroutineScope
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavigationDrawer(
-    context: Context,
-    appUiState: AppUiState,
     items: List<ItemNavigationDrawer>,
     selectedItem: ItemNavigationDrawer,
-    onSelectedItem: (ItemNavigationDrawer)-> Unit,
-    drawerState: DrawerState,
-    scope: CoroutineScope,
-    navController: NavHostController
+    onSelectedItem: (ItemNavigationDrawer)-> Unit
 ){
     ModalDrawerSheet{
         DrawerHeader()
@@ -46,22 +36,7 @@ fun NavigationDrawer(
         DrawerBody(
             items = items,
             selectedItem = selectedItem,
-
-            onItemClick = {
-                onSelectedItem(it)
-
-                appUiState.lastSelectedItems.clear()
-                appUiState.lastSelectedItems.add(it)
-
-                onSelectItemNavDrawer(
-                    context,
-                    appUiState,
-                    it,
-                    drawerState,
-                    scope,
-                    navController)
-            },
-
+            onItemClick = { onSelectedItem(it) },
             modifier = Modifier.padding(top = 20.dp)
         )
     }
@@ -76,7 +51,7 @@ fun DrawerHeader(){
             .padding(vertical = 64.dp, horizontal = 20.dp)
     ){
         Text(
-            text = "My Shopping List",
+            text = stringResource(id = R.string.app_name),
             fontSize = 24.sp,
             color = Color.White
         )
@@ -91,7 +66,6 @@ fun DrawerBody(
     selectedItem: ItemNavigationDrawer,
     modifier: Modifier = Modifier
 ){
-
     Spacer(modifier = modifier)
 
     items.forEach { item ->

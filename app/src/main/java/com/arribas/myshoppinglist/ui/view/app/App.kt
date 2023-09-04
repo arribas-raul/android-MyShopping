@@ -23,11 +23,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.arribas.myshoppinglist.ui.navigation.MyAppNavHost
-import com.arribas.myshoppinglist.ui.navigation.navigate
 import com.arribas.myshoppinglist.ui.navigation.navigationDrawer.ItemNavigationDrawer
 import com.arribas.myshoppinglist.ui.view.general.MyBottomBar
 import com.arribas.myshoppinglist.ui.navigation.navigationDrawer.NavigationDrawer
 import com.arribas.myshoppinglist.ui.navigation.route.RouteEnum
+import com.arribas.myshoppinglist.ui.navigation.route.Routes
 import com.arribas.myshoppinglist.ui.view.AppViewModelProvider
 import com.arribas.myshoppinglist.ui.view.app.topBar.AppBarState
 import com.arribas.myshoppinglist.ui.view.app.topBar.MyTopBar
@@ -42,16 +42,12 @@ fun App(
     appViewModel: AppViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier
 ){
-
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
     val navController = rememberNavController()
-    var selectedItem by remember { mutableStateOf(appViewModel.menuItems.first()) }
 
     val appUiState by appViewModel.appUiState.collectAsState()
-
-    val context = LocalContext.current
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -59,34 +55,38 @@ fun App(
 
         drawerContent = {
             NavigationDrawer(
-                context = context,
-                appUiState = appUiState,
                 items = appViewModel.menuItems,
-                selectedItem = selectedItem,
-                onSelectedItem = { selectedItem = it },
-                drawerState = drawerState,
-                scope = scope,
-                navController = navController
+                selectedItem = appViewModel.selectedItem,
+
+                onSelectedItem = {
+                    appViewModel.changeSelectedItem(it)
+
+                    onSelectItemNavDrawer(
+                        appUiState,
+                        it,
+                        drawerState,
+                        scope,
+                        navController)
+                }
             )
         }
     ) {
         Content(
             appUiState = appUiState,
-            title = appUiState.title,
             items = appViewModel.menuItems,
             navController = navController,
-            selectedItem = selectedItem,
-            onClick = { scope.launch { drawerState.open() } },
+            selectedItem = appViewModel.selectedItem,
+
+            onClick = {
+                scope.launch { drawerState.open() }
+            },
 
             onItemClick = {
-                val routeEnum: RouteEnum = it
-
-                selectedItem = appViewModel.findItem(routeEnum)
+                appViewModel.changeFindSelectedItem(it)
 
                 onSelectItemNavDrawer(
-                    context,
                     appUiState,
-                    selectedItem,
+                    appViewModel.selectedItem,
                     drawerState,
                     scope,
                     navController)
@@ -95,13 +95,13 @@ fun App(
             onSelectItem = {
                 val routeEnum: RouteEnum = it
 
-                selectedItem = appViewModel.findItem(routeEnum)
+                appViewModel.changeFindSelectedItem(routeEnum)
 
-                appUiState.lastSelectedItems.add(selectedItem)
+                appUiState.lastSelectedItems.add(appViewModel.selectedItem)
             },
 
             navigateUp = {
-                selectedItem = appUiState.popItem()
+                appViewModel.changeSelectedItem(appUiState.popItem())
                 appUiState.title = appUiState.actualTitle()
 
                 navController.popBackStack()
@@ -117,7 +117,6 @@ fun App(
 @Composable
 fun Content(
     appUiState: AppUiState,
-    title: String,
     navController: NavHostController,
     items: List<ItemNavigationDrawer>,
     selectedItem: ItemNavigationDrawer,
@@ -135,7 +134,7 @@ fun Content(
     Scaffold(
         topBar = {
             MyTopBar(
-                title = title,
+                title = appUiState.actualTitle(),
                 appBarState = appBarState,
                 canNavigateBack = !selectedItem.menuLeftVisible || appUiState.isLastItem(),
                 navigateUp = navigateUp,
@@ -155,6 +154,7 @@ fun Content(
         Row(modifier = modifier
             .wrapContentWidth()
             .padding(padding)) {
+
             MyAppNavHost(
                 appUiState = appUiState,
                 appBarState = appBarState,
@@ -167,7 +167,6 @@ fun Content(
 
 @OptIn(ExperimentalMaterial3Api::class)
 fun onSelectItemNavDrawer(
-    context: Context,
     appUiState: AppUiState,
     selectedItem: ItemNavigationDrawer,
     drawerState: DrawerState,
@@ -176,12 +175,9 @@ fun onSelectItemNavDrawer(
 ){
     scope.launch { drawerState.close() }
 
-    appUiState.lastSelectedItems.clear()
-    appUiState.addItem(selectedItem)
+    appUiState.addFirstItem(selectedItem)
 
-    navigate(
-        context = context,
-        appUiState = appUiState,
+    Routes.navigate(
         item = selectedItem,
         navController = navController
     )

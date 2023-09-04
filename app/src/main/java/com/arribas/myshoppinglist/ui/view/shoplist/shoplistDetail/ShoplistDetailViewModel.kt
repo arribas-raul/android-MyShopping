@@ -35,7 +35,7 @@ class ShoplistDetailViewModel(
 ) : ViewModel() {
 
     //private val itemId: Int = checkNotNull(savedStateHandle[Routes.ShoplistDetailScreen.itemIdArg])
-    private var itemId: String? = savedStateHandle[Routes.ShoplistDetailScreen.itemIdArg]
+    private var itemId: String? = savedStateHandle[Routes.itemIdArg]
 
     var shoplistUiState by mutableStateOf(ShoplistUiState())
         private set

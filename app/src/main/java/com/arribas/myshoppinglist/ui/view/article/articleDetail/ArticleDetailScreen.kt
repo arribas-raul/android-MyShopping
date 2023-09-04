@@ -15,6 +15,7 @@ import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.general.DetailBody
 import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
 import com.arribas.myshoppinglist.ui.view.AppViewModelProvider
+import com.arribas.myshoppinglist.ui.view.app.AppUiState
 import com.arribas.myshoppinglist.ui.view.app.topBar.AppBarState
 import com.arribas.myshoppinglist.ui.view.category.CategoryViewModel
 import com.arribas.myshoppinglist.ui.view.general.TextFieldAlertDialog
@@ -30,12 +31,15 @@ fun ArticleDetailScreen(
     navigateBack: () -> Unit,
     viewModel: ArticleDetailViewModel = viewModel(factory = AppViewModelProvider.Factory),
     categoryViewModel: CategoryViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    appUiState: AppUiState,
     modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()
     val dialogState: DialogUiState by viewModel.dialogState.collectAsState()
     val categoryDialogState: TextFieldDialogUiState by categoryViewModel.dialogState.collectAsState()
     val listCategoryUiState by categoryViewModel.listUiState.collectAsState()
+
+    appUiState.lastSelectedItems.last().text = appUiState.title
 
     LaunchedEffect(key1 = true) {
         onComposing(

@@ -34,7 +34,7 @@ class ArticleDetailViewModel(
     private val articleCategoryRepository: ArticleCategoryRepository
     ) : ViewModel() {
 
-    private val itemId: Int = checkNotNull(savedStateHandle[Routes.ArticleDetailScreen.itemIdArg])
+    private val itemId: Int = checkNotNull(savedStateHandle[Routes.itemIdArg])
 
     var articleUiState by mutableStateOf(ArticleUiState())
         private set
