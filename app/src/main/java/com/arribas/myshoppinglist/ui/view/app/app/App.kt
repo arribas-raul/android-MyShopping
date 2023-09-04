@@ -26,7 +26,7 @@ import com.arribas.myshoppinglist.ui.view.app.bottomBar.MyBottomBar
 import com.arribas.myshoppinglist.ui.navigation.navigationDrawer.NavigationDrawer
 import com.arribas.myshoppinglist.ui.navigation.route.RouteEnum
 import com.arribas.myshoppinglist.ui.navigation.route.Routes
-import com.arribas.myshoppinglist.ui.view.AppViewModelProvider
+import com.arribas.myshoppinglist.ui.view.app.AppViewModelProvider
 import com.arribas.myshoppinglist.ui.view.app.topBar.AppBarState
 import com.arribas.myshoppinglist.ui.view.app.topBar.MyTopBar
 import kotlinx.coroutines.CoroutineScope
