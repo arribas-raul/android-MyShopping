@@ -25,7 +25,7 @@ class AppViewModel(context: Context) : ViewModel() {
     }
 
     fun findItem(routeEnum: RouteEnum): ItemNavigationDrawer{
-        val item: ItemNavigationDrawer? =  menuItems.find { item -> item.type == routeEnum }
+        val item: ItemNavigationDrawer? = menuItems.find { item -> item.type == routeEnum }
 
         return item ?: menuItems.first()
     }
@@ -53,6 +53,12 @@ data class AppUiState(
         }
 
         return title
+    }
+
+    fun popItem(): ItemNavigationDrawer {
+        lastSelectedItems.removeLast()
+
+        return lastSelectedItems.last()
     }
 }
 

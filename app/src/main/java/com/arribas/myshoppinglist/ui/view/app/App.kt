@@ -81,7 +81,6 @@ fun App(
             onItemClick = {
                 val routeEnum: RouteEnum = it
 
-                //selectedItem = appViewModel.menuItems.find { item -> item.type == routeEnum }!!
                 selectedItem = appViewModel.findItem(routeEnum)
 
                 onSelectItemNavDrawer(
@@ -96,16 +95,13 @@ fun App(
             onSelectItem = {
                 val routeEnum: RouteEnum = it
 
-                //selectedItem = appViewModel.menuItems.find { item -> item.type == routeEnum }!!
                 selectedItem = appViewModel.findItem(routeEnum)
 
                 appUiState.lastSelectedItems.add(selectedItem)
             },
 
             navigateUp = {
-
-                appUiState.lastSelectedItems.removeLast()
-                selectedItem = appUiState.lastSelectedItems.last()
+                selectedItem = appUiState.popItem()
                 appUiState.title = appUiState.actualTitle()
 
                 navController.popBackStack()
