@@ -28,15 +28,15 @@ import com.arribas.myshoppinglist.R
 fun NavigationDrawer(
     items: List<ItemNavigationDrawer>,
     selectedItem: ItemNavigationDrawer,
-    onSelectedItem: (ItemNavigationDrawer)-> Unit
+    onNavigatePressed: (ItemNavigationDrawer)-> Unit
 ){
     ModalDrawerSheet{
         DrawerHeader()
 
         DrawerBody(
             items = items,
+            onNavigatePressed = { onNavigatePressed(it) },
             selectedItem = selectedItem,
-            onItemClick = { onSelectedItem(it) },
             modifier = Modifier.padding(top = 20.dp)
         )
     }
@@ -62,7 +62,7 @@ fun DrawerHeader(){
 @Composable
 fun DrawerBody(
     items: List<ItemNavigationDrawer>,
-    onItemClick: (ItemNavigationDrawer) -> Unit,
+    onNavigatePressed: (ItemNavigationDrawer) -> Unit,
     selectedItem: ItemNavigationDrawer,
     modifier: Modifier = Modifier
 ){
@@ -73,7 +73,7 @@ fun DrawerBody(
             NavigationDrawerItem(
                 label = { Text(text = item.text) },
                 selected = item == selectedItem,
-                onClick = { onItemClick(item) },
+                onClick = { onNavigatePressed(item) },
 
                 icon = {
                     Image(

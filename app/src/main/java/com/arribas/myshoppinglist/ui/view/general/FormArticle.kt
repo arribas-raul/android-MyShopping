@@ -40,8 +40,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arribas.myshoppinglist.R
-import com.arribas.myshoppinglist.ui.view.category.ListCategoryUiState
-import com.arribas.myshoppinglist.ui.view.article.articleList.ArticleUiState
+import com.arribas.myshoppinglist.ui.view.screen.category.ListCategoryUiState
+import com.arribas.myshoppinglist.ui.view.screen.article.articleList.ArticleUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

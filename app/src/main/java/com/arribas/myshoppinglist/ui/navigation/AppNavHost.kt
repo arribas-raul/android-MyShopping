@@ -1,6 +1,5 @@
 package com.arribas.myshoppinglist.ui.navigation
 
-import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -8,18 +7,16 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.arribas.myshoppinglist.R
-import com.arribas.myshoppinglist.ui.navigation.navigationDrawer.ItemNavigationDrawer
 import com.arribas.myshoppinglist.ui.navigation.route.RouteEnum
 import com.arribas.myshoppinglist.ui.navigation.route.Routes
-import com.arribas.myshoppinglist.ui.view.app.AppUiState
+import com.arribas.myshoppinglist.ui.view.app.app.AppUiState
 import com.arribas.myshoppinglist.ui.view.app.topBar.AppBarState
-import com.arribas.myshoppinglist.ui.view.article.articleDetail.ArticleDetailScreen
-import com.arribas.myshoppinglist.ui.view.article.articleList.ArticleListScreen
-import com.arribas.myshoppinglist.ui.view.article.articleNew.ArticleNewScreen
-import com.arribas.myshoppinglist.ui.view.listArticleShop.ListArticleShopScreen
-import com.arribas.myshoppinglist.ui.view.shoplist.shoplistDetail.ShoplistDetailScreen
-import com.arribas.myshoppinglist.ui.view.shoplist.shoplistList.ShoplistListScreen
+import com.arribas.myshoppinglist.ui.view.screen.article.articleDetail.ArticleDetailScreen
+import com.arribas.myshoppinglist.ui.view.screen.article.articleList.ArticleListScreen
+import com.arribas.myshoppinglist.ui.view.screen.article.articleNew.ArticleNewScreen
+import com.arribas.myshoppinglist.ui.view.screen.listArticleShop.ListArticleShopScreen
+import com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistDetail.ShoplistDetailScreen
+import com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistList.ShoplistListScreen
 
 /**
  * Provides Navigation graph for the application.
@@ -29,8 +26,8 @@ fun MyAppNavHost(
     appUiState: AppUiState,
     appBarState: AppBarState,
     navController: NavHostController,
+    onSelectItem: (RouteEnum) -> Unit,
     modifier: Modifier = Modifier,
-    onItemClick: (RouteEnum) -> Unit,
 ) {
 
     NavHost(
@@ -43,9 +40,7 @@ fun MyAppNavHost(
             route = Routes.ShopListScreen.route.toString()
         ){
             ListArticleShopScreen(
-                onComposing = {
-                    appBarState.actions = it.actions
-                },
+                onComposing = { appBarState.actions = it.actions },
                 navigateToItemUpdate = {}
             )
         }
@@ -61,20 +56,17 @@ fun MyAppNavHost(
             )
         ){
             ArticleListScreen(
-                onComposing = {
-                    appBarState.actions = it.actions
-                },
-
+                onComposing = { appBarState.actions = it.actions },
                 navigateBack = { navController.popBackStack() },
 
-                navigateToItemUpdate = {
-                    onItemClick(RouteEnum.ARTICLE_DETAIL)
+                onSelectItem = {
+                    onSelectItem(RouteEnum.ARTICLE_DETAIL)
 
                     navController.navigate(
                         route = "${Routes.ArticleDetailScreen.route}/${it.id}"
                     )
 
-                    appUiState.title = it.name
+                    appUiState.lastSelectedItems.last().text = it.name
                 }
             )
         }
@@ -83,9 +75,7 @@ fun MyAppNavHost(
             route = Routes.ArticleNewScreen.route.toString()
         ){
             ArticleNewScreen(
-                onComposing = {
-                    appBarState.actions = it.actions
-                },
+                onComposing = { appBarState.actions = it.actions },
             )
         }
 
@@ -97,15 +87,9 @@ fun MyAppNavHost(
                 }
             )
         ){
-
             ArticleDetailScreen(
-                onComposing = {
-                    appBarState.actions = it.actions
-                },
-                navigateBack = {
-                    navController.popBackStack()
-                },
-                appUiState = appUiState,
+                onComposing = { appBarState.actions = it.actions },
+                navigateBack = { navController.popBackStack() },
                 modifier = modifier,
             )
         }
@@ -114,14 +98,13 @@ fun MyAppNavHost(
             route = Routes.ShoplistListScreen.route.toString()
         ){
             ShoplistListScreen(
-                onComposing = {
-                    appBarState.actions = it.actions
-                },
-                navigateToItemUpdate = {
-                    onItemClick(RouteEnum.SHOPLIST_DETAIL)
+                onComposing = { appBarState.actions = it.actions },
+
+                onSelectItem = {
+                    onSelectItem(RouteEnum.SHOPLIST_DETAIL)
+                    appUiState.lastSelectedItems.last().text = it.name
 
                     navController.navigate("${Routes.ShoplistDetailScreen.route}?${it.id}")
-                    appUiState.title = it.name
                 }
             )
         }
@@ -137,22 +120,17 @@ fun MyAppNavHost(
             )
         ){
             ShoplistDetailScreen(
-                onComposing = {
-                    appBarState.actions = it.actions
-                },
-
+                onComposing = { appBarState.actions = it.actions },
                 navigateBack = { navController.popBackStack() },
 
-                navigateToItemUpdate = {
-                    onItemClick(RouteEnum.ARTICLE_LIST)
+                onSelectItem = {
+                    onSelectItem(RouteEnum.ARTICLE_LIST)
+                    appUiState.title = appUiState.actualTitle()
 
                     navController.navigate(
                         route = "${Routes.ArticleListScreen.route}?${it.id}"
                     )
-
-                    appUiState.title = appUiState.actualTitle()
                 },
-                appUiState = appUiState,
 
                 modifier = modifier
             )
