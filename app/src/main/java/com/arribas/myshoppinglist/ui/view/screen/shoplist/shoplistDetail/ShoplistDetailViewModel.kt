@@ -17,6 +17,7 @@ import com.arribas.myshoppinglist.data.utils.PreferencesManager
 import com.arribas.myshoppinglist.ui.navigation.route.Routes
 import com.arribas.myshoppinglist.ui.view.filter.GeneralFilterUiState
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.ShoplistUiState
+import com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistList.ShoplisListUiState
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.toShopListUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -50,6 +51,11 @@ class ShoplistDetailViewModel(
     var filterUiState: StateFlow<GeneralFilterUiState> = _filterUiState
 
     lateinit var article: ArticleShop
+
+    private val _shoplistListUiState = MutableStateFlow(ShoplisListUiState())
+    val shoplistListUiState: StateFlow<ShoplisListUiState> = _shoplistListUiState
+
+    lateinit var mode: ShoplistDetailModeEnum
 
     init{
         getData()
@@ -99,13 +105,31 @@ class ShoplistDetailViewModel(
         //onOpenDialogClicked(tag = DIALOG_UI_TAG.TAG_RESET)
     }
 
+    fun setShoplist(element: ShoplistUiState){
+        shoplistUiState = shoplistUiState.copy(
+            id = element.id,
+            name = element.name,
+            type = element.type
+        )
+
+        PreferencesManager(context).saveData(
+            PreferencesEnum.MAIN_LIST.toString(),
+            this.shoplistUiState.id.toString()
+        )
+
+    }
+
     /**Private functions********************************************/
     private fun getData() {
         viewModelScope.launch{
             try {
                 if(itemId.isNullOrEmpty() ){
+                    mode = ShoplistDetailModeEnum.SHOP
+
                     itemId = PreferencesManager(context)
                         .getData(PreferencesEnum.MAIN_LIST.toString(), "0")
+                }else{
+                    mode = ShoplistDetailModeEnum.QUERY
                 }
 
                 if(itemId.isNullOrEmpty()){
@@ -139,6 +163,18 @@ class ShoplistDetailViewModel(
                         itemSelectCount = list.count { it.check }
                     )
                 }*/
+        }
+    }
+
+    private fun getDataShoplist(){
+        viewModelScope.launch {
+            shoplistRepository.getItemsByName(filterUiState.value.name).collect {
+                    list ->
+                _shoplistListUiState.value = ShoplisListUiState(
+                    itemList = list,
+                    itemCount = list.count()
+                )
+            }
         }
     }
 

@@ -36,9 +36,13 @@ interface ArticleDao {
             "order by c.name) as category " +
 
             "FROM article as a " +
+            "LEFT JOIN shoplist_article as sla on a.id = sla.article_id " +
+            "   and sla.shoplist_id = :shoplist_id " +
+
             "WHERE a.name like '%' || :name || '%' " +
+
             "ORDER BY a.name ASC")
-    fun getItemsByName(name: String): Flow<List<QArticle>>
+    fun getItemsByName(shoplist_id: Int, name: String): Flow<List<QArticle>>
 
     @Query("SELECT * from article WHERE shopCheked = 0 ORDER BY name ASC")
     fun getAllItems(): Flow<List<Article>>

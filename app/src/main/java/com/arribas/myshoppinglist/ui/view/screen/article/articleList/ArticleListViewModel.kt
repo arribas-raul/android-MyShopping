@@ -1,5 +1,9 @@
 package com.arribas.myshoppinglist.ui.view.screen.article.articleList
 
+import android.content.Context
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,7 +16,10 @@ import com.arribas.myshoppinglist.data.repository.ArticleRepository
 import com.arribas.myshoppinglist.data.repository.ArticleShopRepository
 import com.arribas.myshoppinglist.data.utils.DIALOG_UI_TAG
 import com.arribas.myshoppinglist.data.utils.DialogUiState
+import com.arribas.myshoppinglist.data.utils.PreferencesEnum
+import com.arribas.myshoppinglist.data.utils.PreferencesManager
 import com.arribas.myshoppinglist.ui.navigation.route.Routes
+import com.arribas.myshoppinglist.ui.view.screen.shoplist.ShoplistUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,6 +29,7 @@ import kotlinx.coroutines.launch
 
 class ListArticleViewModel(
     savedStateHandle: SavedStateHandle,
+    private val context: Context,
     private val articleRepository: ArticleRepository,
     private val articleShopRepository: ArticleShopRepository,
     private val articleCategoryRepository: ArticleCategoryRepository
@@ -36,23 +44,45 @@ class ListArticleViewModel(
 
     lateinit var article: QArticle
 
+    var shoplistUiState by mutableStateOf(ShoplistUiState())
+        private set
+
     init{
         getData()
     }
 
     private fun getData(){
-        viewModelScope.launch{
-            articleRepository.getItemsByName(_searchUiState.value.name).collect { list ->
-                _listUiState.value = ListUiState(
-                    itemList = list,
-                    itemCount = list.count(),
-                    itemSelectCount = list.count { it.shopCheked }
-                )
+        try {
+            viewModelScope.launch{
+                val itemId = PreferencesManager(context)
+                    .getData(PreferencesEnum.MAIN_LIST.toString(), "0")
+
+                if (itemId.isNullOrEmpty()) {
+                    shoplistUiState.copy(id = 0)
+                    //TODO: Mostrar mensaje de que no hay lista
+                }
+
+                articleRepository.getItemsByName(
+                    shoplistUiState.id,
+                    _searchUiState.value.name)
+                        .collect { list ->
+                            _listUiState.value = ListUiState(
+                                itemList = list,
+                                itemCount = list.count(),
+                                itemSelectCount = list.count { it.shopCheked }
+                    )
+                }
             }
+        }catch (e: IllegalArgumentException){
+
         }
     }
 
     fun updateItem(qArticle: QArticle) {
+        if(!shoplistUiState.existElement()){
+            return
+        }
+
         article = qArticle
 
         viewModelScope.launch(Dispatchers.IO) {

@@ -14,8 +14,9 @@ import com.arribas.myshoppinglist.ui.view.screen.article.articleNew.NewViewModel
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistBottomSheet.ShoplistBottomSheetViewModel
 import com.arribas.myshoppinglist.ui.view.screen.article.articleList.ListArticleViewModel
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistList.ShoplistListViewModel
-import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.ListArticleShopViewModel
+import com.arribas.myshoppinglist.ui.view.screen.listArticleShop.ListArticleShopViewModel
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistDetail.ShoplistDetailViewModel
+import com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistDetail.ShoplistSelectDialogViewModel
 
 /**
  * Provides Factory to create instance of ViewModel for the entire Inventory app
@@ -28,6 +29,7 @@ object AppViewModelProvider {
 
         initializer {
             ListArticleShopViewModel(
+                AppApplication().applicationContext,
                 AppApplication().container.articleRepository,
                 AppApplication().container.articleShopRepository
             )
@@ -36,6 +38,7 @@ object AppViewModelProvider {
         initializer {
             ListArticleViewModel(
                 this.createSavedStateHandle(),
+                AppApplication().applicationContext,
                 AppApplication().container.articleRepository,
                 AppApplication().container.articleShopRepository,
                 AppApplication().container.articleCategoryRepository
@@ -65,6 +68,12 @@ object AppViewModelProvider {
 
         initializer {
             ShoplistListViewModel(
+                AppApplication().container.shoplistRepository
+            )
+        }
+
+        initializer {
+            ShoplistSelectDialogViewModel(
                 AppApplication().container.shoplistRepository
             )
         }

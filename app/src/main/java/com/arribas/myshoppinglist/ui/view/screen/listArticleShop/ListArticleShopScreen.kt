@@ -41,9 +41,7 @@ import com.arribas.myshoppinglist.ui.view.app.AppViewModelProvider
 import com.arribas.myshoppinglist.ui.view.app.topBar.AppBarState
 import com.arribas.myshoppinglist.ui.view.general.CircleButton
 import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
-import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.ListArticleShopUiState
-import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.ListArticleShopViewModel
-import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.SearchListArticleUiState
+import com.arribas.myshoppinglist.ui.view.screen.shoplist.ShoplistUiState
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
@@ -79,6 +77,7 @@ fun ListArticleShopScreen(
     ListArticleShopBody(
         listUiState = listUiState,
         searchUiState = searchUiState,
+        isModeSelect = viewModel.shoplistUiState.existElement(),
         navigateToItemUpdate = { navigateToItemUpdate(it) },
         deleteItem = { viewModel.onDialogDelete(it) },
         updateItem = { viewModel.onUpdateItem(it) },
@@ -98,6 +97,7 @@ fun ListArticleShopScreen(
 fun ListArticleShopBody(
     listUiState: ListArticleShopUiState,
     searchUiState: SearchListArticleUiState,
+    isModeSelect: Boolean,
     navigateToItemUpdate: (Int) -> Unit,
     deleteItem: (article: ArticleShop) -> Unit,
     updateItem: (ArticleShop) -> Unit,
@@ -109,7 +109,6 @@ fun ListArticleShopBody(
     Column(
         modifier = modifier
     ) {
-
         HeaderArticleShopList(
             listUiState = listUiState,
             searchUiState = searchUiState,
@@ -126,6 +125,7 @@ fun ListArticleShopBody(
         } else {
             InventoryArticleShopList(
                 itemList = listUiState.itemList,
+                isModeSelect = isModeSelect,
                 onItemClick = { navigateToItemUpdate(it.id) },
                 onDeleteClick = { deleteItem(it) },
                 onCheckClick =  { updateItem(it) },
@@ -141,6 +141,7 @@ fun ListArticleShopBody(
 @Composable
 private fun InventoryArticleShopList(
     itemList: List<ArticleShop>,
+    isModeSelect: Boolean,
     onItemClick: (ArticleShop) -> Unit,
     onDeleteClick: (ArticleShop) -> Unit,
     onCheckClick: (ArticleShop) -> Unit,

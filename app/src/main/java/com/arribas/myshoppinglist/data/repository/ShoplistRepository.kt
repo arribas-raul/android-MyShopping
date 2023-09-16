@@ -34,7 +34,7 @@ interface ShoplistRepositoryInterface {
     fun getItem(id: Int): Flow<Shoplist?>
     fun getItemByName(name: String): Flow<Shoplist?>
 
-    fun getItemsByName(name: String): Flow<List<Shoplist>>
+    fun getItemsByName(name: String = ""): Flow<List<Shoplist>>
 
     /**
      * Insert item in the data source

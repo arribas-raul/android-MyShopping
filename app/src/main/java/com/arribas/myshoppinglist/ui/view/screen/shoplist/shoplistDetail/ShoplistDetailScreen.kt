@@ -14,6 +14,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.List
+import androidx.compose.material.icons.rounded.Menu
+import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.rounded.ShoppingCart
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -49,13 +52,15 @@ import com.arribas.myshoppinglist.ui.view.general.CircleButton
 import com.arribas.myshoppinglist.ui.view.general.FloatingButton
 import com.arribas.myshoppinglist.ui.view.filter.GeneralFilter
 import com.arribas.myshoppinglist.ui.view.filter.GeneralFilterUiState
+import com.arribas.myshoppinglist.ui.view.screen.listArticleShop.SearchListArticleUiState
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.ShoplistUiState
-import com.arribas.myshoppinglist.ui.viewModel.listArticleShop.SearchListArticleUiState
 import kotlinx.coroutines.launch
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
 import org.burnoutcrew.reorderable.reorderable
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState")
@@ -77,14 +82,16 @@ fun ShoplistDetailScreen(
         listState.firstVisibleItemIndex == 0
     }
 
+    val showDialog =  remember { mutableStateOf(false) }
+
     LaunchedEffect(key1 = true) {
         onComposing(
             AppBarState(
                 actions = {
-                    if(!listViewModel.shoplistUiState.existElement()) {
-                        IconButton(onClick = {}) {
+                    if(listViewModel.mode === ShoplistDetailModeEnum.SHOP) {
+                        IconButton(onClick = { showDialog.value = true}) {
                             Icon(
-                                imageVector = Icons.Rounded.List,
+                                imageVector = Icons.Rounded.ShoppingCart,
                                 contentDescription = "",
                                 tint = Color.White,
                             )
@@ -94,6 +101,18 @@ fun ShoplistDetailScreen(
             )
         )
     }
+
+    if(showDialog.value)
+        ShoplistSelectDialog(
+            value = listViewModel.shoplistUiState,
+            onItemValueChange = {
+                listViewModel.setShoplist(it)
+                showDialog.value = false
+            },
+            setShowDialog = {
+                showDialog.value = false
+            }
+        )
 
     Scaffold(
         floatingActionButton = {
@@ -117,6 +136,8 @@ fun ShoplistDetailScreen(
                 .fillMaxSize()
                 .background(colorResource(R.color.my_background))
         ) {
+            Text(text = listViewModel.shoplistUiState.name)
+
             ShoplistDetailBody(
                 listUiState = listUiState,
                 filterUiState = filterUiState,
