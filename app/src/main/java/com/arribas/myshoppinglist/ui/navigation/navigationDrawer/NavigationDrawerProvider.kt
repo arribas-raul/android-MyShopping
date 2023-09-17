@@ -49,6 +49,12 @@ object NavigationDrawerProvider {
                 type = RouteEnum.SHOPLIST_DETAIL,
                 text = context.getString(R.string.shoplist_detail_title),
                 icon = R.drawable.ic_view_list,
+            ),
+
+            ItemNavigationDrawer(
+                type = RouteEnum.SHOPLIST_MANAGE,
+                text = context.getString(R.string.shoplist_manage_title),
+                icon = R.drawable.ic_view_list,
                 menuLeftVisible = true,
                 menuBottomVisible = true
             ),

@@ -14,6 +14,7 @@ import com.arribas.myshoppinglist.data.model.QArticle
 import com.arribas.myshoppinglist.data.repository.ArticleCategoryRepository
 import com.arribas.myshoppinglist.data.repository.ArticleRepository
 import com.arribas.myshoppinglist.data.repository.ArticleShopRepository
+import com.arribas.myshoppinglist.data.repository.ShoplistArticleRepository
 import com.arribas.myshoppinglist.data.utils.DIALOG_UI_TAG
 import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.data.utils.PreferencesEnum
@@ -32,10 +33,12 @@ class ListArticleViewModel(
     private val context: Context,
     private val articleRepository: ArticleRepository,
     private val articleShopRepository: ArticleShopRepository,
+    private val shoplistArticleRepository: ShoplistArticleRepository,
     private val articleCategoryRepository: ArticleCategoryRepository
 ): ViewModel() {
 
-    private var itemId: String? = savedStateHandle[Routes.itemIdArg]
+    private val itemId: Int = checkNotNull(savedStateHandle[Routes.itemIdArg])
+
     private val _searchUiState = MutableStateFlow(SearchUiState())
     var searchUiState: StateFlow<SearchUiState> = _searchUiState
 
@@ -54,14 +57,6 @@ class ListArticleViewModel(
     private fun getData(){
         try {
             viewModelScope.launch{
-                val itemId = PreferencesManager(context)
-                    .getData(PreferencesEnum.MAIN_LIST.toString(), "0")
-
-                if (itemId.isNullOrEmpty()) {
-                    shoplistUiState.copy(id = 0)
-                    //TODO: Mostrar mensaje de que no hay lista
-                }
-
                 articleRepository.getItemsByName(
                     shoplistUiState.id,
                     _searchUiState.value.name)
@@ -88,10 +83,14 @@ class ListArticleViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             //println("article: $article")
             if(qArticle.shopCheked){
-                val articleShop = articleShopRepository.getItemByName(qArticle.name)
+                //val articleShop = articleShopRepository.getItemByName(qArticle.name)
+                val article = shoplistArticleRepository.getItemByListAndArticle(
+                    qArticle.shoplist_id, qArticle.id
+                )
 
-                if(articleShop.first() != null) {
-                    articleShopRepository.deleteItem(articleShop.first()!!)
+                //TODO::Me quedo aquí
+                if(article.first() != null) {
+                    shoplistArticleRepository.deleteItem(article.first()!!)
                 }
 
             }else{

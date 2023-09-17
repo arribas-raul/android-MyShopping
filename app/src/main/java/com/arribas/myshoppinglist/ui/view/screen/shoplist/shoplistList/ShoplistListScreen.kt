@@ -162,7 +162,6 @@ fun ShoplistListScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp)
             ) {
-
                 GeneralFilter(
                     filterUiState = filterUiState,
                     onValueChange = { listViewModel.onSearch(it) },

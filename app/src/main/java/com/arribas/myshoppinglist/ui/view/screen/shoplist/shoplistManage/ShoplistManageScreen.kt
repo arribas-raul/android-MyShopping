@@ -1,4 +1,4 @@
-package com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistDetail
+package com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistManage
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
@@ -8,10 +8,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.List
 import androidx.compose.material.icons.rounded.Menu
@@ -55,6 +58,8 @@ import com.arribas.myshoppinglist.ui.view.filter.GeneralFilter
 import com.arribas.myshoppinglist.ui.view.filter.GeneralFilterUiState
 import com.arribas.myshoppinglist.ui.view.screen.listArticleShop.SearchListArticleUiState
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.ShoplistUiState
+import com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistDetail.ShoplistDetailHeader
+import com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistDetail.ShoplistSelectDialog
 import kotlinx.coroutines.launch
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
@@ -66,10 +71,10 @@ import org.burnoutcrew.reorderable.reorderable
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState")
 @Composable
-fun ShoplistDetailScreen(
+fun ShoplistManageScreen(
     onComposing: (AppBarState) -> Unit = {},
     navigateBack: (() -> Unit)? = null,
-    listViewModel: ShoplistDetailViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    listViewModel: ShoplistManageViewModel = viewModel(factory = AppViewModelProvider.Factory),
     onSelectItem: (ShoplistUiState) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -87,9 +92,32 @@ fun ShoplistDetailScreen(
 
     LaunchedEffect(key1 = true) {
         onComposing(
-            AppBarState()
+            AppBarState(
+                actions = {
+                    IconButton(onClick = { showDialog.value = true}) {
+                        Icon(
+                            imageVector = Icons.Rounded.ShoppingCart,
+                            contentDescription = "",
+                            tint = Color.White,
+                        )
+                    }
+                }
+            )
         )
     }
+
+    if(showDialog.value)
+        ShoplistSelectDialog(
+            value = listViewModel.shoplistUiState,
+            onItemValueChange = {
+
+                listViewModel.setShoplist(it)
+                showDialog.value = false
+            },
+            setShowDialog = {
+                showDialog.value = false
+            }
+        )
 
     Scaffold(
         floatingActionButton = {
@@ -113,6 +141,21 @@ fun ShoplistDetailScreen(
                 .fillMaxSize()
                 .background(colorResource(R.color.my_background))
         ) {
+            ShoplistListTitle(
+                title = if (listViewModel.shoplistUiState == null) {
+                    stringResource(R.string.shoplist_manage_not_select_list)
+                } else {
+                    listViewModel.shoplistUiState.name
+                },
+                modifier = modifier.padding(8.dp)
+            )
+
+            ShoplistManageHeader(
+                listUiState = listUiState,
+                onResetBt = { },
+                modifier = Modifier.padding(8.dp)
+            )
+
             ShoplistDetailBody(
                 listUiState = listUiState,
                 filterUiState = filterUiState,
@@ -127,6 +170,30 @@ fun ShoplistDetailScreen(
                 onCheckFilter = { }
             )
         }
+    }
+}
+
+@Composable
+fun ShoplistListTitle(
+    title: String,
+    modifier: Modifier
+){
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(
+                color = Color.LightGray,
+                shape = RoundedCornerShape(size = 5.dp)
+            )
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+            color = Color.Black,
+            modifier = modifier
+                .padding(vertical = 4.dp)
+                .align(Alignment.CenterHorizontally)
+        )
     }
 }
 
@@ -148,21 +215,6 @@ fun ShoplistDetailBody(
     Column(
         modifier = modifier
     ) {
-        if (isVisibleHeader) {
-            GeneralFilter(
-                filterUiState = filterUiState,
-                onValueChange = { onSearch(it) },
-                onKeyEvent = { },
-                clearName = onClearName
-            )
-
-        }else{
-            ShoplistDetailHeader(
-                listUiState = listUiState,
-                onResetBt = onReset,
-                modifier = Modifier.padding(8.dp)
-            )
-        }
 
         if (listUiState.itemList.isEmpty()) {
             Text(

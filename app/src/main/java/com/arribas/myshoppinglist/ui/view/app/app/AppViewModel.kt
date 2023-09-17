@@ -77,6 +77,14 @@ data class AppUiState(
         return title
     }
 
+    fun updateActualTitle(newTitle: String){
+        if(lastSelectedItems.size > 0){
+            lastSelectedItems.last().text = newTitle
+        }
+
+        title = newTitle
+    }
+
     fun popItem(): ItemNavigationDrawer {
         lastSelectedItems.removeLast()
 

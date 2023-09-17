@@ -1,4 +1,4 @@
-package com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistDetail
+package com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistManage
 
 import android.content.Context
 import androidx.compose.runtime.getValue
@@ -17,6 +17,7 @@ import com.arribas.myshoppinglist.data.utils.PreferencesManager
 import com.arribas.myshoppinglist.ui.navigation.route.Routes
 import com.arribas.myshoppinglist.ui.view.filter.GeneralFilterUiState
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.ShoplistUiState
+import com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistDetail.ShoplistDetailModeEnum
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistList.ShoplisListUiState
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.toShopListUiState
 import kotlinx.coroutines.Dispatchers
@@ -28,15 +29,14 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-class ShoplistDetailViewModel(
-    savedStateHandle: SavedStateHandle,
+class ShoplistManageViewModel(
     private val context: Context,
     private val shoplistRepository: ShoplistRepository,
     private val shoplistArticleRepository: ShoplistArticleRepository
 ) : ViewModel() {
 
     //private val itemId: Int = checkNotNull(savedStateHandle[Routes.ShoplistDetailScreen.itemIdArg])
-    private var itemId: String? = savedStateHandle[Routes.itemIdArg]
+    private var itemId: String? = null
 
     var shoplistUiState by mutableStateOf(ShoplistUiState())
         private set
@@ -125,14 +125,8 @@ class ShoplistDetailViewModel(
     private fun getData() {
         viewModelScope.launch{
             try {
-                if(itemId.isNullOrEmpty() ){
-                    mode = ShoplistDetailModeEnum.SHOP
-
-                    itemId = PreferencesManager(context)
-                        .getData(PreferencesEnum.MAIN_LIST.toString(), "0")
-                }else{
-                    mode = ShoplistDetailModeEnum.QUERY
-                }
+                itemId = PreferencesManager(context)
+                    .getData(PreferencesEnum.MAIN_LIST.toString(), "0")
 
                 if(itemId.isNullOrEmpty()){
                     shoplistUiState.copy(id = 0)

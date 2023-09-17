@@ -26,6 +26,12 @@ interface ShoplistArticleDao {
     @Query("SELECT * " +
             "FROM shoplist_article " +
             "WHERE shoplist_id = :list_id " +
+            "AND article_id = :article_id ")
+    fun getItemByListAndArticle(list_id: Int, article_id: Int): Flow<ShoplistArticle>
+
+    @Query("SELECT * " +
+            "FROM shoplist_article " +
+            "WHERE shoplist_id = :list_id " +
             "ORDER BY `order`")
     fun getItemsByList(list_id: Int): Flow<List<ShoplistArticle>>
 

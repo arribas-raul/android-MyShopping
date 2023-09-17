@@ -11,6 +11,7 @@ enum class RouteEnum {
     ARTICLE_DETAIL,
     SHOPLIST_LIST,
     SHOPLIST_DETAIL,
+    SHOPLIST_MANAGE,
 }
 
 sealed class Routes{
@@ -50,6 +51,11 @@ sealed class Routes{
         val routeWithArgs = "$route?{$itemIdArg}"
     }
 
+    object ShoplistManageScreen: Route {
+        override val route = RouteEnum.SHOPLIST_MANAGE
+        override val titleRes = R.string.shoplist_manage_title
+    }
+
     companion object {
         val itemIdArg = "itemId"
 
@@ -64,6 +70,7 @@ sealed class Routes{
                 RouteEnum.ARTICLE_DETAIL  -> navController.navigate(ArticleDetailScreen.routeWithArgs)
                 RouteEnum.SHOPLIST_LIST   -> navController.navigate(ShoplistListScreen.route.toString())
                 RouteEnum.SHOPLIST_DETAIL -> navController.navigate(ShoplistDetailScreen.routeWithArgs)
+                RouteEnum.SHOPLIST_MANAGE -> navController.navigate(ShoplistManageScreen.route.toString())
             }
         }
     }

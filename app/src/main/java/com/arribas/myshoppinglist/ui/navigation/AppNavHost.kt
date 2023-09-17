@@ -17,6 +17,7 @@ import com.arribas.myshoppinglist.ui.view.screen.article.articleNew.ArticleNewSc
 import com.arribas.myshoppinglist.ui.view.screen.listArticleShop.ListArticleShopScreen
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistDetail.ShoplistDetailScreen
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistList.ShoplistListScreen
+import com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistManage.ShoplistManageScreen
 
 /**
  * Provides Navigation graph for the application.
@@ -122,7 +123,25 @@ fun MyAppNavHost(
             ShoplistDetailScreen(
                 onComposing = { appBarState.actions = it.actions },
                 navigateBack = { navController.popBackStack() },
+                onSelectItem = {
+                    onSelectItem(RouteEnum.ARTICLE_LIST)
+                    appUiState.title = appUiState.actualTitle()
 
+                    navController.navigate(
+                        route = "${Routes.ArticleListScreen.route}?${it.id}"
+                    )
+                },
+
+                modifier = modifier
+            )
+        }
+
+        composable(
+            route = Routes.ShoplistManageScreen.route.toString(),
+        ){
+            ShoplistManageScreen(
+                onComposing = { appBarState.actions = it.actions },
+                navigateBack = { navController.popBackStack() },
                 onSelectItem = {
                     onSelectItem(RouteEnum.ARTICLE_LIST)
                     appUiState.title = appUiState.actualTitle()
