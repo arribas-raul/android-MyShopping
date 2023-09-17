@@ -28,6 +28,7 @@ interface ArticleDao {
     fun getItemByName(name: String): Flow<Article>
 
     @Query("SELECT a.*, " +
+            "sla.shoplist_id, " +
 
             "(select group_concat(c.name, ',') as category " +
             "from category as c " +

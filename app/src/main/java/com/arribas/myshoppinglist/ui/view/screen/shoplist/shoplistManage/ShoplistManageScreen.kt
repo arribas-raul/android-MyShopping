@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arribas.myshoppinglist.R
 import com.arribas.myshoppinglist.data.model.ArticleShop
+import com.arribas.myshoppinglist.data.model.ShoplistArticle
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.app.AppViewModelProvider
 import com.arribas.myshoppinglist.ui.view.app.app.AppUiState
@@ -199,12 +200,12 @@ fun ShoplistListTitle(
 
 @Composable
 fun ShoplistDetailBody(
-    listUiState: ShoplistDetailUiState,
+    listUiState: ShoplistManageUiState,
     filterUiState: GeneralFilterUiState,
     isVisibleHeader: Boolean,
     navigateToItemUpdate: (Int) -> Unit,
-    deleteItem: (article: ArticleShop) -> Unit,
-    updateItem: (ArticleShop) -> Unit,
+    deleteItem: (article: ShoplistArticle) -> Unit,
+    updateItem: (ShoplistArticle) -> Unit,
     onSearch: (String) -> Unit,
     onReset: () -> Unit,
     onClearName: () -> Unit,
@@ -224,7 +225,7 @@ fun ShoplistDetailBody(
             )
 
         } else {
-            ShoplistDetailList(
+            ShoplistManagelList(
                 itemList = listUiState.itemList,
                 onItemClick = { navigateToItemUpdate(it.id) },
                 onDeleteClick = { deleteItem(it) },
@@ -237,12 +238,12 @@ fun ShoplistDetailBody(
 }
 
 @Composable
-private fun ShoplistDetailList(
-    itemList: List<ArticleShop>,
-    onItemClick: (ArticleShop) -> Unit,
-    onDeleteClick: (ArticleShop) -> Unit,
-    onCheckClick: (ArticleShop) -> Unit,
-    onChangeItem: (ArticleShop) -> Unit,
+private fun ShoplistManagelList(
+    itemList: List<ShoplistArticle>,
+    onItemClick: (ShoplistArticle) -> Unit,
+    onDeleteClick: (ShoplistArticle) -> Unit,
+    onCheckClick: (ShoplistArticle) -> Unit,
+    onChangeItem: (ShoplistArticle) -> Unit,
     onReorderItems: (Int, Int) -> Unit,
     modifier: Modifier = Modifier
 ){
@@ -255,10 +256,10 @@ private fun ShoplistDetailList(
             }
         },
 
-        canDragOver = {draggedOver, dragging ->
+       /* canDragOver = {draggedOver, dragging ->
             data.value.getOrNull(draggedOver.index)?.isLocked != true
 
-        }
+        }*/
     )
 
     LazyColumn(
@@ -271,7 +272,7 @@ private fun ShoplistDetailList(
     {
         items(items = itemList, key = { it.id }) { item ->
             ReorderableItem(state, key = item.id, defaultDraggingModifier = Modifier) { isDragging ->
-                ShoplistDetailItem(
+                ShoplistManageItem(
                     item = item,
                     onItemClick = onItemClick,
                     onDeleteClick = { onDeleteClick(it) },
@@ -285,12 +286,12 @@ private fun ShoplistDetailList(
 }
 
 @Composable
-private fun ShoplistDetailItem(
-    item: ArticleShop,
-    onItemClick: (ArticleShop) -> Unit,
-    onDeleteClick: (ArticleShop) -> Unit,
-    onCheckClick: (ArticleShop) -> Unit,
-    onChangeItem: (ArticleShop) -> Unit = {},
+private fun ShoplistManageItem(
+    item: ShoplistArticle,
+    onItemClick: (ShoplistArticle) -> Unit,
+    onDeleteClick: (ShoplistArticle) -> Unit,
+    onCheckClick: (ShoplistArticle) -> Unit,
+    onChangeItem: (ShoplistArticle) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -391,16 +392,18 @@ private fun ShoplistDetailItem(
 @Preview(showBackground = true)
 @Composable
 fun ShoplistDetailItemPreview() {
-    val article = ArticleShop(
+    val article = ShoplistArticle(
         id = 1,
         name = "Bolsa de patatas",
+        article_id = 8,
+        shoplist_id = 19,
         quantity = 1,
         check = false,
         order = 1
     )
 
     MyShoppingListTheme {
-        ShoplistDetailItem(
+        ShoplistManageItem(
             item = article,
             onItemClick = {},
             onDeleteClick = {},

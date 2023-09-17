@@ -35,5 +35,6 @@ interface ShoplistArticleDao {
             "ORDER BY `order`")
     fun getItemsByList(list_id: Int): Flow<List<ShoplistArticle>>
 
-
+    @Query("SELECT count(id) from articleShop")
+    fun count(): Int
 }

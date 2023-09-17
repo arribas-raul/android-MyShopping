@@ -8,6 +8,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arribas.myshoppinglist.data.model.ArticleShop
+import com.arribas.myshoppinglist.data.model.ShoplistArticle
 import com.arribas.myshoppinglist.data.repository.ShoplistArticleRepository
 import com.arribas.myshoppinglist.data.repository.ShoplistRepository
 import com.arribas.myshoppinglist.data.utils.DIALOG_UI_TAG
@@ -44,8 +45,8 @@ class ShoplistManageViewModel(
     private val _dialogState = MutableStateFlow(DialogUiState())
     val dialogState: StateFlow<DialogUiState> = _dialogState
 
-    private val _listUiState = MutableStateFlow(ShoplistDetailUiState())
-    var listUiState: StateFlow<ShoplistDetailUiState> = _listUiState
+    private val _listUiState = MutableStateFlow(ShoplistManageUiState())
+    var listUiState: StateFlow<ShoplistManageUiState> = _listUiState
 
     private val _filterUiState = MutableStateFlow(GeneralFilterUiState())
     var filterUiState: StateFlow<GeneralFilterUiState> = _filterUiState
@@ -117,7 +118,7 @@ class ShoplistManageViewModel(
             this.shoplistUiState.id.toString()
         )
 
-
+        getData()
 
     }
 
@@ -140,11 +141,18 @@ class ShoplistManageViewModel(
                             .toShopListUiState()
 
                         val shoplistArticles = shoplistArticleRepository.getItemsByList(itemId!!.toInt())
+                            .collect { list ->
+                                _listUiState.value = ShoplistManageUiState(
+                                    itemList = list,
+                                    itemCount = list.count(),
+                                    itemSelectCount = list.count { it.check }
+                                )
+                            }
 
-                        if (shoplistArticles.count() > 0) {
+                        //if (shoplistArticles.count() > 0) {
                             /*articleUiState =
                                 articleUiState.copy(category = articleCategorys[0].category_id)*/
-                        }
+                       // }
                     }
                 }
 
@@ -279,8 +287,8 @@ class ShoplistManageViewModel(
     }
 }
 
-data class ShoplistDetailUiState(
-    var itemList: List<ArticleShop> = listOf(),
+data class ShoplistManageUiState(
+    var itemList: List<ShoplistArticle> = listOf(),
     val itemCount: Int = 0,
     val itemSelectCount: Int = 0
 ){

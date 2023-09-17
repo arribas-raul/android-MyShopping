@@ -11,6 +11,7 @@ import com.arribas.myshoppinglist.data.model.Article
 import com.arribas.myshoppinglist.data.model.ArticleCategory
 import com.arribas.myshoppinglist.data.model.ArticleShop
 import com.arribas.myshoppinglist.data.model.QArticle
+import com.arribas.myshoppinglist.data.model.ShoplistArticle
 import com.arribas.myshoppinglist.data.repository.ArticleCategoryRepository
 import com.arribas.myshoppinglist.data.repository.ArticleRepository
 import com.arribas.myshoppinglist.data.repository.ArticleShopRepository
@@ -37,7 +38,7 @@ class ListArticleViewModel(
     private val articleCategoryRepository: ArticleCategoryRepository
 ): ViewModel() {
 
-    private val itemId: Int = checkNotNull(savedStateHandle[Routes.itemIdArg])
+    private var itemId: String? = savedStateHandle[Routes.itemIdArg]
 
     private val _searchUiState = MutableStateFlow(SearchUiState())
     var searchUiState: StateFlow<SearchUiState> = _searchUiState
@@ -51,21 +52,34 @@ class ListArticleViewModel(
         private set
 
     init{
+
         getData()
     }
 
     private fun getData(){
         try {
-            viewModelScope.launch{
-                articleRepository.getItemsByName(
-                    shoplistUiState.id,
-                    _searchUiState.value.name)
+            if(itemId == null) {
+                itemId = PreferencesManager(context)
+                    .getData(PreferencesEnum.MAIN_LIST.toString(), "0")
+            }
+
+            if(itemId.isNullOrEmpty()){
+                shoplistUiState.copy(id = 0)
+            }else {
+                shoplistUiState = shoplistUiState.copy(id = itemId!!.toInt())
+
+                viewModelScope.launch {
+                    articleRepository.getItemsByName(
+                        shoplistUiState.id,
+                        _searchUiState.value.name
+                    )
                         .collect { list ->
                             _listUiState.value = ListUiState(
                                 itemList = list,
                                 itemCount = list.count(),
                                 itemSelectCount = list.count { it.shopCheked }
-                    )
+                            )
+                        }
                 }
             }
         }catch (e: IllegalArgumentException){
@@ -78,35 +92,37 @@ class ListArticleViewModel(
             return
         }
 
-        article = qArticle
+        //article = qArticle.copy(shoplist_id = shoplistUiState.id)
 
         viewModelScope.launch(Dispatchers.IO) {
             //println("article: $article")
-            if(qArticle.shopCheked){
+            if(qArticle.shoplist_id > 0){
                 //val articleShop = articleShopRepository.getItemByName(qArticle.name)
-                val article = shoplistArticleRepository.getItemByListAndArticle(
+                val shoplistArticle = shoplistArticleRepository.getItemByListAndArticle(
                     qArticle.shoplist_id, qArticle.id
                 )
 
-                //TODO::Me quedo aquí
-                if(article.first() != null) {
-                    shoplistArticleRepository.deleteItem(article.first()!!)
+                if(shoplistArticle.first() != null) {
+                    shoplistArticleRepository.deleteItem(shoplistArticle.first()!!)
                 }
 
             }else{
-                val count: Int = articleShopRepository.count()
+                val count: Int = shoplistArticleRepository.count()
 
-                val articleShop = ArticleShop(
+                val shoplistArticle = ShoplistArticle(
+                    id = 0,
+                    article_id =   qArticle.id,
+                    shoplist_id = shoplistUiState.id,
                     name = qArticle.name,
                     order = count + 1
                 )
 
-                articleShopRepository.insertItem(articleShop)
+                shoplistArticleRepository.insertItem(shoplistArticle)
             }
-
+/*
             articleRepository.updateItem(
                 qArticleToArticle(
-                    article.copy(shopCheked = !article.shopCheked)))
+                    article.copy(shopCheked = !article.shopCheked)))*/
         }
     }
 

@@ -181,7 +181,7 @@ private fun InventoryItem(
                     .padding(end = 10.dp)
             )*/
 
-            if(item.shopCheked) {
+            if(item.shoplist_id > 0) {
                 Image(
                     painter = painterResource(R.drawable.ic_check),
                     contentDescription = stringResource(R.string.update),
@@ -265,6 +265,7 @@ fun ListArticleHeaderPreview() {
 fun ListArticleItemPreview() {
     val article = QArticle(
         id = 1,
+        shoplist_id = 1,
         name = "Bolsa de patatas",
         category = "Fruta, Carne",
         shopCheked = false

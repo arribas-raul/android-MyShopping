@@ -27,7 +27,7 @@ import com.arribas.myshoppinglist.R
 
 @Composable
 fun ShoplistManageHeader(
-    listUiState: ShoplistDetailUiState,
+    listUiState: ShoplistManageUiState,
     onResetBt: () -> Unit = {},
 
     modifier: Modifier = Modifier
@@ -79,7 +79,7 @@ fun ShoplistManageHeader(
 @Preview(showBackground = true)
 @Composable
 fun HeaderArticleShopListPreview() {
-    val listUiState = ShoplistDetailUiState(
+    val listUiState = ShoplistManageUiState(
         itemCount = 20,
         itemSelectCount = 10
     )
