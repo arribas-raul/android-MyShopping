@@ -118,6 +118,11 @@ class ShoplistManageViewModel(
             this.shoplistUiState.id.toString()
         )
 
+        PreferencesManager(context).saveData(
+            PreferencesEnum.MAIN_LIST_NAME.toString(),
+            this.shoplistUiState.name.toString()
+        )
+
         getData()
 
     }
@@ -159,14 +164,6 @@ class ShoplistManageViewModel(
             }catch (e: IllegalArgumentException){
 
             }
-            /*articleShopRepository.getAllItems()
-                .collect { list ->
-                    _listUiState.value = ListArticleShopUiState(
-                        itemList = list,
-                        itemCount = list.count(),
-                        itemSelectCount = list.count { it.check }
-                    )
-                }*/
         }
     }
 

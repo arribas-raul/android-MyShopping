@@ -1,20 +1,29 @@
 package com.arribas.myshoppinglist.ui.view.app.app
 
 import android.content.Context
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.arribas.myshoppinglist.data.utils.PreferencesEnum
+import com.arribas.myshoppinglist.data.utils.PreferencesManager
 import com.arribas.myshoppinglist.ui.navigation.navigationDrawer.ItemNavigationDrawer
 import com.arribas.myshoppinglist.ui.navigation.navigationDrawer.NavigationDrawerProvider
 import com.arribas.myshoppinglist.ui.navigation.route.RouteEnum
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 class AppViewModel(context: Context) : ViewModel() {
 
     private val _appUiState = MutableStateFlow(AppUiState())
     val appUiState: StateFlow<AppUiState> = _appUiState
+
+    private val _title = MutableStateFlow("")
+    val title: StateFlow<String> = _title
 
     var menuItems: List<ItemNavigationDrawer>
 
@@ -22,11 +31,23 @@ class AppViewModel(context: Context) : ViewModel() {
         private set
 
     init{
-        //appUiState.value.title = context.resources.getString(R.string.shoplist_detail_title)
         menuItems = NavigationDrawerProvider.getData(context)
 
         appUiState.value.setup(menuItems.first())
         selectedItem = menuItems.first()
+        viewModelScope.launch {
+            val title = PreferencesManager(context)
+                .getData(PreferencesEnum.MAIN_LIST_NAME.toString(), "")
+
+            if (title !== "") {
+                _appUiState.value.selectedItem.text = title
+                onUpdateTitle(title)
+            }
+        }
+    }
+
+    fun onUpdateTitle(title: String){
+        _title.value = title
     }
 
     fun changeSelectedItem(item: ItemNavigationDrawer){

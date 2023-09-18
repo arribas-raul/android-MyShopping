@@ -5,7 +5,7 @@ import com.arribas.myshoppinglist.R
 import com.arribas.myshoppinglist.ui.navigation.navigationDrawer.ItemNavigationDrawer
 
 enum class RouteEnum {
-    SHOP_LIST,
+    //SHOP_LIST,
     ARTICLE_LIST,
     ARTICLE_NEW,
     ARTICLE_DETAIL,
@@ -15,10 +15,10 @@ enum class RouteEnum {
 }
 
 sealed class Routes{
-    object ShopListScreen: Route {
+    /*object ShopListScreen: Route {
         override val route = RouteEnum.SHOP_LIST
         override val titleRes = R.string.shop_list_title
-    }
+    }*/
 
     object ArticleListScreen: Route {
         override val route = RouteEnum.ARTICLE_LIST
@@ -64,7 +64,7 @@ sealed class Routes{
             navController: NavHostController
         ){
             when(item.type){
-                RouteEnum.SHOP_LIST       -> navController.navigate(ShopListScreen.route.toString())
+                //RouteEnum.SHOP_LIST       -> navController.navigate(ShopListScreen.route.toString())
                 RouteEnum.ARTICLE_LIST    -> navController.navigate(ArticleListScreen.routeWithArgs)
                 RouteEnum.ARTICLE_NEW     -> navController.navigate(ArticleNewScreen.route.toString())
                 RouteEnum.ARTICLE_DETAIL  -> navController.navigate(ArticleDetailScreen.routeWithArgs)

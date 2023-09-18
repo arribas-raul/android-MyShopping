@@ -3,7 +3,7 @@ package com.arribas.myshoppinglist.ui.navigation.navigationDrawer
 import com.arribas.myshoppinglist.ui.navigation.route.RouteEnum
 
 data class ItemNavigationDrawer(
-    val type: RouteEnum = RouteEnum.SHOP_LIST,
+    val type: RouteEnum = RouteEnum.SHOPLIST_MANAGE,
     var text: String = "",
     val icon: Int = 0,
     val menuLeftVisible: Boolean = false,

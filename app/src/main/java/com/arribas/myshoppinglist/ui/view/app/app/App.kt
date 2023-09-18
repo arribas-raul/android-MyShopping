@@ -46,6 +46,7 @@ fun App(
     val navController = rememberNavController()
 
     val appUiState by appViewModel.appUiState.collectAsState()
+    val title by appViewModel.title.collectAsState()
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -70,6 +71,8 @@ fun App(
         }
     ) {
         Content(
+            onUpdateTitle = {appViewModel.onUpdateTitle(it)},
+            title = title,
             appUiState = appUiState,
             items = appViewModel.menuItems,
             navController = navController,
@@ -114,6 +117,8 @@ fun App(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Content(
+    onUpdateTitle: (String) ->Unit,
+    title: String,
     appUiState: AppUiState,
     navController: NavHostController,
     items: List<ItemNavigationDrawer>,
@@ -132,7 +137,7 @@ fun Content(
     Scaffold(
         topBar = {
             MyTopBar(
-                title = appUiState.actualTitle(),
+                title = title,
                 appBarState = appBarState,
                 canNavigateBack = !selectedItem.menuLeftVisible || appUiState.isLastItem(),
                 navigateUp = navigateUp,
@@ -154,6 +159,7 @@ fun Content(
             .padding(padding)) {
 
             MyAppNavHost(
+                onUpdateTitle = { onUpdateTitle(it) },
                 appUiState = appUiState,
                 appBarState = appBarState,
                 navController = navController,

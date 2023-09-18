@@ -2,11 +2,14 @@ package com.arribas.myshoppinglist.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.arribas.myshoppinglist.data.utils.PreferencesEnum
+import com.arribas.myshoppinglist.data.utils.PreferencesManager
 import com.arribas.myshoppinglist.ui.navigation.route.RouteEnum
 import com.arribas.myshoppinglist.ui.navigation.route.Routes
 import com.arribas.myshoppinglist.ui.view.app.app.AppUiState
@@ -24,27 +27,53 @@ import com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistManage.Shoplis
  */
 @Composable
 fun MyAppNavHost(
+    onUpdateTitle: (String)->Unit,
     appUiState: AppUiState,
     appBarState: AppBarState,
     navController: NavHostController,
     onSelectItem: (RouteEnum) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    onUpdateTitle(appUiState.lastSelectedItems.last().text)
 
     NavHost(
         navController = navController,
-        startDestination = Routes.ShopListScreen.route.toString(),
+        startDestination = Routes.ShoplistManageScreen.route.toString(),
         modifier = modifier
     ) {
-
         composable(
+            route = Routes.ShoplistManageScreen.route.toString(),
+        ){
+            ShoplistManageScreen(
+                onComposing = {
+                    appBarState.actions = it.actions
+                    onUpdateTitle("")
+                },
+                navigateBack = { navController.popBackStack() },
+                onSelectItem = {
+                    onSelectItem(RouteEnum.ARTICLE_LIST)
+                    appUiState.title = appUiState.actualTitle()
+
+                    navController.navigate(
+                        route = "${Routes.ArticleListScreen.route}?${it.id}"
+                    )
+                },
+                onUpdateTitle = {
+                    appUiState.lastSelectedItems.last().text = it
+                    onUpdateTitle(it)
+                },
+
+                modifier = modifier
+            )
+        }
+        /*composable(
             route = Routes.ShopListScreen.route.toString()
         ){
             ListArticleShopScreen(
                 onComposing = { appBarState.actions = it.actions },
                 navigateToItemUpdate = {}
             )
-        }
+        }*/
 
         composable(
             route = Routes.ArticleListScreen.routeWithArgs,
@@ -121,25 +150,6 @@ fun MyAppNavHost(
             )
         ){
             ShoplistDetailScreen(
-                onComposing = { appBarState.actions = it.actions },
-                navigateBack = { navController.popBackStack() },
-                onSelectItem = {
-                    onSelectItem(RouteEnum.ARTICLE_LIST)
-                    appUiState.title = appUiState.actualTitle()
-
-                    navController.navigate(
-                        route = "${Routes.ArticleListScreen.route}?${it.id}"
-                    )
-                },
-
-                modifier = modifier
-            )
-        }
-
-        composable(
-            route = Routes.ShoplistManageScreen.route.toString(),
-        ){
-            ShoplistManageScreen(
                 onComposing = { appBarState.actions = it.actions },
                 navigateBack = { navController.popBackStack() },
                 onSelectItem = {

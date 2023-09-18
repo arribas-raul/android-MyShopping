@@ -10,12 +10,14 @@ import androidx.compose.ui.graphics.Color
 
 data class AppBarState(
     var actions: (@Composable RowScope.() -> Unit)? = {
-        IconButton(onClick = {}) {
+        /*IconButton(onClick = {}) {
             Icon(
                 imageVector = Icons.Rounded.Search,
                 contentDescription = "",
                 tint = Color.White,
             )
-        }
+        }*/
     }
+
+
 )

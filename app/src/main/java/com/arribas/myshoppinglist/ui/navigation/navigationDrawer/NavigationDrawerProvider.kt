@@ -8,10 +8,17 @@ import com.arribas.myshoppinglist.ui.navigation.route.RouteEnum
 object NavigationDrawerProvider {
     fun getData(context: Context): List<ItemNavigationDrawer>{
         return listOf(
-            ItemNavigationDrawer(
+            /*ItemNavigationDrawer(
                 type = RouteEnum.SHOP_LIST,
                 text = context.getString(R.string.shoplist_list_title),
                 icon = R.drawable.ic_shopping_cart,
+                menuLeftVisible = true,
+                menuBottomVisible = true
+            ),*/
+            ItemNavigationDrawer(
+                type = RouteEnum.SHOPLIST_MANAGE,
+                text = context.getString(R.string.shoplist_manage_title),
+                icon = R.drawable.ic_view_list,
                 menuLeftVisible = true,
                 menuBottomVisible = true
             ),
@@ -49,15 +56,7 @@ object NavigationDrawerProvider {
                 type = RouteEnum.SHOPLIST_DETAIL,
                 text = context.getString(R.string.shoplist_detail_title),
                 icon = R.drawable.ic_view_list,
-            ),
-
-            ItemNavigationDrawer(
-                type = RouteEnum.SHOPLIST_MANAGE,
-                text = context.getString(R.string.shoplist_manage_title),
-                icon = R.drawable.ic_view_list,
-                menuLeftVisible = true,
-                menuBottomVisible = true
-            ),
+            )
         )
     }
 }

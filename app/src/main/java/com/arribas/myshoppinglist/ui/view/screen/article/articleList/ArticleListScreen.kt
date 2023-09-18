@@ -59,13 +59,7 @@ fun ArticleListScreen(
         onComposing(
             AppBarState(
                 actions = {
-                    IconButton(onClick = {}) {
-                        Icon(
-                            imageVector = Icons.Rounded.List,
-                            contentDescription = "",
-                            tint = Color.White,
-                        )
-                    }
+                    IconButton(onClick = {}) {}
                 }
             )
         )

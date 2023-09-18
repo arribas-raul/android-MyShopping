@@ -61,12 +61,13 @@ import com.arribas.myshoppinglist.ui.view.screen.listArticleShop.SearchListArtic
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.ShoplistUiState
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistDetail.ShoplistDetailHeader
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistDetail.ShoplistSelectDialog
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
 import org.burnoutcrew.reorderable.reorderable
-
+import kotlin.time.Duration.Companion.seconds
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -77,17 +78,11 @@ fun ShoplistManageScreen(
     navigateBack: (() -> Unit)? = null,
     listViewModel: ShoplistManageViewModel = viewModel(factory = AppViewModelProvider.Factory),
     onSelectItem: (ShoplistUiState) -> Unit,
+    onUpdateTitle: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val scope = rememberCoroutineScope()
-    val listState = rememberLazyListState()
-
     val listUiState by listViewModel.listUiState.collectAsState()
     val filterUiState by listViewModel.filterUiState.collectAsState()
-
-    val fabVisibility by derivedStateOf {
-        listState.firstVisibleItemIndex == 0
-    }
 
     val showDialog =  remember { mutableStateOf(false) }
 
@@ -111,8 +106,8 @@ fun ShoplistManageScreen(
         ShoplistSelectDialog(
             value = listViewModel.shoplistUiState,
             onItemValueChange = {
-
                 listViewModel.setShoplist(it)
+                onUpdateTitle(it.name)
                 showDialog.value = false
             },
             setShowDialog = {
@@ -121,18 +116,6 @@ fun ShoplistManageScreen(
         )
 
     Scaffold(
-        floatingActionButton = {
-            FloatingButton(
-                onClick = {
-                    //listViewModel.shoplistUiState.existElement()
-                    scope.launch {
-                        onSelectItem(listViewModel.shoplistUiState)
-                    }
-                },
-
-                fabVisibility = fabVisibility,
-            )
-        },
         modifier = modifier
 
     ) { padding ->
@@ -142,14 +125,12 @@ fun ShoplistManageScreen(
                 .fillMaxSize()
                 .background(colorResource(R.color.my_background))
         ) {
-            ShoplistListTitle(
-                title = if (listViewModel.shoplistUiState == null) {
-                    stringResource(R.string.shoplist_manage_not_select_list)
-                } else {
-                    listViewModel.shoplistUiState.name
-                },
-                modifier = modifier.padding(8.dp)
-            )
+            if (listViewModel.shoplistUiState == null) {
+                ShoplistListTitle(
+                    title = stringResource(R.string.shoplist_manage_not_select_list),
+                    modifier = modifier.padding(8.dp)
+                )
+            }
 
             ShoplistManageHeader(
                 listUiState = listUiState,

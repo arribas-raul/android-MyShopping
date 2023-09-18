@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 
 
 enum class PreferencesEnum {
-    MAIN_LIST
+    MAIN_LIST, MAIN_LIST_NAME
 }
 
 class PreferencesManager(context: Context){
