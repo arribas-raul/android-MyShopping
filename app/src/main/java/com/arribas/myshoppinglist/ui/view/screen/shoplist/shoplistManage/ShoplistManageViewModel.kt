@@ -42,13 +42,7 @@ class ShoplistManageViewModel(
     private val _listUiState = MutableStateFlow(ShoplistManageUiState())
     var listUiState: StateFlow<ShoplistManageUiState> = _listUiState
 
-    private val _filterUiState = MutableStateFlow(GeneralFilterUiState())
-    var filterUiState: StateFlow<GeneralFilterUiState> = _filterUiState
-
     lateinit var article: ShoplistArticle
-
-    private val _shoplistListUiState = MutableStateFlow(ShoplisListUiState())
-    val shoplistListUiState: StateFlow<ShoplisListUiState> = _shoplistListUiState
 
     init{
         getData()
@@ -73,21 +67,7 @@ class ShoplistManageViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             shoplistArticleRepository.updateItem(articleTo.copy(order = articleFrom.order))
             shoplistArticleRepository.updateItem(articleFrom.copy(order = articleTo.order))
-            //articleShopRepository.updateItem(articleTo.copy(order = articleFrom.order))
-            //articleShopRepository.updateItem(articleFrom.copy(order = articleTo.order))
         }
-
-    }
-
-    fun onSearch(_name: String){
-        _filterUiState.value = _filterUiState.value.copy(name = _name)
-
-        getData()
-    }
-
-    fun onClearName(){
-        _filterUiState.value = _filterUiState.value.copy(name = "")
-        getData()
     }
 
     fun onDialogDelete(_article: ShoplistArticle){
@@ -118,7 +98,6 @@ class ShoplistManageViewModel(
         )
 
         getData()
-
     }
 
     /**Private functions********************************************/
@@ -130,7 +109,7 @@ class ShoplistManageViewModel(
 
                 if(itemId.isNullOrEmpty()){
                     shoplistUiState.copy(id = 0)
-                    //TODO: Mostrar mensaje de que no hay lista
+
                 }else {
                     viewModelScope.launch(Dispatchers.IO) {
                         delay(100)
@@ -139,7 +118,7 @@ class ShoplistManageViewModel(
                             .first()
                             .toShopListUiState()
 
-                        val shoplistArticles = shoplistArticleRepository.getItemsByList(itemId!!.toInt())
+                        shoplistArticleRepository.getItemsByList(itemId!!.toInt())
                             .collect { list ->
                                 _listUiState.value = ShoplistManageUiState(
                                     itemList = list,
@@ -147,11 +126,6 @@ class ShoplistManageViewModel(
                                     itemSelectCount = list.count { it.check }
                                 )
                             }
-
-                        //if (shoplistArticles.count() > 0) {
-                            /*articleUiState =
-                                articleUiState.copy(category = articleCategorys[0].category_id)*/
-                       // }
                     }
                 }
 
@@ -161,29 +135,15 @@ class ShoplistManageViewModel(
         }
     }
 
-    private fun getDataShoplist(){
-        viewModelScope.launch {
-            shoplistRepository.getItemsByName(filterUiState.value.name).collect {
-                    list ->
-                _shoplistListUiState.value = ShoplisListUiState(
-                    itemList = list,
-                    itemCount = list.count()
-                )
-            }
-        }
-    }
-
     private fun reset(){
         viewModelScope.launch(Dispatchers.IO) {
             shoplistArticleRepository.reset(shoplistUiState.id)
-           // articleShopRepository.reset()
         }
     }
 
     private fun updateItem(){
         viewModelScope.launch {
             shoplistArticleRepository.updateItem(article)
-            ///articleShopRepository.updateItem(article)
         }
     }
 
@@ -192,19 +152,6 @@ class ShoplistManageViewModel(
             shoplistArticleRepository.deleteItem(article)
 
             updateOrderItems()
-         /*   articleShopRepository.deleteItem(article)
-
-            val article = articleRepository.getItemByName(article.name);
-
-            article.first()?.let{ _article->
-                val article = _article.copy(
-                    shopCheked = false
-                )
-
-                articleRepository.updateItem(article)
-            }
-
-            updateOrderItems()*/
         }
     }
 
@@ -214,7 +161,6 @@ class ShoplistManageViewModel(
 
             listUiState.value.itemList.forEach { article ->
                 shoplistArticleRepository.updateItem(article.copy(order = count++))
-                //articleShopRepository.updateItem(article.copy(order = count++))
             }
         }
     }
@@ -292,14 +238,4 @@ data class ShoplistManageUiState(
     fun getTotalItemText(): String {
         return "Total Items ${itemCount} - Select Items ${itemSelectCount}"
     }
-}/*
-data class ListArticleShopUiState(
-    var itemList: List<ArticleShop> = listOf(),
-    val itemCount: Int = 0,
-    val itemSelectCount: Int = 0
-)
-
-data class SearchListArticleUiState(
-    val check: Boolean = false
-)
-*/
+}

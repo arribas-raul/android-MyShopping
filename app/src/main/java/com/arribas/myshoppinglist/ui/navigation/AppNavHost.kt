@@ -49,15 +49,6 @@ fun MyAppNavHost(
                     appBarState.actions = it.actions
                     onUpdateTitle("")
                 },
-                navigateBack = { navController.popBackStack() },
-                onSelectItem = {
-                    onSelectItem(RouteEnum.ARTICLE_LIST)
-                    appUiState.title = appUiState.actualTitle()
-
-                    navController.navigate(
-                        route = "${Routes.ArticleListScreen.route}?${it.id}"
-                    )
-                },
                 onUpdateTitle = {
                     appUiState.lastSelectedItems.last().text = it
                     onUpdateTitle(it)

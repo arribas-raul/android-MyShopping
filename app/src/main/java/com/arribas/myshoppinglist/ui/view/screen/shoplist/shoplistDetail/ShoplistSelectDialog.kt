@@ -49,6 +49,7 @@ import com.arribas.myshoppinglist.ui.view.screen.shoplist.ShoplistUiState
 fun ShoplistSelectDialog(
     value: ShoplistUiState,
     onItemValueChange: (ShoplistUiState) -> Unit = {},
+    isShow: Boolean,
     setShowDialog: (Boolean) -> Unit,
     viewModel: ShoplistSelectDialogViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
 
@@ -56,101 +57,104 @@ fun ShoplistSelectDialog(
 
     viewModel.setShoplist(value)
 
-    Dialog(onDismissRequest = { setShowDialog(false) }) {
-        Surface(
-            shape = RoundedCornerShape(16.dp),
-            color = Color.White
-        ) {
-            Box(
-                contentAlignment = Alignment.Center
+    if(isShow) {
+
+        Dialog(onDismissRequest = { setShowDialog(false) }) {
+            Surface(
+                shape = RoundedCornerShape(16.dp),
+                color = Color.White
             ) {
-                Column(modifier = Modifier.padding(20.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Seleccionar lista",
-                            style = TextStyle(
-                                fontSize = 24.sp,
-                                fontFamily = FontFamily.Default,
-                                fontWeight = FontWeight.Bold
+                Box(
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(modifier = Modifier.padding(20.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Seleccionar lista",
+                                style = TextStyle(
+                                    fontSize = 24.sp,
+                                    fontFamily = FontFamily.Default,
+                                    fontWeight = FontWeight.Bold
+                                )
                             )
-                        )
-                        Icon(
-                            imageVector = Icons.Filled.List,
-                            contentDescription = "",
-                            tint = colorResource(R.color.my_secondary),
-                            modifier = Modifier
-                                .width(30.dp)
-                                .height(30.dp)
-                                .clickable { setShowDialog(false) }
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(20.dp))
-
-                    Row(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp, bottom = 16.dp, end = 8.dp)
-                    ) {
-                        var expanded by remember { mutableStateOf(false) }
-                        var selectedOptionText by remember {
-                            mutableStateOf(viewModel.shoplistUiState.id)
+                            Icon(
+                                imageVector = Icons.Filled.List,
+                                contentDescription = "",
+                                tint = colorResource(R.color.my_secondary),
+                                modifier = Modifier
+                                    .width(30.dp)
+                                    .height(30.dp)
+                                    .clickable { setShowDialog(false) }
+                            )
                         }
 
-                        ExposedDropdownMenuBox(
-                            expanded = expanded,
-                            onExpandedChange = {
-                                expanded = !expanded
-                            },
-                            modifier = Modifier.weight(7f)
+                        Spacer(modifier = Modifier.height(20.dp))
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 16.dp, bottom = 16.dp, end = 8.dp)
                         ) {
-                            TextField(
-                                readOnly = true,
-                                value = shoplistUiState?.itemList?.
-                                    find{it.id === selectedOptionText}?.name.orEmpty(),
+                            var expanded by remember { mutableStateOf(false) }
+                            var selectedOptionText by remember {
+                                mutableStateOf(viewModel.shoplistUiState.id)
+                            }
 
-                                onValueChange = {},
-                                label = { Text("Listas") },
-                                trailingIcon = {
-                                    ExposedDropdownMenuDefaults.TrailingIcon(
-                                        expanded = expanded
-                                    )
-                                },
-                                colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                                modifier = Modifier
-                                    .align(Alignment.CenterVertically)
-                                    .fillMaxWidth()
-                                    .menuAnchor()
-                                    .background(colorResource(id = R.color.white))
-                            )
-
-                            ExposedDropdownMenu(
+                            ExposedDropdownMenuBox(
                                 expanded = expanded,
-                                onDismissRequest = {
-                                    expanded = false
+                                onExpandedChange = {
+                                    expanded = !expanded
                                 },
-                                modifier = Modifier.background(
-                                    colorResource(id = R.color.my_primary)
-                                )
+                                modifier = Modifier.weight(7f)
                             ) {
-                                shoplistUiState.itemList.forEachIndexed() { index, shoplist ->
-                                    DropdownMenuItem(
-                                        onClick = {
-                                            selectedOptionText = shoplist.id
-                                            onItemValueChange(
-                                                viewModel.shoplistUiState.copy(
-                                                    id = shoplist.id,
-                                                    name = shoplist.name,
-                                                    type = shoplist.type
-                                                )
-                                            )
-                                            expanded = false
-                                        },
-                                        text = { Text(text = shoplist.name) }
+                                TextField(
+                                    readOnly = true,
+                                    value = shoplistUiState?.itemList?.find { it.id === selectedOptionText }?.name.orEmpty(),
+
+                                    onValueChange = {},
+                                    label = { Text("Listas") },
+                                    trailingIcon = {
+                                        ExposedDropdownMenuDefaults.TrailingIcon(
+                                            expanded = expanded
+                                        )
+                                    },
+                                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                                    modifier = Modifier
+                                        .align(Alignment.CenterVertically)
+                                        .fillMaxWidth()
+                                        .menuAnchor()
+                                        .background(colorResource(id = R.color.white))
+                                )
+
+                                ExposedDropdownMenu(
+                                    expanded = expanded,
+                                    onDismissRequest = {
+                                        expanded = false
+                                    },
+                                    modifier = Modifier.background(
+                                        colorResource(id = R.color.my_primary)
                                     )
+                                ) {
+                                    shoplistUiState.itemList.forEachIndexed() { index, shoplist ->
+                                        DropdownMenuItem(
+                                            onClick = {
+                                                selectedOptionText = shoplist.id
+                                                onItemValueChange(
+                                                    viewModel.shoplistUiState.copy(
+                                                        id = shoplist.id,
+                                                        name = shoplist.name,
+                                                        type = shoplist.type
+                                                    )
+                                                )
+                                                expanded = false
+                                            },
+                                            text = { Text(text = shoplist.name) }
+                                        )
+                                    }
                                 }
                             }
                         }
