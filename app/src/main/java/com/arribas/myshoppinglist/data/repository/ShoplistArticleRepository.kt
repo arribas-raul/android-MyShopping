@@ -32,7 +32,7 @@ interface ShoplistArticleRepositoryInterface {
 
     fun getItemsByList(list_id: Int): Flow<List<ShoplistArticle>>
 
-    suspend fun count(): Int
+    suspend fun count(id: Int): Int
 
     /**
      * Insert item in the data source
@@ -48,6 +48,8 @@ interface ShoplistArticleRepositoryInterface {
      * Update item in the data source
      */
     suspend fun updateItem(item: ShoplistArticle)
+
+    suspend fun reset(id: Int)
 }
 
 class ShoplistArticleRepository(private val shoplistArticleDao: ShoplistArticleDao) : ShoplistArticleRepositoryInterface {
@@ -59,11 +61,13 @@ class ShoplistArticleRepository(private val shoplistArticleDao: ShoplistArticleD
 
     override fun getItemsByList(list_id: Int): Flow<List<ShoplistArticle>> = shoplistArticleDao.getItemsByList(list_id)
 
-    override suspend fun count(): Int = shoplistArticleDao.count()
+    override suspend fun count(id: Int): Int = shoplistArticleDao.count(id)
 
     override suspend fun insertItem(item: ShoplistArticle) = shoplistArticleDao.insert(item)
 
     override suspend fun deleteItem(item: ShoplistArticle) = shoplistArticleDao.delete(item)
 
     override suspend fun updateItem(item: ShoplistArticle) = shoplistArticleDao.update(item)
+
+    override suspend fun reset(id: Int) = shoplistArticleDao.reset(id)
 }

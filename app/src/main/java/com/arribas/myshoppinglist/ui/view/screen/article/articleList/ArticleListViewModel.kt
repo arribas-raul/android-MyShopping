@@ -107,11 +107,11 @@ class ListArticleViewModel(
                 }
 
             }else{
-                val count: Int = shoplistArticleRepository.count()
+                val count: Int = shoplistArticleRepository.count(shoplistUiState.id)
 
                 val shoplistArticle = ShoplistArticle(
                     id = 0,
-                    article_id =   qArticle.id,
+                    article_id = qArticle.id,
                     shoplist_id = shoplistUiState.id,
                     name = qArticle.name,
                     order = count + 1

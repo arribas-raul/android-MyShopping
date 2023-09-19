@@ -27,4 +27,5 @@ data class ShoplistArticle(
     var quantity: Int = 1,
     var check: Boolean = false,
     val order: Int = 1,
+    val isLocked: Boolean = false
 )

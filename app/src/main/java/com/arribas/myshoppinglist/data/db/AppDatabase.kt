@@ -26,7 +26,7 @@ import com.arribas.myshoppinglist.data.model.ShoplistArticle
         Shoplist::class,
         ShoplistArticle::class
     ],
-    version = 2,
+    version = 1,
     exportSchema = false)
 
 abstract class AppDatabase: RoomDatabase() {

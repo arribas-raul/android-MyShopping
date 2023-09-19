@@ -49,6 +49,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arribas.myshoppinglist.R
 import com.arribas.myshoppinglist.data.model.ArticleShop
 import com.arribas.myshoppinglist.data.model.ShoplistArticle
+import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.app.AppViewModelProvider
 import com.arribas.myshoppinglist.ui.view.app.app.AppUiState
@@ -57,6 +58,7 @@ import com.arribas.myshoppinglist.ui.view.general.CircleButton
 import com.arribas.myshoppinglist.ui.view.general.FloatingButton
 import com.arribas.myshoppinglist.ui.view.filter.GeneralFilter
 import com.arribas.myshoppinglist.ui.view.filter.GeneralFilterUiState
+import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
 import com.arribas.myshoppinglist.ui.view.screen.listArticleShop.SearchListArticleUiState
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.ShoplistUiState
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistDetail.ShoplistDetailHeader
@@ -83,7 +85,7 @@ fun ShoplistManageScreen(
 ) {
     val listUiState by listViewModel.listUiState.collectAsState()
     val filterUiState by listViewModel.filterUiState.collectAsState()
-
+    val dialogState: DialogUiState by listViewModel.dialogState.collectAsState()
     val showDialog =  remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = true) {
@@ -101,6 +103,12 @@ fun ShoplistManageScreen(
             )
         )
     }
+
+    SimpleAlertDialog(
+        dialogState = dialogState,
+        onDismiss = listViewModel::onDialogDismiss,
+        onConfirm = listViewModel::onDialogConfirm
+    )
 
     if(showDialog.value)
         ShoplistSelectDialog(
@@ -125,7 +133,7 @@ fun ShoplistManageScreen(
                 .fillMaxSize()
                 .background(colorResource(R.color.my_background))
         ) {
-            if (listViewModel.shoplistUiState == null) {
+            if (listViewModel.shoplistUiState.id == 0) {
                 ShoplistListTitle(
                     title = stringResource(R.string.shoplist_manage_not_select_list),
                     modifier = modifier.padding(8.dp)
@@ -134,7 +142,7 @@ fun ShoplistManageScreen(
 
             ShoplistManageHeader(
                 listUiState = listUiState,
-                onResetBt = { },
+                onResetBt = { listViewModel.onDialogReset() },
                 modifier = Modifier.padding(8.dp)
             )
 
@@ -143,8 +151,8 @@ fun ShoplistManageScreen(
                 filterUiState = filterUiState,
                 isVisibleHeader = listViewModel.shoplistUiState.existElement(),
                 navigateToItemUpdate = {  },
-                deleteItem = {  },
-                updateItem = {  },
+                deleteItem = { listViewModel.onDialogDelete(it) },
+                updateItem = { listViewModel.onUpdateItem(it) },
                 onSearch = { listViewModel.onSearch(it) },
                 onReset = {  },
                 onClearName = { },
@@ -237,10 +245,10 @@ private fun ShoplistManagelList(
             }
         },
 
-       /* canDragOver = {draggedOver, dragging ->
+        canDragOver = {draggedOver, dragging ->
             data.value.getOrNull(draggedOver.index)?.isLocked != true
 
-        }*/
+        }
     )
 
     LazyColumn(

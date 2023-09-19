@@ -4,10 +4,8 @@ import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.arribas.myshoppinglist.data.model.ArticleShop
 import com.arribas.myshoppinglist.data.model.ShoplistArticle
 import com.arribas.myshoppinglist.data.repository.ShoplistArticleRepository
 import com.arribas.myshoppinglist.data.repository.ShoplistRepository
@@ -15,17 +13,14 @@ import com.arribas.myshoppinglist.data.utils.DIALOG_UI_TAG
 import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.data.utils.PreferencesEnum
 import com.arribas.myshoppinglist.data.utils.PreferencesManager
-import com.arribas.myshoppinglist.ui.navigation.route.Routes
 import com.arribas.myshoppinglist.ui.view.filter.GeneralFilterUiState
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.ShoplistUiState
-import com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistDetail.ShoplistDetailModeEnum
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistList.ShoplisListUiState
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.toShopListUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -36,7 +31,6 @@ class ShoplistManageViewModel(
     private val shoplistArticleRepository: ShoplistArticleRepository
 ) : ViewModel() {
 
-    //private val itemId: Int = checkNotNull(savedStateHandle[Routes.ShoplistDetailScreen.itemIdArg])
     private var itemId: String? = null
 
     var shoplistUiState by mutableStateOf(ShoplistUiState())
@@ -51,23 +45,21 @@ class ShoplistManageViewModel(
     private val _filterUiState = MutableStateFlow(GeneralFilterUiState())
     var filterUiState: StateFlow<GeneralFilterUiState> = _filterUiState
 
-    lateinit var article: ArticleShop
+    lateinit var article: ShoplistArticle
 
     private val _shoplistListUiState = MutableStateFlow(ShoplisListUiState())
     val shoplistListUiState: StateFlow<ShoplisListUiState> = _shoplistListUiState
-
-    lateinit var mode: ShoplistDetailModeEnum
 
     init{
         getData()
     }
 
     /**Public functions**************************************/
-    fun onUpdateItem(_article: ArticleShop) {
+    fun onUpdateItem(_article: ShoplistArticle) {
         article = _article
 
         if(article.quantity == 0){
-            //onOpenDialogClicked(tag = DIALOG_UI_TAG.TAG_DELETE)
+            onOpenDialogClicked(tag = DIALOG_UI_TAG.TAG_DELETE)
 
         }else{
             updateItem()
@@ -77,12 +69,14 @@ class ShoplistManageViewModel(
     fun onReorderItems(startIndex: Int, endIndex: Int){
         val articleTo = listUiState.value.itemList.get(startIndex)
         val articleFrom = listUiState.value.itemList.get(endIndex)
-    /*
+
         viewModelScope.launch(Dispatchers.IO) {
-            articleShopRepository.updateItem(articleTo.copy(order = articleFrom.order))
-            articleShopRepository.updateItem(articleFrom.copy(order = articleTo.order))
+            shoplistArticleRepository.updateItem(articleTo.copy(order = articleFrom.order))
+            shoplistArticleRepository.updateItem(articleFrom.copy(order = articleTo.order))
+            //articleShopRepository.updateItem(articleTo.copy(order = articleFrom.order))
+            //articleShopRepository.updateItem(articleFrom.copy(order = articleTo.order))
         }
-    */
+
     }
 
     fun onSearch(_name: String){
@@ -96,14 +90,14 @@ class ShoplistManageViewModel(
         getData()
     }
 
-    fun onDialogDelete(_article: ArticleShop){
+    fun onDialogDelete(_article: ShoplistArticle){
         article = _article
 
-        //onOpenDialogClicked(tag = DIALOG_UI_TAG.TAG_DELETE)
+        onOpenDialogClicked(tag = DIALOG_UI_TAG.TAG_DELETE)
     }
 
     fun onDialogReset(){
-        //onOpenDialogClicked(tag = DIALOG_UI_TAG.TAG_RESET)
+        onOpenDialogClicked(tag = DIALOG_UI_TAG.TAG_RESET)
     }
 
     fun setShoplist(element: ShoplistUiState){
@@ -120,7 +114,7 @@ class ShoplistManageViewModel(
 
         PreferencesManager(context).saveData(
             PreferencesEnum.MAIN_LIST_NAME.toString(),
-            this.shoplistUiState.name.toString()
+            this.shoplistUiState.name
         )
 
         getData()
@@ -181,18 +175,23 @@ class ShoplistManageViewModel(
 
     private fun reset(){
         viewModelScope.launch(Dispatchers.IO) {
+            shoplistArticleRepository.reset(shoplistUiState.id)
            // articleShopRepository.reset()
         }
     }
 
     private fun updateItem(){
         viewModelScope.launch {
-          //  articleShopRepository.updateItem(article)
+            shoplistArticleRepository.updateItem(article)
+            ///articleShopRepository.updateItem(article)
         }
     }
 
     private fun deleteItem() {
         viewModelScope.launch {
+            shoplistArticleRepository.deleteItem(article)
+
+            updateOrderItems()
          /*   articleShopRepository.deleteItem(article)
 
             val article = articleRepository.getItemByName(article.name);
@@ -214,14 +213,15 @@ class ShoplistManageViewModel(
             var count = 1;
 
             listUiState.value.itemList.forEach { article ->
-               // articleShopRepository.updateItem(article.copy(order = count++))
+                shoplistArticleRepository.updateItem(article.copy(order = count++))
+                //articleShopRepository.updateItem(article.copy(order = count++))
             }
         }
     }
 
     /**AlertDialog functions****************************************/
     fun onDialogConfirm() {
-       /* when(_dialogState.value.tag) {
+        when(_dialogState.value.tag) {
             DIALOG_UI_TAG.TAG_DELETE  -> deleteItem()
             DIALOG_UI_TAG.TAG_RESET   -> reset()
             DIALOG_UI_TAG.TAG_SUCCESS -> onDialogDismiss()
@@ -230,7 +230,7 @@ class ShoplistManageViewModel(
         }
 
         _dialogState.value = DialogUiState(
-            isShow = false)*/
+            isShow = false)
     }
 
     fun onDialogDismiss() {

@@ -35,6 +35,14 @@ interface ShoplistArticleDao {
             "ORDER BY `order`")
     fun getItemsByList(list_id: Int): Flow<List<ShoplistArticle>>
 
-    @Query("SELECT count(id) from articleShop")
-    fun count(): Int
+    @Query("SELECT count(id) " +
+            "FROM shoplist_article " +
+            "WHERE shoplist_id = :id")
+    fun count(id: Int): Int
+
+    /**Update functions***************/
+    @Query("UPDATE shoplist_article " +
+            "SET `check` = 0 " +
+            "WHERE shoplist_id = :id")
+    fun reset(id: Int)
 }
