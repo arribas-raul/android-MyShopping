@@ -125,7 +125,7 @@ fun MyAppNavHost(
                     onSelectItem(RouteEnum.SHOPLIST_DETAIL)
                     appUiState.lastSelectedItems.last().text = it.name
 
-                    navController.navigate("${Routes.ShoplistDetailScreen.route}?${it.id}")
+                    navController.navigate("${Routes.ShoplistDetailScreen.route}/${it.id}")
                 }
             )
         }

@@ -8,6 +8,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arribas.myshoppinglist.data.model.ArticleShop
+import com.arribas.myshoppinglist.data.model.ShoplistArticle
 import com.arribas.myshoppinglist.data.repository.ShoplistArticleRepository
 import com.arribas.myshoppinglist.data.repository.ShoplistRepository
 import com.arribas.myshoppinglist.data.utils.DIALOG_UI_TAG
@@ -35,8 +36,7 @@ class ShoplistDetailViewModel(
     private val shoplistArticleRepository: ShoplistArticleRepository
 ) : ViewModel() {
 
-    //private val itemId: Int = checkNotNull(savedStateHandle[Routes.ShoplistDetailScreen.itemIdArg])
-    private var itemId: String? = savedStateHandle[Routes.itemIdArg]
+    private var itemId: String = checkNotNull(savedStateHandle[Routes.itemIdArg])
 
     var shoplistUiState by mutableStateOf(ShoplistUiState())
         private set
@@ -116,42 +116,28 @@ class ShoplistDetailViewModel(
             PreferencesEnum.MAIN_LIST.toString(),
             this.shoplistUiState.id.toString()
         )
-
-
-
     }
 
     /**Private functions********************************************/
     private fun getData() {
         viewModelScope.launch{
             try {
-                if(itemId.isNullOrEmpty() ){
-                    mode = ShoplistDetailModeEnum.SHOP
+                viewModelScope.launch(Dispatchers.IO) {
+                    delay(100)
+                    shoplistUiState = shoplistRepository.getItem(itemId!!.toInt())
+                        .filterNotNull()
+                        .first()
+                        .toShopListUiState()
 
-                    itemId = PreferencesManager(context)
-                        .getData(PreferencesEnum.MAIN_LIST.toString(), "0")
-                }else{
-                    mode = ShoplistDetailModeEnum.QUERY
-                }
-
-                if(itemId.isNullOrEmpty()){
-                    shoplistUiState.copy(id = 0)
-                    //TODO: Mostrar mensaje de que no hay lista
-                }else {
-                    viewModelScope.launch(Dispatchers.IO) {
-                        delay(100)
-                        shoplistUiState = shoplistRepository.getItem(itemId!!.toInt())
-                            .filterNotNull()
-                            .first()
-                            .toShopListUiState()
-
-                        val shoplistArticles = shoplistArticleRepository.getItemsByList(itemId!!.toInt())
-
-                        if (shoplistArticles.count() > 0) {
-                            /*articleUiState =
-                                articleUiState.copy(category = articleCategorys[0].category_id)*/
+                    shoplistArticleRepository.getItemsByList(itemId!!.toInt())
+                        .collect { list ->
+                            _listUiState.value = ShoplistDetailUiState(
+                                itemList = list,
+                                itemCount = list.count(),
+                                itemSelectCount = list.count { it.check }
+                            )
                         }
-                    }
+
                 }
 
             }catch (e: IllegalArgumentException){
@@ -286,7 +272,7 @@ class ShoplistDetailViewModel(
 }
 
 data class ShoplistDetailUiState(
-    var itemList: List<ArticleShop> = listOf(),
+    var itemList: List<ShoplistArticle> = listOf(),
     val itemCount: Int = 0,
     val itemSelectCount: Int = 0
 ){

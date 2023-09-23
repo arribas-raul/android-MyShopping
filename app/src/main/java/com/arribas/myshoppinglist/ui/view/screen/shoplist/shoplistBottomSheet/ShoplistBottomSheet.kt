@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
@@ -17,9 +19,12 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -29,8 +34,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arribas.myshoppinglist.R
@@ -44,12 +52,12 @@ import com.arribas.myshoppinglist.ui.view.screen.shoplist.ShoplistUiState
 fun ShoplistBottomSheet(
     viewModel: ShoplistBottomSheetViewModel,
     modifier: Modifier = Modifier,
-    sheetState: ModalBottomSheetState,
-    showModalSheet: MutableState<Boolean>
+    sheetState: ModalBottomSheetState
 ){
     val dialogState: DialogUiState by viewModel.dialogState.collectAsState()
 
     val context = LocalContext.current
+
 
     LaunchedEffect(Unit) {
         viewModel
@@ -84,12 +92,22 @@ fun ShoplistBottomSheet(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShoplistBottomSheetContent(
     shoplistUiState: ShoplistUiState,
     onValueChange: (ShoplistUiState) -> Unit,
     onClick: (ShoplistUiState) -> Unit
 ){
+    val focusManager = LocalFocusManager.current
+
+    val title =
+        if(shoplistUiState.id === 0){
+            "Nueva lista"
+        }else{
+            "Modificar lista"
+        }
+
     Surface(
         modifier = Modifier.height(250.dp),
         color = colorResource(R.color.my_primary)
@@ -99,7 +117,7 @@ fun ShoplistBottomSheetContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Nueva lista",
+                text = title,
                 fontSize = 20.sp,
                 modifier = Modifier.padding(10.dp),
                 color = Color.White)
@@ -109,28 +127,39 @@ fun ShoplistBottomSheetContent(
                 color = Color.White
             )
 
-            EditText(
-                title = "Nombre",
+            OutlinedTextField(
+                label = { Text("Nombre") },
                 value = shoplistUiState.name,
-
+                singleLine = true,
                 onValueChange = {
                     onValueChange( shoplistUiState.copy(name = it))
                 },
 
-                onKeyEvent = {  },
-                modifier = Modifier.padding(horizontal = 10.dp)
+
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                colors = TextFieldDefaults
+                    .textFieldColors(
+                        textColor = colorResource(R.color.black),
+                        containerColor = colorResource(R.color.my_background)
+                    ),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
             )
 
-            EditText(
-                title = "Tipo",
+            OutlinedTextField(
+                label = { Text("Tiipo") },
                 value = shoplistUiState.type,
-
                 onValueChange = {
                     onValueChange( shoplistUiState.copy(type = it))
                 },
 
-                onKeyEvent = {  },
-                modifier = Modifier.padding(horizontal = 10.dp)
+                keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                colors = TextFieldDefaults
+                    .textFieldColors(
+                        textColor = colorResource(R.color.black),
+                        containerColor = colorResource(R.color.my_background)
+                    ),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
             )
 
             Spacer(

@@ -34,4 +34,8 @@
     <string name="bt_remove">Reducir</string>
     <string name="bt_category">Categoria</string>
     <string name="shoplist_manage_not_select_list">No hay ninguna lista seleccionada</string>
+
+    <string name="general_filter_label">Filtrar por...</string>
+    <string name="general_filter_clear_text">Borrar el texto</string>
+    <string name="general_filter_empty_data">No hay items en esta lista</string>
 </resources>

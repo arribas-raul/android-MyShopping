@@ -5,53 +5,34 @@ import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.rememberModalBottomSheetState
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -59,13 +40,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arribas.myshoppinglist.R
 import com.arribas.myshoppinglist.data.model.Shoplist
@@ -80,7 +56,6 @@ import com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistBottomSheet.Sh
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistBottomSheet.ShoplistBottomSheetViewModel
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.toShopListUiState
 import kotlinx.coroutines.launch
-import java.time.format.TextStyle
 
 @SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
@@ -98,10 +73,6 @@ fun ShoplistListScreen(
     val listUiState by listViewModel.listUiState.collectAsState()
     val filterUiState by listViewModel.filterUiState.collectAsState()
     val dialogState: DialogUiState by listViewModel.dialogState.collectAsState()
-
-    val showModalSheet = rememberSaveable {
-        mutableStateOf(false)
-    }
 
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
@@ -138,7 +109,7 @@ fun ShoplistListScreen(
     Scaffold(
         floatingActionButton = {
             FloatingButton(
-                onClick = { showModalSheet.value = true
+                onClick = {
                     scope.launch {
                         detailViewModel.onClearUiState()
                         sheetState.show()
@@ -160,13 +131,13 @@ fun ShoplistListScreen(
             Column(
                 modifier = modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
             ) {
                 GeneralFilter(
                     filterUiState = filterUiState,
                     onValueChange = { listViewModel.onSearch(it) },
                     onKeyEvent = { },
-                    clearName = listViewModel::onClearName
+                    clearName = listViewModel::onClearName,
+                    isTextEmptyVisible = listUiState.itemList.isEmpty()
                 )
 
                 ShopListBody(
@@ -197,11 +168,8 @@ fun ShoplistListScreen(
 
     ShoplistBottomSheet(
         viewModel = detailViewModel,
-        sheetState = sheetState,
-        showModalSheet = showModalSheet
+        sheetState = sheetState
     )
-
-
 }
 
 @Composable
@@ -217,30 +185,20 @@ fun ShopListBody(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        if (itemList.isEmpty()) {
-            Text(
-                text = stringResource(R.string.no_item_description),
-                style = MaterialTheme.typography.labelMedium,
-                modifier = modifier.padding(horizontal = 8.dp),
-            )
-
-        } else {
-            LazyColumn(
-                modifier = modifier,
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(vertical = 8.dp, horizontal = 8.dp),
-                state = lazyState,
-            )
-            {
-                items(items = itemList, key = { it.id }) { item ->
-                    ShoplistListItem(
-                        item = item,
-                        onItemClick = { onClickItem(it) },
-                        onDeleteClick = { onDeleteItem(it) },
-                        onEditClick = { onEditClick(it) },
-                        modifier = Modifier
-                    )
-                }
+        LazyColumn(
+            modifier = modifier,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(vertical = 8.dp, horizontal = 10.dp),
+            state = lazyState,
+        ){
+            items(items = itemList, key = { it.id }) { item ->
+                ShoplistListItem(
+                    item = item,
+                    onItemClick = { onClickItem(it) },
+                    onDeleteClick = { onDeleteItem(it) },
+                    onEditClick = { onEditClick(it) },
+                    modifier = modifier
+                )
             }
         }
     }
@@ -256,6 +214,7 @@ private fun ShoplistListItem(
 ) {
     Card(
         border = BorderStroke(0.2.dp, Color.Gray),
+        shape = RoundedCornerShape(6.dp),
     ) {
         Row(modifier = Modifier
             .fillMaxWidth()

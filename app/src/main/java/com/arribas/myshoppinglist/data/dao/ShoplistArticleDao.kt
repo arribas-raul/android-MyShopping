@@ -20,6 +20,10 @@ interface ShoplistArticleDao {
     @Delete
     suspend fun delete(shopListArticle: ShoplistArticle)
 
+    @Query("DELETE FROM shoplist_article " +
+            "WHERE shoplist_id = :list_id")
+    fun deleteByShoplist(list_id: Int)
+
     @Query("SELECT * from shoplist_article WHERE id = :id")
     fun getItem(id: Int): Flow<ShoplistArticle>
 

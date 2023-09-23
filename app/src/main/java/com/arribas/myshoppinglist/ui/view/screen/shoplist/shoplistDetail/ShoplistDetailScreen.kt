@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arribas.myshoppinglist.R
 import com.arribas.myshoppinglist.data.model.ArticleShop
+import com.arribas.myshoppinglist.data.model.ShoplistArticle
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.app.AppViewModelProvider
 import com.arribas.myshoppinglist.ui.view.app.app.AppUiState
@@ -83,8 +84,6 @@ fun ShoplistDetailScreen(
         listState.firstVisibleItemIndex == 0
     }
 
-    val showDialog =  remember { mutableStateOf(false) }
-
     LaunchedEffect(key1 = true) {
         onComposing(
             AppBarState()
@@ -95,7 +94,6 @@ fun ShoplistDetailScreen(
         floatingActionButton = {
             FloatingButton(
                 onClick = {
-                    //listViewModel.shoplistUiState.existElement()
                     scope.launch {
                         onSelectItem(listViewModel.shoplistUiState)
                     }
@@ -136,8 +134,8 @@ fun ShoplistDetailBody(
     filterUiState: GeneralFilterUiState,
     isVisibleHeader: Boolean,
     navigateToItemUpdate: (Int) -> Unit,
-    deleteItem: (article: ArticleShop) -> Unit,
-    updateItem: (ArticleShop) -> Unit,
+    deleteItem: (ShoplistArticle) -> Unit,
+    updateItem: (ShoplistArticle) -> Unit,
     onSearch: (String) -> Unit,
     onReset: () -> Unit,
     onClearName: () -> Unit,
@@ -186,11 +184,11 @@ fun ShoplistDetailBody(
 
 @Composable
 private fun ShoplistDetailList(
-    itemList: List<ArticleShop>,
-    onItemClick: (ArticleShop) -> Unit,
-    onDeleteClick: (ArticleShop) -> Unit,
-    onCheckClick: (ArticleShop) -> Unit,
-    onChangeItem: (ArticleShop) -> Unit,
+    itemList: List<ShoplistArticle>,
+    onItemClick: (ShoplistArticle) -> Unit,
+    onDeleteClick: (ShoplistArticle) -> Unit,
+    onCheckClick: (ShoplistArticle) -> Unit,
+    onChangeItem: (ShoplistArticle) -> Unit,
     onReorderItems: (Int, Int) -> Unit,
     modifier: Modifier = Modifier
 ){
@@ -234,11 +232,11 @@ private fun ShoplistDetailList(
 
 @Composable
 private fun ShoplistDetailItem(
-    item: ArticleShop,
-    onItemClick: (ArticleShop) -> Unit,
-    onDeleteClick: (ArticleShop) -> Unit,
-    onCheckClick: (ArticleShop) -> Unit,
-    onChangeItem: (ArticleShop) -> Unit = {},
+    item: ShoplistArticle,
+    onItemClick: (ShoplistArticle) -> Unit,
+    onDeleteClick: (ShoplistArticle) -> Unit,
+    onCheckClick: (ShoplistArticle) -> Unit,
+    onChangeItem: (ShoplistArticle) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -339,8 +337,10 @@ private fun ShoplistDetailItem(
 @Preview(showBackground = true)
 @Composable
 fun ShoplistDetailItemPreview() {
-    val article = ArticleShop(
+    val article = ShoplistArticle(
         id = 1,
+        article_id = 1,
+        shoplist_id = 1,
         name = "Bolsa de patatas",
         quantity = 1,
         check = false,

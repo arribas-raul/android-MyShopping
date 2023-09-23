@@ -70,7 +70,9 @@ object AppViewModelProvider {
 
         initializer {
             ShoplistListViewModel(
-                AppApplication().container.shoplistRepository
+                AppApplication().applicationContext,
+                AppApplication().container.shoplistRepository,
+                AppApplication().container.shoplistArticleRepository
             )
         }
 

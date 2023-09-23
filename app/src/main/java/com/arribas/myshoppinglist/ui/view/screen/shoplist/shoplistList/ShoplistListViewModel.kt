@@ -1,14 +1,18 @@
 package com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistList
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arribas.myshoppinglist.data.model.Shoplist
+import com.arribas.myshoppinglist.data.repository.ShoplistArticleRepository
 import com.arribas.myshoppinglist.data.repository.ShoplistRepository
 import com.arribas.myshoppinglist.data.utils.DIALOG_UI_TAG
 import com.arribas.myshoppinglist.data.utils.DialogUiState
+import com.arribas.myshoppinglist.data.utils.PreferencesEnum
+import com.arribas.myshoppinglist.data.utils.PreferencesManager
 import com.arribas.myshoppinglist.ui.view.filter.GeneralFilterUiState
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.ShoplistUiState
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.toItem
@@ -23,7 +27,9 @@ import kotlinx.coroutines.launch
 import java.lang.Exception
 
 class ShoplistListViewModel(
-    private val shoplistRepository: ShoplistRepository
+    private val context: Context,
+    private val shoplistRepository: ShoplistRepository,
+    private val shoplistArticleRepository: ShoplistArticleRepository
 ): ViewModel() {
 
     private val _filterUiState = MutableStateFlow(GeneralFilterUiState())
@@ -101,11 +107,20 @@ class ShoplistListViewModel(
 
     private fun deleteItem() {
         viewModelScope.launch(Dispatchers.IO) {
-            //val articleCategorys = articleCategoryRepository.getByArticle(article.id)
-            //TODO:: Delete articles to list
-
             try {
+                shoplistArticleRepository.deleteByShoplist(shoplistUiState.id)
                 shoplistRepository.deleteItem(shoplistUiState.toItem())
+
+                val itemId = PreferencesManager(context)
+                    .getData(PreferencesEnum.MAIN_LIST.toString(), "0")
+
+                if(itemId.toInt() == shoplistUiState.id){
+                    PreferencesManager(context)
+                        .deleteData(PreferencesEnum.MAIN_LIST.toString())
+
+                    PreferencesManager(context).deleteData(
+                        PreferencesEnum.MAIN_LIST_NAME.toString())
+                }
 
                 sendMessage("Item borrado correctamente")
 

@@ -48,7 +48,7 @@ sealed class Routes{
         override val route = RouteEnum.SHOPLIST_DETAIL
         override val titleRes = R.string.shoplist_detail_title
 
-        val routeWithArgs = "$route?{$itemIdArg}"
+        val routeWithArgs = "$route/{$itemIdArg}"
     }
 
     object ShoplistManageScreen: Route {

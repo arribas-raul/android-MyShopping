@@ -112,7 +112,7 @@ fun ShoplistManageScreen(
                 .background(colorResource(R.color.my_background))
         ) {
             LabelText(
-                isShow = listViewModel.shoplistUiState.id < 0,
+                isShow = listViewModel.shoplistUiState.id === 0,
                 title = stringResource(R.string.shoplist_manage_not_select_list),
                 modifier = modifier.padding(8.dp)
             )

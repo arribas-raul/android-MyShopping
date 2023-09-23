@@ -44,6 +44,8 @@ interface ShoplistArticleRepositoryInterface {
      */
     suspend fun deleteItem(item: ShoplistArticle)
 
+    suspend fun deleteByShoplist(list_id: Int)
+
     /**
      * Update item in the data source
      */
@@ -66,6 +68,8 @@ class ShoplistArticleRepository(private val shoplistArticleDao: ShoplistArticleD
     override suspend fun insertItem(item: ShoplistArticle) = shoplistArticleDao.insert(item)
 
     override suspend fun deleteItem(item: ShoplistArticle) = shoplistArticleDao.delete(item)
+
+    override suspend fun deleteByShoplist(list_id: Int) = shoplistArticleDao.deleteByShoplist(list_id)
 
     override suspend fun updateItem(item: ShoplistArticle) = shoplistArticleDao.update(item)
 
