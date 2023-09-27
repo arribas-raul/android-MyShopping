@@ -36,8 +36,9 @@ interface ShoplistArticleDao {
     @Query("SELECT * " +
             "FROM shoplist_article " +
             "WHERE shoplist_id = :list_id " +
+            "AND name LIKE '%' || :name || '%' " +
             "ORDER BY `order`")
-    fun getItemsByList(list_id: Int): Flow<List<ShoplistArticle>>
+    fun getItemsByList(list_id: Int, name: String): Flow<List<ShoplistArticle>>
 
     @Query("SELECT count(id) " +
             "FROM shoplist_article " +

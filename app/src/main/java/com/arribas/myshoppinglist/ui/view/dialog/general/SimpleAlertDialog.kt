@@ -1,4 +1,4 @@
-package com.arribas.myshoppinglist.ui.view.general
+package com.arribas.myshoppinglist.ui.view.dialog.general
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text

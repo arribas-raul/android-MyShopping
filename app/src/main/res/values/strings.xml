@@ -6,6 +6,8 @@
     <string name="article_new_title">Nuevo artículo</string>
     <string name="article_detail_title">Detalle artículo</string>
 
+    <string name="category_list_title">Lista de categorías</string>
+
     <string name="shoplist_list_title">Listas</string>
     <string name="shoplist_detail_title">Lista de productos</string>
     <string name="shoplist_manage_title">Gestión lista</string>
@@ -38,4 +40,28 @@
     <string name="general_filter_label">Filtrar por...</string>
     <string name="general_filter_clear_text">Borrar el texto</string>
     <string name="general_filter_empty_data">No hay items en esta lista</string>
+
+    <string name="shoplist_bottomsheet_title_create">Nueva lista</string>
+    <string name="shoplist_bottomsheet_title_update">Modificar lista</string>
+    <string name="shoplist_bottomsheet_form_name">Nombre</string>
+    <string name="shoplist_bottomsheet_form_description">Descripción</string>
+    <string name="shoplist_bottomsheet_bt_save_desctiption">Guardar cambios</string>
+
+    <string name="category_bottomsheet_title_create">Nueva categoría</string>
+    <string name="category_bottomsheet_title_update">Modificar categoría</string>
+    <string name="category_bottomsheet_form_name">Nombre</string>
+    <string name="category_bottomsheet_bt_save_desctiption">Guardar cambios</string>
+
+    <string name="managelist_header_items"> Hay %2$d de %1$d objetos seleccionados</string>
+
+    <string name="crud_created_success">Item creado corréctamente</string>
+    <string name="crud_created_error">Se ha producido un error al crear el objeto</string>
+    <string name="crud_updated_success">Item modificado corréctamente</string>
+    <string name="crud_updated_error">Se ha producido un error al actualizar el objeto</string>
+    <string name="crud_deleted_success">Item borrado corréctamente</string>
+    <string name="crud_deleted_error">Se ha producido un error al borrar el objeto</string>
+    <string name="crud_element_exist">Este objeto ya existe</string>
+
+    <string name="dialog_sure_title">¿Seguro que quieres continuar?</string>
+    <string name="dialog_sure_delete_description">Si continuas se eliminará el item de la lista</string>
 </resources>

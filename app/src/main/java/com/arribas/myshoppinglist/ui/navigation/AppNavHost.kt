@@ -17,6 +17,7 @@ import com.arribas.myshoppinglist.ui.view.app.topBar.AppBarState
 import com.arribas.myshoppinglist.ui.view.screen.article.articleDetail.ArticleDetailScreen
 import com.arribas.myshoppinglist.ui.view.screen.article.articleList.ArticleListScreen
 import com.arribas.myshoppinglist.ui.view.screen.article.articleNew.ArticleNewScreen
+import com.arribas.myshoppinglist.ui.view.screen.category.categoryList.CategoryListScreen
 import com.arribas.myshoppinglist.ui.view.screen.listArticleShop.ListArticleShopScreen
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistDetail.ShoplistDetailScreen
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistList.ShoplistListScreen
@@ -116,6 +117,14 @@ fun MyAppNavHost(
         }
 
         composable(
+            route = Routes.CategoryListScreen.route.toString()
+        ){
+            CategoryListScreen(
+                onComposing = { appBarState.actions = it.actions }
+            )
+        }
+
+        composable(
             route = Routes.ShoplistListScreen.route.toString()
         ){
             ShoplistListScreen(
@@ -142,7 +151,6 @@ fun MyAppNavHost(
         ){
             ShoplistDetailScreen(
                 onComposing = { appBarState.actions = it.actions },
-                navigateBack = { navController.popBackStack() },
                 onSelectItem = {
                     onSelectItem(RouteEnum.ARTICLE_LIST)
                     appUiState.title = appUiState.actualTitle()

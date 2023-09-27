@@ -1,4 +1,4 @@
-package com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistList
+package com.arribas.myshoppinglist.ui.view.screen.category.categoryList
 
 import android.annotation.SuppressLint
 import android.widget.Toast
@@ -44,11 +44,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arribas.myshoppinglist.R
+import com.arribas.myshoppinglist.data.model.Category
 import com.arribas.myshoppinglist.data.model.Shoplist
 import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.app.AppViewModelProvider
 import com.arribas.myshoppinglist.ui.view.app.topBar.AppBarState
+import com.arribas.myshoppinglist.ui.view.bottomsheet.categoryBottomSheet.CategoryBottomSheet
+import com.arribas.myshoppinglist.ui.view.bottomsheet.categoryBottomSheet.CategoryBottomSheetViewModel
 import com.arribas.myshoppinglist.ui.view.general.FloatingButton
 import com.arribas.myshoppinglist.ui.view.filter.GeneralFilter
 import com.arribas.myshoppinglist.ui.view.bottomsheet.shoplistBottomSheet.ShoplistBottomSheet
@@ -60,11 +63,10 @@ import kotlinx.coroutines.launch
 @SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun ShoplistListScreen(
+fun CategoryListScreen(
     onComposing: (AppBarState) -> Unit = {},
-    onSelectItem: (Shoplist) -> Unit,
-    listViewModel: ShoplistListViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    detailViewModel: ShoplistBottomSheetViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    listViewModel: CategoryListViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    detailViewModel: CategoryBottomSheetViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier
 ){
     val scope = rememberCoroutineScope()
@@ -140,19 +142,22 @@ fun ShoplistListScreen(
                     isTextEmptyVisible = listUiState.itemList.isEmpty()
                 )
 
-                ShopListBody(
+                CategoryBody(
                     itemList = listUiState.itemList,
                     onDeleteItem = { listViewModel.onDialogDelete(it) },
 
                     onClickItem  = {
-                        detailViewModel.onUpdateUiState(it.toShopListUiState())
+                        //detailViewModel.onUpdateUiState(it.toCategoryUiState())
+
+                    },
+
+                    onEditClick  = {
+                        detailViewModel.onUpdateUiState(it.toCategoryUiState())
 
                         scope.launch {
                             sheetState.show()
                         }
-                    },
-
-                    onEditClick  = { onSelectItem(it) },
+                    } ,
 
                     lazyState = listState
                 )
@@ -166,18 +171,18 @@ fun ShoplistListScreen(
         onConfirm = listViewModel::onDialogConfirm
     )
 
-    ShoplistBottomSheet(
+    CategoryBottomSheet(
         viewModel = detailViewModel,
         sheetState = sheetState
     )
 }
 
 @Composable
-fun ShopListBody(
-    itemList: List<Shoplist>,
-    onDeleteItem: (Shoplist) -> Unit,
-    onClickItem: (Shoplist) -> Unit,
-    onEditClick: (Shoplist) -> Unit,
+fun CategoryBody(
+    itemList: List<Category>,
+    onDeleteItem: (Category) -> Unit,
+    onClickItem: (Category) -> Unit,
+    onEditClick: (Category) -> Unit,
     lazyState: LazyListState,
     modifier: Modifier = Modifier){
 
@@ -192,7 +197,7 @@ fun ShopListBody(
             state = lazyState,
         ){
             items(items = itemList, key = { it.id }) { item ->
-                ShoplistListItem(
+                CategoryListItem(
                     item = item,
                     onItemClick = { onClickItem(it) },
                     onDeleteClick = { onDeleteItem(it) },
@@ -205,11 +210,11 @@ fun ShopListBody(
 }
 
 @Composable
-private fun ShoplistListItem(
-    item: Shoplist,
-    onItemClick: (Shoplist) -> Unit,
-    onDeleteClick: (Shoplist) -> Unit,
-    onEditClick: (Shoplist) -> Unit,
+private fun CategoryListItem(
+    item: Category,
+    onItemClick: (Category) -> Unit,
+    onDeleteClick: (Category) -> Unit,
+    onEditClick: (Category) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -218,7 +223,7 @@ private fun ShoplistListItem(
     ) {
         Row(modifier = Modifier
             .fillMaxWidth()
-            .clickable { onEditClick(item) }
+            .clickable { onItemClick(item) }
             .background(colorResource(R.color.white))
             .padding(8.dp)
         ) {
@@ -233,16 +238,10 @@ private fun ShoplistListItem(
                     style = MaterialTheme.typography.bodyLarge,
                     color = Color.Black,
                 )
-
-                Text(
-                    text = item.type,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.Black
-                )
             }
 
             IconButton(
-                onClick = { onItemClick(item) },
+                onClick = { onEditClick(item) },
                 modifier = Modifier
                     .weight(0.3f)
                     .align(Alignment.CenterVertically)
@@ -270,24 +269,23 @@ private fun ShoplistListItem(
 
 @Preview(showBackground = true)
 @Composable
-fun ShoplistPreview() {
+fun CategoryListPreview() {
     MyShoppingListTheme {
-        ShoplistListScreen( onSelectItem = {})
+        CategoryListScreen()
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun ShoplistListItemPreview() {
-    val shoplist = Shoplist(
+fun CategoryListItemPreview() {
+    val category = Category(
         id = 1,
-        name = "Lista d ela compra",
-        type = "Lista de la compra de la semana"
+        name = "Videojuegos"
     )
 
     MyShoppingListTheme {
-        ShoplistListItem(
-            item = shoplist,
+        CategoryListItem(
+            item = category,
             onItemClick = {},
             onDeleteClick = {},
             onEditClick = {}

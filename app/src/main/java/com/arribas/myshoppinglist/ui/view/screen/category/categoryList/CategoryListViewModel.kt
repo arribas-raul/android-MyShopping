@@ -1,4 +1,4 @@
-package com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistList
+package com.arribas.myshoppinglist.ui.view.screen.category.categoryList
 
 import android.content.Context
 import androidx.compose.runtime.getValue
@@ -7,7 +7,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arribas.myshoppinglist.R
+import com.arribas.myshoppinglist.data.model.Category
 import com.arribas.myshoppinglist.data.model.Shoplist
+import com.arribas.myshoppinglist.data.repository.ArticleCategoryRepository
+import com.arribas.myshoppinglist.data.repository.CategoryRepository
 import com.arribas.myshoppinglist.data.repository.ShoplistArticleRepository
 import com.arribas.myshoppinglist.data.repository.ShoplistRepository
 import com.arribas.myshoppinglist.data.utils.CrudMessageEnum
@@ -29,24 +32,24 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
-class ShoplistListViewModel(
+class CategoryListViewModel(
     private val context: Context,
-    private val shoplistRepository: ShoplistRepository,
-    private val shoplistArticleRepository: ShoplistArticleRepository
+    private val categoryRepository: CategoryRepository,
+    private val articleCategoryRepository: ArticleCategoryRepository
 ): ViewModel() {
 
     private val _filterUiState = MutableStateFlow(GeneralFilterUiState())
     var filterUiState: StateFlow<GeneralFilterUiState> = _filterUiState
 
-    private val _listUiState = MutableStateFlow(ShoplisListUiState())
-    val listUiState: StateFlow<ShoplisListUiState> = _listUiState
+    private val _listUiState = MutableStateFlow(CategoryListUiState())
+    val listUiState: StateFlow<CategoryListUiState> = _listUiState
+
+    var categoryUiState by mutableStateOf(CategoryUiState())
+        private set
 
     /**AlertDialog functions****************************************/
     private val _dialogState = MutableStateFlow(DialogUiState())
     val dialogState: StateFlow<DialogUiState> = _dialogState.asStateFlow()
-
-    var shoplistUiState by mutableStateOf(ShoplistUiState())
-        private set
 
     private val _toastMessage = MutableSharedFlow<String>()
     val toastMessage = _toastMessage.asSharedFlow()
@@ -67,8 +70,8 @@ class ShoplistListViewModel(
     }
 
     /**AlertDialog functions****************************************/
-    fun onDialogDelete(shoplist: Shoplist){
-        this.shoplistUiState = shoplist.toShopListUiState()
+    fun onDialogDelete(category: Category){
+        this.categoryUiState = category.toCategoryUiState()
 
         openDialogClicked(
             tag = DIALOG_UI_TAG.TAG_DELETE
@@ -111,19 +114,8 @@ class ShoplistListViewModel(
     private fun deleteItem() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                shoplistArticleRepository.deleteByShoplist(shoplistUiState.id)
-                shoplistRepository.deleteItem(shoplistUiState.toItem())
-
-                val itemId = PreferencesManager(context)
-                    .getData(PreferencesEnum.MAIN_LIST.toString(), "0")
-
-                if(itemId.toInt() == shoplistUiState.id){
-                    PreferencesManager(context)
-                        .deleteData(PreferencesEnum.MAIN_LIST.toString())
-
-                    PreferencesManager(context).deleteData(
-                        PreferencesEnum.MAIN_LIST_NAME.toString())
-                }
+                articleCategoryRepository.deleteByCategory(categoryUiState.id)
+                categoryRepository.deleteItem(categoryUiState.toItem())
 
                 sendMessage(CrudMessageManager(context)
                     .getMessage(CrudMessageEnum.DELETED_SUCCESS))
@@ -137,9 +129,9 @@ class ShoplistListViewModel(
 
     private fun getData(){
         viewModelScope.launch {
-            shoplistRepository.getItemsByName(filterUiState.value.name).collect {
+            categoryRepository.getItemsByName(filterUiState.value.name).collect {
                 list ->
-                    _listUiState.value = ShoplisListUiState(
+                    _listUiState.value = CategoryListUiState(
                         itemList = list,
                         itemCount = list.count()
                     )
@@ -155,8 +147,8 @@ class ShoplistListViewModel(
     }
 }
 
-data class ShoplisListUiState(
-    var itemList: List<Shoplist> = listOf(),
+data class CategoryListUiState(
+    var itemList: List<Category> = listOf(),
     val itemCount: Int = 0,
     val filterName: String = ""
 )

@@ -71,14 +71,14 @@ fun DrawerBody(
     items.forEach { item ->
         if(item.menuLeftVisible) {
             NavigationDrawerItem(
-                label = { Text(text = item.text) },
+                label = { Text(text = item.text_menu) },
                 selected = item == selectedItem,
                 onClick = { onNavigatePressed(item) },
 
                 icon = {
                     Image(
                         painter = painterResource(item.icon),
-                        contentDescription = item.text,
+                        contentDescription = item.text_menu,
                         colorFilter = ColorFilter.tint(Color.White)
                     )
                 },

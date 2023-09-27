@@ -33,7 +33,6 @@ class ListArticleViewModel(
     savedStateHandle: SavedStateHandle,
     private val context: Context,
     private val articleRepository: ArticleRepository,
-    private val articleShopRepository: ArticleShopRepository,
     private val shoplistArticleRepository: ShoplistArticleRepository,
     private val articleCategoryRepository: ArticleCategoryRepository
 ): ViewModel() {
@@ -92,12 +91,8 @@ class ListArticleViewModel(
             return
         }
 
-        //article = qArticle.copy(shoplist_id = shoplistUiState.id)
-
         viewModelScope.launch(Dispatchers.IO) {
-            //println("article: $article")
             if(qArticle.shoplist_id > 0){
-                //val articleShop = articleShopRepository.getItemByName(qArticle.name)
                 val shoplistArticle = shoplistArticleRepository.getItemByListAndArticle(
                     qArticle.shoplist_id, qArticle.id
                 )
@@ -119,21 +114,15 @@ class ListArticleViewModel(
 
                 shoplistArticleRepository.insertItem(shoplistArticle)
             }
-/*
-            articleRepository.updateItem(
-                qArticleToArticle(
-                    article.copy(shopCheked = !article.shopCheked)))*/
         }
     }
 
     fun search(_name: String){
-        //println("article $_name")
         _searchUiState.value = _searchUiState.value.copy(name = _name)
         getData()
     }
 
     fun clearName(){
-        println("article clearName")
         _searchUiState.value = _searchUiState.value.copy(name = "")
         getData()
     }

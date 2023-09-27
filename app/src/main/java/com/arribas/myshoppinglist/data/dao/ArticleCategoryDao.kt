@@ -21,6 +21,10 @@ interface ArticleCategoryDao {
     @Delete
     suspend fun delete(articleCategory: ArticleCategory)
 
+    @Query("DELETE FROM article_category " +
+            "WHERE category_id = :category_id")
+    fun deleteByCategory(category_id: Int)
+
     @Query("SELECT * from article_category WHERE id = :id")
     fun getItem(id: Int): Flow<ArticleCategory>
 

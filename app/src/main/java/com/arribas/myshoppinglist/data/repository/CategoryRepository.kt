@@ -34,6 +34,8 @@ interface CategoryRepositoryInterface {
 
     fun getItemByName(name: String): Flow<Category?>
 
+    fun getItemsByName(name: String): Flow<List<Category>>
+
     /**
      * Insert item in the data source
      */
@@ -56,6 +58,8 @@ class CategoryRepository(private val categoryDao: CategoryDao) : CategoryReposit
     override fun getItem(id: Int): Flow<Category?> = categoryDao.getItem(id)
 
     override fun getItemByName(name: String): Flow<Category?> = categoryDao.getItemByName(name)
+
+    override fun getItemsByName(name: String): Flow<List<Category>> = categoryDao.getItemsByName(name)
 
     override suspend fun insertItem(item: Category) = categoryDao.insert(item)
 

@@ -43,10 +43,10 @@ import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.app.AppViewModelProvider
 import com.arribas.myshoppinglist.ui.view.app.topBar.AppBarState
+import com.arribas.myshoppinglist.ui.view.dialog.general.SimpleAlertDialog
 import com.arribas.myshoppinglist.ui.view.general.CircleButton
 import com.arribas.myshoppinglist.ui.view.general.LabelText
-import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
-import com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistDetail.ShoplistSelectDialog
+import com.arribas.myshoppinglist.ui.view.dialog.shoplistSelectDialog.ShoplistSelectDialog
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
@@ -123,7 +123,7 @@ fun ShoplistManageScreen(
                 modifier = Modifier.padding(8.dp)
             )
 
-            ShoplistDetailBody(
+            ShoplistManageBody(
                 listUiState = listUiState,
                 updateItem = { listViewModel.onUpdateItem(it) },
                 onReorderItems = listViewModel::onReorderItems,
@@ -132,10 +132,8 @@ fun ShoplistManageScreen(
     }
 }
 
-
-
 @Composable
-fun ShoplistDetailBody(
+fun ShoplistManageBody(
     listUiState: ShoplistManageUiState,
     updateItem: (ShoplistArticle) -> Unit,
     onReorderItems: (to: Int, from:Int) -> Unit,
@@ -181,7 +179,6 @@ private fun ShoplistManagelList(
 
         canDragOver = {draggedOver, dragging ->
             data.value.getOrNull(draggedOver.index)?.isLocked != true
-
         }
     )
 
@@ -252,7 +249,7 @@ private fun ShoplistManageItem(
                 CircleButton(
                     icon = R.drawable.ic_remove,
                     color = R.color.white,
-                    backgroundColor = R.color.my_warning,
+                    backgroundColor = R.color.my_gray,
                     quantity = item.quantity,
                     description = R.string.bt_remove,
                     onChangeItem = {

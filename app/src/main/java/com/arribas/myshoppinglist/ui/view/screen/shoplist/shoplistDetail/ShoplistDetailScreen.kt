@@ -46,16 +46,20 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arribas.myshoppinglist.R
 import com.arribas.myshoppinglist.data.model.ArticleShop
 import com.arribas.myshoppinglist.data.model.ShoplistArticle
+import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.app.AppViewModelProvider
 import com.arribas.myshoppinglist.ui.view.app.app.AppUiState
 import com.arribas.myshoppinglist.ui.view.app.topBar.AppBarState
+import com.arribas.myshoppinglist.ui.view.dialog.general.SimpleAlertDialog
 import com.arribas.myshoppinglist.ui.view.general.CircleButton
 import com.arribas.myshoppinglist.ui.view.general.FloatingButton
 import com.arribas.myshoppinglist.ui.view.filter.GeneralFilter
 import com.arribas.myshoppinglist.ui.view.filter.GeneralFilterUiState
 import com.arribas.myshoppinglist.ui.view.screen.listArticleShop.SearchListArticleUiState
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.ShoplistUiState
+import com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistManage.ShoplistManageBody
+import com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistManage.ShoplistManageHeader
 import kotlinx.coroutines.launch
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
@@ -69,7 +73,6 @@ import org.burnoutcrew.reorderable.reorderable
 @Composable
 fun ShoplistDetailScreen(
     onComposing: (AppBarState) -> Unit = {},
-    navigateBack: (() -> Unit)? = null,
     listViewModel: ShoplistDetailViewModel = viewModel(factory = AppViewModelProvider.Factory),
     onSelectItem: (ShoplistUiState) -> Unit,
     modifier: Modifier = Modifier
@@ -78,7 +81,8 @@ fun ShoplistDetailScreen(
     val listState = rememberLazyListState()
 
     val listUiState by listViewModel.listUiState.collectAsState()
-    val filterUiState by listViewModel.filterUiState.collectAsState()
+    val dialogState: DialogUiState by listViewModel.dialogState.collectAsState()
+    val showDialog =  remember { mutableStateOf(false) }
 
     val fabVisibility by derivedStateOf {
         listState.firstVisibleItemIndex == 0
@@ -89,6 +93,12 @@ fun ShoplistDetailScreen(
             AppBarState()
         )
     }
+
+    SimpleAlertDialog(
+        dialogState = dialogState,
+        onDismiss = listViewModel::onDialogDismiss,
+        onConfirm = listViewModel::onDialogConfirm
+    )
 
     Scaffold(
         floatingActionButton = {
@@ -111,18 +121,16 @@ fun ShoplistDetailScreen(
                 .fillMaxSize()
                 .background(colorResource(R.color.my_background))
         ) {
-            ShoplistDetailBody(
+            ShoplistManageHeader(
                 listUiState = listUiState,
-                filterUiState = filterUiState,
-                isVisibleHeader = listViewModel.shoplistUiState.existElement(),
-                navigateToItemUpdate = {  },
-                deleteItem = {  },
-                updateItem = {  },
-                onSearch = { listViewModel.onSearch(it) },
-                onReset = {  },
-                onClearName = { },
+                onResetBt = { listViewModel.onDialogReset() },
+                modifier = Modifier.padding(8.dp)
+            )
+
+            ShoplistManageBody(
+                listUiState = listUiState,
+                updateItem = { listViewModel.onUpdateItem(it) },
                 onReorderItems = listViewModel::onReorderItems,
-                onCheckFilter = { }
             )
         }
     }
@@ -130,39 +138,17 @@ fun ShoplistDetailScreen(
 
 @Composable
 fun ShoplistDetailBody(
-    listUiState: ShoplistDetailUiState,
-    filterUiState: GeneralFilterUiState,
-    isVisibleHeader: Boolean,
+    itemList: List<ShoplistArticle>,
     navigateToItemUpdate: (Int) -> Unit,
     deleteItem: (ShoplistArticle) -> Unit,
     updateItem: (ShoplistArticle) -> Unit,
-    onSearch: (String) -> Unit,
-    onReset: () -> Unit,
-    onClearName: () -> Unit,
     onReorderItems: (to: Int, from:Int) -> Unit,
-    onCheckFilter: (SearchListArticleUiState) -> Unit = {},
     modifier: Modifier = Modifier)
 {
     Column(
         modifier = modifier
     ) {
-        if (isVisibleHeader) {
-            GeneralFilter(
-                filterUiState = filterUiState,
-                onValueChange = { onSearch(it) },
-                onKeyEvent = { },
-                clearName = onClearName
-            )
-
-        }else{
-            ShoplistDetailHeader(
-                listUiState = listUiState,
-                onResetBt = onReset,
-                modifier = Modifier.padding(8.dp)
-            )
-        }
-
-        if (listUiState.itemList.isEmpty()) {
+        if (itemList.isEmpty()) {
             Text(
                 text = stringResource(R.string.no_item_description),
                 style = MaterialTheme.typography.labelMedium,
@@ -171,10 +157,10 @@ fun ShoplistDetailBody(
 
         } else {
             ShoplistDetailList(
-                itemList = listUiState.itemList,
+                itemList = itemList,
                 onItemClick = { navigateToItemUpdate(it.id) },
                 onDeleteClick = { deleteItem(it) },
-                onCheckClick =  { updateItem(it) },
+                onCheckClick = { updateItem(it) },
                 onChangeItem = { updateItem(it) },
                 onReorderItems = onReorderItems
             )
@@ -211,8 +197,7 @@ private fun ShoplistDetailList(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(vertical = 8.dp, horizontal = 8.dp),
         state = state.listState,
-        modifier = modifier
-            .reorderable(state)
+        modifier = modifier.reorderable(state)
     )
     {
         items(items = itemList, key = { it.id }) { item ->

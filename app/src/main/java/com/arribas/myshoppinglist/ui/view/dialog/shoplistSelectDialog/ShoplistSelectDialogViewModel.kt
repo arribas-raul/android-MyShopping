@@ -1,4 +1,4 @@
-package com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistDetail
+package com.arribas.myshoppinglist.ui.view.dialog.shoplistSelectDialog
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -6,8 +6,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arribas.myshoppinglist.data.repository.ShoplistRepository
-import com.arribas.myshoppinglist.data.utils.PreferencesEnum
-import com.arribas.myshoppinglist.data.utils.PreferencesManager
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.ShoplistUiState
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistList.ShoplisListUiState
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -42,6 +42,8 @@ interface ArticleCategoryRepositoryInterface {
      */
     suspend fun deleteItem(item: ArticleCategory)
 
+    suspend fun deleteByCategory(category_id: Int)
+
     /**
      * Update item in the data source
      */
@@ -57,6 +59,8 @@ class ArticleCategoryRepository(private val articleCategoryDao: ArticleCategoryD
     override suspend fun insertItem(item: ArticleCategory) = articleCategoryDao.insert(item)
 
     override suspend fun deleteItem(item: ArticleCategory) = articleCategoryDao.delete(item)
+
+    override suspend fun deleteByCategory(category_id: Int) = articleCategoryDao.deleteByCategory(category_id)
 
     override suspend fun updateItem(item: ArticleCategory) = articleCategoryDao.update(item)
 }

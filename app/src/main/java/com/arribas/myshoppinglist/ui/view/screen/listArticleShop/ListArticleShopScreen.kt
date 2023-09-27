@@ -39,9 +39,8 @@ import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.app.AppViewModelProvider
 import com.arribas.myshoppinglist.ui.view.app.topBar.AppBarState
+import com.arribas.myshoppinglist.ui.view.dialog.general.SimpleAlertDialog
 import com.arribas.myshoppinglist.ui.view.general.CircleButton
-import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
-import com.arribas.myshoppinglist.ui.view.screen.shoplist.ShoplistUiState
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState

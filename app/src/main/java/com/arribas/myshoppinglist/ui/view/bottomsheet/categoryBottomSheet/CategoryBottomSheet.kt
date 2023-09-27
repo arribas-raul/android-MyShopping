@@ -1,5 +1,6 @@
-package com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistBottomSheet
+package com.arribas.myshoppinglist.ui.view.bottomsheet.categoryBottomSheet
 
+import android.view.KeyEvent
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -27,37 +28,36 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arribas.myshoppinglist.R
 import com.arribas.myshoppinglist.data.utils.DialogUiState
-import com.arribas.myshoppinglist.ui.view.general.EditText
-import com.arribas.myshoppinglist.ui.view.general.SimpleAlertDialog
+import com.arribas.myshoppinglist.ui.view.dialog.general.SimpleAlertDialog
+import com.arribas.myshoppinglist.ui.view.screen.category.categoryList.CategoryUiState
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.ShoplistUiState
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ShoplistBottomSheet(
-    viewModel: ShoplistBottomSheetViewModel,
+fun CategoryBottomSheet(
+    viewModel: CategoryBottomSheetViewModel,
+    sheetState: ModalBottomSheetState,
     modifier: Modifier = Modifier,
-    sheetState: ModalBottomSheetState
 ){
     val dialogState: DialogUiState by viewModel.dialogState.collectAsState()
 
     val context = LocalContext.current
-
 
     LaunchedEffect(Unit) {
         viewModel
@@ -75,8 +75,8 @@ fun ShoplistBottomSheet(
         sheetState = sheetState,
 
         sheetContent = {
-            ShoplistBottomSheetContent(
-                shoplistUiState = viewModel.shoplistUiState,
+            CategoryBottomSheetContent(
+                categoryUiState = viewModel.categoryUiState,
                 onValueChange = { viewModel.onChange(it) },
                 onClick = {
                     viewModel.onSave()
@@ -94,18 +94,18 @@ fun ShoplistBottomSheet(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShoplistBottomSheetContent(
-    shoplistUiState: ShoplistUiState,
-    onValueChange: (ShoplistUiState) -> Unit,
-    onClick: (ShoplistUiState) -> Unit
+fun CategoryBottomSheetContent(
+    categoryUiState: CategoryUiState,
+    onValueChange: (CategoryUiState) -> Unit,
+    onClick: (CategoryUiState) -> Unit
 ){
     val focusManager = LocalFocusManager.current
 
     val title =
-        if(shoplistUiState.id === 0){
-            "Nueva lista"
+        if(categoryUiState.id === 0){
+            stringResource(R.string.category_bottomsheet_title_create)
         }else{
-            "Modificar lista"
+            stringResource(R.string.category_bottomsheet_title_update)
         }
 
     Surface(
@@ -120,7 +120,8 @@ fun ShoplistBottomSheetContent(
                 text = title,
                 fontSize = 20.sp,
                 modifier = Modifier.padding(10.dp),
-                color = Color.White)
+                color = Color.White
+            )
 
             Divider(
                 modifier = Modifier.padding(5.dp),
@@ -128,11 +129,11 @@ fun ShoplistBottomSheetContent(
             )
 
             OutlinedTextField(
-                label = { Text("Nombre") },
-                value = shoplistUiState.name,
+                label = { Text(stringResource(R.string.category_bottomsheet_form_name)) },
+                value = categoryUiState.name,
                 singleLine = true,
                 onValueChange = {
-                    onValueChange( shoplistUiState.copy(name = it))
+                    onValueChange(categoryUiState.copy(name = it.trim()))
                 },
 
 
@@ -142,32 +143,26 @@ fun ShoplistBottomSheetContent(
                         textColor = colorResource(R.color.black),
                         containerColor = colorResource(R.color.my_background)
                     ),
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp)
+                    .onKeyEvent {
+                        if (it.nativeKeyEvent.keyCode == KeyEvent.KEYCODE_ENTER) {
+                            focusManager.clearFocus()
+                            true
+                        }
+
+                        false
+                    }
             )
 
-            OutlinedTextField(
-                label = { Text("Tiipo") },
-                value = shoplistUiState.type,
-                onValueChange = {
-                    onValueChange( shoplistUiState.copy(type = it))
-                },
-
-                keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                colors = TextFieldDefaults
-                    .textFieldColors(
-                        textColor = colorResource(R.color.black),
-                        containerColor = colorResource(R.color.my_background)
-                    ),
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
-            )
 
             Spacer(
                 modifier = Modifier.padding(5.dp)
             )
 
             Button(
-                onClick = { onClick(shoplistUiState) },
+                onClick = { onClick(categoryUiState) },
                 enabled = true,
                 colors = ButtonDefaults.buttonColors(colorResource(R.color.my_secondary)),
                 shape = RoundedCornerShape(size = 4.dp),
@@ -178,7 +173,7 @@ fun ShoplistBottomSheetContent(
                 Icon(
                     imageVector = Icons.Default.Add,
                     tint = Color.White,
-                    contentDescription = "Add article"
+                    contentDescription = stringResource(R.string.category_bottomsheet_bt_save_desctiption)
                 )
                 Spacer(modifier = Modifier.width(width = 8.dp))
                 Text(

@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.arribas.myshoppinglist.R
 import com.arribas.myshoppinglist.data.model.ShoplistArticle
 import com.arribas.myshoppinglist.data.repository.ShoplistArticleRepository
 import com.arribas.myshoppinglist.data.repository.ShoplistRepository
@@ -39,7 +40,7 @@ class ShoplistManageViewModel(
     private val _dialogState = MutableStateFlow(DialogUiState())
     val dialogState: StateFlow<DialogUiState> = _dialogState
 
-    private val _listUiState = MutableStateFlow(ShoplistManageUiState())
+    private val _listUiState = MutableStateFlow(ShoplistManageUiState(context))
     var listUiState: StateFlow<ShoplistManageUiState> = _listUiState
 
     lateinit var article: ShoplistArticle
@@ -101,8 +102,9 @@ class ShoplistManageViewModel(
     }
 
     /**Private functions********************************************/
-    private fun getData() {
+    private fun  getData() {
         viewModelScope.launch{
+            delay(100)
             try {
                 itemId = PreferencesManager(context)
                     .getData(PreferencesEnum.MAIN_LIST.toString(), "0")
@@ -121,6 +123,7 @@ class ShoplistManageViewModel(
                         shoplistArticleRepository.getItemsByList(itemId!!.toInt())
                             .collect { list ->
                                 _listUiState.value = ShoplistManageUiState(
+                                    context = context,
                                     itemList = list,
                                     itemCount = list.count(),
                                     itemSelectCount = list.count { it.check }
@@ -231,11 +234,12 @@ class ShoplistManageViewModel(
 }
 
 data class ShoplistManageUiState(
+    var context: Context,
     var itemList: List<ShoplistArticle> = listOf(),
     val itemCount: Int = 0,
     val itemSelectCount: Int = 0
 ){
     fun getTotalItemText(): String {
-        return "Total Items ${itemCount} - Select Items ${itemSelectCount}"
+        return context.getString(R.string.managelist_header_items,  itemCount,  itemSelectCount)
     }
 }

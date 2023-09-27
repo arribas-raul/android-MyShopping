@@ -30,7 +30,7 @@ interface ShoplistArticleRepositoryInterface {
 
     fun getItemByListAndArticle(list_id: Int, article_id: Int): Flow<ShoplistArticle?>
 
-    fun getItemsByList(list_id: Int): Flow<List<ShoplistArticle>>
+    fun getItemsByList(list_id: Int, name: String = ""): Flow<List<ShoplistArticle>>
 
     suspend fun count(id: Int): Int
 
@@ -61,7 +61,7 @@ class ShoplistArticleRepository(private val shoplistArticleDao: ShoplistArticleD
     override fun getItemByListAndArticle(list_id: Int, article_id: Int): Flow<ShoplistArticle?> =
         shoplistArticleDao.getItemByListAndArticle(list_id, article_id)
 
-    override fun getItemsByList(list_id: Int): Flow<List<ShoplistArticle>> = shoplistArticleDao.getItemsByList(list_id)
+    override fun getItemsByList(list_id: Int, name: String): Flow<List<ShoplistArticle>> = shoplistArticleDao.getItemsByList(list_id, name)
 
     override suspend fun count(id: Int): Int = shoplistArticleDao.count(id)
 

@@ -1,4 +1,4 @@
-package com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistDetail
+package com.arribas.myshoppinglist.ui.view.dialog.shoplistSelectDialog
 
 
 import androidx.compose.foundation.background

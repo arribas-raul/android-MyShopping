@@ -27,6 +27,11 @@ interface CategoryDao {
     @Query("SELECT * from category WHERE name = :name")
     fun getItemByName(name: String): Flow<Category>
 
+    @Query("SELECT * " +
+            "FROM category " +
+            "WHERE name like '%' || :name || '%' ")
+    fun getItemsByName(name: String): Flow<List<Category>>
+
     @Query("SELECT * from category ORDER BY name ASC")
     fun getAllItems(): Flow<kotlin.collections.List<Category>>
 }

@@ -35,6 +35,7 @@ class AppViewModel(context: Context) : ViewModel() {
 
         appUiState.value.setup(menuItems.first())
         selectedItem = menuItems.first()
+
         viewModelScope.launch {
             val title = PreferencesManager(context)
                 .getData(PreferencesEnum.MAIN_LIST_NAME.toString(), "")

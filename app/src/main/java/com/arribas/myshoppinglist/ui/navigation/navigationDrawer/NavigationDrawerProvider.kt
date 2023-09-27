@@ -18,6 +18,7 @@ object NavigationDrawerProvider {
             ItemNavigationDrawer(
                 type = RouteEnum.SHOPLIST_MANAGE,
                 text = context.getString(R.string.shoplist_manage_title),
+                text_menu = context.getString(R.string.shoplist_manage_title),
                 icon = R.drawable.ic_view_list,
                 menuLeftVisible = true,
                 menuBottomVisible = true
@@ -26,7 +27,8 @@ object NavigationDrawerProvider {
             ItemNavigationDrawer(
                 type = RouteEnum.ARTICLE_LIST,
                 text = context.getString(R.string.article_list_title),
-                icon = R.drawable.ic_view_list,
+                text_menu = context.getString(R.string.article_list_title),
+                icon = R.drawable.ic_check,
                 menuLeftVisible = true,
                 menuBottomVisible = true
             ),
@@ -34,6 +36,7 @@ object NavigationDrawerProvider {
             ItemNavigationDrawer(
                 type = RouteEnum.ARTICLE_NEW,
                 text = context.getString(R.string.article_new_title),
+                text_menu = context.getString(R.string.article_new_title),
                 icon = R.drawable.ic_create,
                 menuLeftVisible = true,
                 menuBottomVisible = true
@@ -42,12 +45,22 @@ object NavigationDrawerProvider {
             ItemNavigationDrawer(
                 type = RouteEnum.ARTICLE_DETAIL,
                 text = context.getString(R.string.article_detail_title),
+                text_menu = context.getString(R.string.article_detail_title),
                 icon = R.drawable.ic_create
+            ),
+
+            ItemNavigationDrawer(
+                type = RouteEnum.CATEGORY_LIST,
+                text = context.getString(R.string.category_list_title),
+                text_menu = context.getString(R.string.category_list_title),
+                icon = R.drawable.ic_view_list,
+                menuLeftVisible = true
             ),
 
             ItemNavigationDrawer(
                 type = RouteEnum.SHOPLIST_LIST,
                 text = context.getString(R.string.shoplist_list_title),
+                text_menu = context.getString(R.string.shoplist_list_title),
                 icon = R.drawable.ic_view_list,
                 menuLeftVisible = true
             ),
@@ -55,6 +68,7 @@ object NavigationDrawerProvider {
             ItemNavigationDrawer(
                 type = RouteEnum.SHOPLIST_DETAIL,
                 text = context.getString(R.string.shoplist_detail_title),
+                text_menu = context.getString(R.string.shoplist_detail_title),
                 icon = R.drawable.ic_view_list,
             )
         )

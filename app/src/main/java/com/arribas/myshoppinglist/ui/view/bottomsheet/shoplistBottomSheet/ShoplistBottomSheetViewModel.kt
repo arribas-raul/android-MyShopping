@@ -1,11 +1,16 @@
-package com.arribas.myshoppinglist.ui.view.screen.shoplist.shoplistBottomSheet
+package com.arribas.myshoppinglist.ui.view.bottomsheet.shoplistBottomSheet
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.arribas.myshoppinglist.R
 import com.arribas.myshoppinglist.data.repository.ShoplistRepository
+import com.arribas.myshoppinglist.data.utils.CrudMessageEnum
+import com.arribas.myshoppinglist.data.utils.CrudMessageManager
 import com.arribas.myshoppinglist.data.utils.DIALOG_UI_TAG
 import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.ShoplistUiState
@@ -22,6 +27,7 @@ import kotlinx.coroutines.launch
 import java.lang.Exception
 
 class ShoplistBottomSheetViewModel(
+    private val context: Context,
     private val shoplistRepository: ShoplistRepository
 ): ViewModel() {
     var shoplistUiState by mutableStateOf(ShoplistUiState())
@@ -74,10 +80,10 @@ class ShoplistBottomSheetViewModel(
             try {
                 shoplistRepository.updateItem(shoplistUiState.toItem())
 
-                sendMessage("Item modificado correctamente")
+                sendMessage(context.getString(R.string.crud_updated_success))
 
             }catch (e: Exception){
-                sendMessage("Se ha producido un error al actualizar el item")
+                sendMessage(context.getString(R.string.crud_updated_error))
             }
         }
     }
@@ -97,10 +103,12 @@ class ShoplistBottomSheetViewModel(
                         shoplistUiState = ShoplistUiState()
                     }
 
-                    sendMessage("Item creado correctamente")
+                    sendMessage(CrudMessageManager(context)
+                        .getMessage(CrudMessageEnum.CREATED_SUCCESS))
 
                 }catch (e: Exception){
-                    sendMessage("Se ha producido un error al crear el item")
+                    sendMessage(CrudMessageManager(context)
+                        .getMessage(CrudMessageEnum.CREATED_ERROR))
                 }
             }
         }
@@ -114,7 +122,7 @@ class ShoplistBottomSheetViewModel(
             DIALOG_UI_TAG.TAG_ELEMENT_EXISTS ->
                 _dialog = DialogUiState(
                     tag = tag,
-                    title = "Este elemento ya existe",
+                    title = CrudMessageManager(context).getMessage(CrudMessageEnum.ELEMENT_EXIST),
                     isShow = true
                 )
             else ->
