@@ -241,7 +241,7 @@ private fun CategoryListItem(
             }
 
             IconButton(
-                onClick = { onEditClick(item) },
+                onClick = { onItemClick(item) },
                 modifier = Modifier
                     .weight(0.3f)
                     .align(Alignment.CenterVertically)

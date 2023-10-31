@@ -162,7 +162,7 @@ fun ShoplistBottomSheetContent(
                 value = shoplistUiState.type,
                 singleLine = true,
                 onValueChange = {
-                    onValueChange( shoplistUiState.copy(type = it.trim()))
+                    onValueChange( shoplistUiState.copy(type = it))
                 },
 
                 keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),

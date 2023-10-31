@@ -194,7 +194,10 @@ private fun InventoryItem(
                     color = Color.Black
                 )
 
-                LazyRow(modifier = modifier.padding(top = 5.dp, bottom = 5.dp), horizontalArrangement = Arrangement.spacedBy(space = 3.dp)) {
+                LazyRow(
+                    modifier = modifier.padding(top = 5.dp, bottom = 5.dp),
+                    horizontalArrangement = Arrangement.spacedBy(space = 3.dp)
+                ) {
                     val categories: List<String>? = item.category?.split(",")
                     if (categories != null) {
                         if(categories.isNotEmpty()) {

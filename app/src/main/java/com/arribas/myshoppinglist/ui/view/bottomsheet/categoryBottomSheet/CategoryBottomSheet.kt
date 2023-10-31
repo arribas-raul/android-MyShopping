@@ -133,7 +133,7 @@ fun CategoryBottomSheetContent(
                 value = categoryUiState.name,
                 singleLine = true,
                 onValueChange = {
-                    onValueChange(categoryUiState.copy(name = it.trim()))
+                    onValueChange(categoryUiState.copy(name = it))
                 },
 
 

@@ -1,6 +1,7 @@
 package com.arribas.myshoppinglist.ui.view.screen.article.articleList
 
 import com.arribas.myshoppinglist.data.model.Article
+import com.arribas.myshoppinglist.data.model.Category
 
 data class ArticleUiState(
     val id: Int = 0,
@@ -8,7 +9,8 @@ data class ArticleUiState(
     val quantity: String = "1",
     val category: Int = 0,
     val check: Boolean = false,
-    val actionEnabled: Boolean = false
+    val actionEnabled: Boolean = false,
+    val categories: MutableList<Category> = arrayListOf(),
 )
 
 fun ArticleUiState.toItem(): Article = Article(

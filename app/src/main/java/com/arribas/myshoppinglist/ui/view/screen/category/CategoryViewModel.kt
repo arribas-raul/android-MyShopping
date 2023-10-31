@@ -27,7 +27,6 @@ class CategoryViewModel(
 
     fun getData(){
         viewModelScope.launch{
-
             categoryRepository.getAllItems().collect { list ->
                 _listUiState.value = ListCategoryUiState(
                     itemList = list,

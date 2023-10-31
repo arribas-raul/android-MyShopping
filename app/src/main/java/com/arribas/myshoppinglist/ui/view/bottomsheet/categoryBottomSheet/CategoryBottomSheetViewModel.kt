@@ -77,6 +77,7 @@ class CategoryBottomSheetViewModel(
     private fun updateItem() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                categoryUiState.copy(name = categoryUiState.name.trim())
                 categoryRepository.updateItem(categoryUiState.toItem())
 
                 sendMessage(context.getString(R.string.crud_updated_success))
@@ -89,6 +90,8 @@ class CategoryBottomSheetViewModel(
 
     private fun createItem() {
         viewModelScope.launch(Dispatchers.IO) {
+            categoryUiState.copy(name = categoryUiState.name.trim())
+
             val shoplist = categoryRepository.getItemByName(categoryUiState.name)
 
             if(shoplist.first() != null) {

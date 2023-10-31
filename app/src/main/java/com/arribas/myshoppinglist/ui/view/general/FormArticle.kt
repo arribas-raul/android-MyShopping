@@ -2,25 +2,33 @@ package com.arribas.myshoppinglist.ui.view.general
 
 import android.view.KeyEvent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -36,6 +44,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -83,7 +92,7 @@ fun DetailBody(
             ) {
                 TextField(
                     readOnly = true,
-                    value = listCategoryUiState?.itemList?.find{it.id === articleUiState.category}?.name.orEmpty(),
+                    value = listCategoryUiState?.itemList?.find { it.id === articleUiState.category }?.name.orEmpty(),
                     onValueChange = { },
                     label = { Text("Categorias") },
                     trailingIcon = {
@@ -112,6 +121,7 @@ fun DetailBody(
                                 selectedOptionText = category.id
                                 onItemValueChange(articleUiState.copy(category = category.id))
                                 expanded = false
+                                articleUiState.categories.add(category)
                             },
                             text = { Text(text = category.name) }
                         )
@@ -133,6 +143,9 @@ fun DetailBody(
                 )
             }
         }
+
+
+
 
         Button(
             onClick = onSaveClick,

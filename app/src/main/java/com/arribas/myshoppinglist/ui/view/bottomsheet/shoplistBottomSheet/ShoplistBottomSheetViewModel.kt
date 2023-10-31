@@ -78,6 +78,11 @@ class ShoplistBottomSheetViewModel(
     private fun updateItem() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                shoplistUiState.copy(
+                    name = shoplistUiState.name.trim(),
+                    type = shoplistUiState.type.trim()
+                )
+
                 shoplistRepository.updateItem(shoplistUiState.toItem())
 
                 sendMessage(context.getString(R.string.crud_updated_success))
@@ -90,6 +95,11 @@ class ShoplistBottomSheetViewModel(
 
     private fun createItem() {
         viewModelScope.launch(Dispatchers.IO) {
+            shoplistUiState.copy(
+                name = shoplistUiState.name.trim(),
+                type = shoplistUiState.type.trim()
+            )
+
             val shoplist = shoplistRepository.getItemByName(shoplistUiState.name)
 
             if(shoplist.first() != null) {
