@@ -36,6 +36,8 @@ interface ArticleRepositoryInterface {
 
     fun getItemsByName(shoplist_id: Int, name: String): Flow<List<QArticle>>
 
+    fun getItemsByFilter(shoplist_id: Int, name: String, category: Int): Flow<List<QArticle>>
+
     /**
      * Insert item in the data source
      */
@@ -61,6 +63,9 @@ class ArticleRepository(private val articleDao: ArticleDao) : ArticleRepositoryI
 
     override fun getItemsByName(shoplist_id: Int, name: String): Flow<List<QArticle>> =
         articleDao.getItemsByName(shoplist_id, name)
+
+    override fun getItemsByFilter(shoplist_id: Int, name: String, category: Int): Flow<List<QArticle>> =
+        articleDao.getItemsByFilter(shoplist_id, name, category)
 
     override suspend fun insertItem(item: Article) = articleDao.insert(item)
 

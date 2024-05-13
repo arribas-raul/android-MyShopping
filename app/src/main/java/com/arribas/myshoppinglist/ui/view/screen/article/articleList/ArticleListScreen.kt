@@ -5,33 +5,45 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.List
 import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arribas.myshoppinglist.R
@@ -41,7 +53,13 @@ import com.arribas.myshoppinglist.ui.theme.MyShoppingListTheme
 import com.arribas.myshoppinglist.ui.view.app.AppViewModelProvider
 import com.arribas.myshoppinglist.ui.view.app.topBar.AppBarState
 import com.arribas.myshoppinglist.ui.view.dialog.general.SimpleAlertDialog
+import com.arribas.myshoppinglist.ui.view.screen.category.CategoryViewModel
+import com.arribas.myshoppinglist.ui.view.screen.category.ListCategoryUiState
 import com.arribas.myshoppinglist.ui.view.shoplistList.ListArticleHeader
+
+enum class SidePanelState {
+    Open, Closed
+}
 
 @Composable
 fun ArticleListScreen(
@@ -49,23 +67,42 @@ fun ArticleListScreen(
     navigateBack: () -> Unit,
     onSelectItem: (QArticle) -> Unit,
     viewModel: ListArticleViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    categoryViewModel: CategoryViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier){
 
     val listUiState by viewModel.listUiState.collectAsState()
     val searchUiState by viewModel.searchUiState.collectAsState()
     val dialogState: DialogUiState by viewModel.dialogState.collectAsState()
+    val drawerState = remember { mutableStateOf(SidePanelState.Closed) }
+    val categoryListUiState by categoryViewModel.listUiState.collectAsState()
 
     LaunchedEffect(key1 = true) {
         onComposing(
             AppBarState(
                 actions = {
-                    IconButton(onClick = {}) {}
+                    IconButton(
+                        onClick = {
+                            if(drawerState.value == SidePanelState.Closed){
+                                drawerState.value = SidePanelState.Open
+                            }else{
+                                drawerState.value = SidePanelState.Closed
+                            }
+                        }
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.ic_filter),
+                            contentDescription = "Filtro",
+                            colorFilter = ColorFilter.tint(Color.White),
+                        )
+                    }
                 }
             )
         )
     }
 
-    Column {
+    Column(
+        Modifier.fillMaxWidth()) {
+
         ListArticleHeader(
             searchUiState = searchUiState,
             onValueChange = { viewModel.search(it) },
@@ -80,12 +117,32 @@ fun ArticleListScreen(
         )
     }
 
+    if(drawerState.value == SidePanelState.Open) {
+        val menuWidth = 250.dp
+        val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+        val offsetMax = screenWidth - menuWidth
+
+        Box(
+            Modifier
+                .offset(x = offsetMax)
+        ) {
+            LateralRightMenu(
+                searchUiState = searchUiState,
+                width = menuWidth,
+                categoryListUiState = categoryListUiState,
+                onItemValueChange = {
+                    drawerState.value = SidePanelState.Closed
+                    viewModel.searchByCategory(it.category)
+                },
+            )
+        }
+    }
+
     SimpleAlertDialog(
         dialogState = dialogState,
         onDismiss = viewModel::onDialogDismiss,
         onConfirm = viewModel::onDialogConfirm
     )
-
 }
 
 @Composable
@@ -275,6 +332,84 @@ fun ListArticleItemPreview() {
             onDeleteClick = {},
             onCheckClick = {}
         )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun LateralRightMenu(
+    searchUiState: SearchUiState,
+    width: Dp,
+    categoryListUiState: ListCategoryUiState,
+    onItemValueChange: (SearchUiState) -> Unit = {}
+) {
+    Box(
+        modifier = Modifier
+            .background(colorResource(R.color.my_primary))
+            .width(width)
+            .fillMaxHeight()
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            var expanded by remember { mutableStateOf(false) }
+            var selectedOptionText by remember { mutableStateOf(searchUiState.category) }
+
+            ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = {
+                    expanded = !expanded
+                }
+            ) {
+                TextField(
+                    readOnly = true,
+                    value = categoryListUiState?.itemList?.find {
+                        it.id === searchUiState.category }?.name.orEmpty(),
+                    onValueChange = { },
+                    label = { Text("Categorias") },
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(
+                            expanded = expanded
+                        )
+                    },
+                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .fillMaxWidth()
+                        .menuAnchor()
+                        .background(colorResource(id = R.color.white))
+                )
+
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = {
+                        expanded = false
+                    },
+                    modifier = Modifier.background(colorResource(id = R.color.my_primary))
+                ) {
+                    DropdownMenuItem(
+                        onClick = {
+                            selectedOptionText = 0
+                            onItemValueChange(searchUiState.copy(category = 0))
+                            expanded = false
+                        },
+                        text = { Text(text = "") }
+                    )
+                    categoryListUiState.itemList.forEachIndexed() { index, category ->
+                        DropdownMenuItem(
+                            onClick = {
+                                selectedOptionText = category.id
+                                onItemValueChange(searchUiState.copy(category = category.id))
+                                expanded = false
+                            },
+                            text = { Text(text = category.name) }
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 

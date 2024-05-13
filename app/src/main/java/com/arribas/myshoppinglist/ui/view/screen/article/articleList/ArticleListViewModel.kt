@@ -1,6 +1,7 @@
 package com.arribas.myshoppinglist.ui.view.screen.article.articleList
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.arribas.myshoppinglist.data.model.Article
 import com.arribas.myshoppinglist.data.model.ArticleCategory
 import com.arribas.myshoppinglist.data.model.ArticleShop
+import com.arribas.myshoppinglist.data.model.Category
 import com.arribas.myshoppinglist.data.model.QArticle
 import com.arribas.myshoppinglist.data.model.ShoplistArticle
 import com.arribas.myshoppinglist.data.repository.ArticleCategoryRepository
@@ -20,7 +22,9 @@ import com.arribas.myshoppinglist.data.utils.DIALOG_UI_TAG
 import com.arribas.myshoppinglist.data.utils.DialogUiState
 import com.arribas.myshoppinglist.data.utils.PreferencesEnum
 import com.arribas.myshoppinglist.data.utils.PreferencesManager
+import com.arribas.myshoppinglist.data.utils.TextFieldDialogUiState
 import com.arribas.myshoppinglist.ui.navigation.route.Routes
+import com.arribas.myshoppinglist.ui.view.screen.category.ListCategoryUiState
 import com.arribas.myshoppinglist.ui.view.screen.shoplist.ShoplistUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -64,21 +68,39 @@ class ListArticleViewModel(
 
             if(itemId.isNullOrEmpty()){
                 shoplistUiState.copy(id = 0)
+
             }else {
                 shoplistUiState = shoplistUiState.copy(id = itemId!!.toInt())
 
                 viewModelScope.launch {
-                    articleRepository.getItemsByName(
-                        shoplistUiState.id,
-                        _searchUiState.value.name
-                    )
-                        .collect { list ->
-                            _listUiState.value = ListUiState(
-                                itemList = list,
-                                itemCount = list.count(),
-                                itemSelectCount = list.count { it.shopCheked }
-                            )
-                        }
+                    if(_searchUiState.value.category == 0){
+                        articleRepository.getItemsByName(
+                            shoplistUiState.id,
+                            _searchUiState.value.name
+                        )
+                            .collect { list ->
+                                _listUiState.value = ListUiState(
+                                    itemList = list,
+                                    itemCount = list.count(),
+                                    itemSelectCount = list.count { it.shopCheked }
+                                )
+                            }
+
+                    }else{
+                        articleRepository.getItemsByFilter(
+                            shoplistUiState.id,
+                            _searchUiState.value.name,
+                            _searchUiState.value.category
+                        )
+                            .collect { list ->
+                                _listUiState.value = ListUiState(
+                                    itemList = list,
+                                    itemCount = list.count(),
+                                    itemSelectCount = list.count { it.shopCheked }
+                                )
+                            }
+                    }
+
                 }
             }
         }catch (e: IllegalArgumentException){
@@ -115,6 +137,11 @@ class ListArticleViewModel(
                 shoplistArticleRepository.insertItem(shoplistArticle)
             }
         }
+    }
+
+    fun searchByCategory(_category: Int){
+        _searchUiState.value.category = _category
+        getData()
     }
 
     fun search(_name: String){
@@ -211,5 +238,7 @@ data class ListUiState(
 )
 
 data class SearchUiState(
-    val name: String = ""
+    val name: String = "",
+    var category: Int = 0
 )
+

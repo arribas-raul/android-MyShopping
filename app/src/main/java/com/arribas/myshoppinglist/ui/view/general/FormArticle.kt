@@ -144,9 +144,6 @@ fun DetailBody(
             }
         }
 
-
-
-
         Button(
             onClick = onSaveClick,
             enabled = articleUiState.actionEnabled,
