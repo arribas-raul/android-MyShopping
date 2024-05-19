@@ -54,12 +54,7 @@ class ListArticleViewModel(
     var shoplistUiState by mutableStateOf(ShoplistUiState())
         private set
 
-    init{
-
-        getData()
-    }
-
-    private fun getData(){
+     fun getData(){
         try {
             if(itemId == null) {
                 itemId = PreferencesManager(context)
@@ -73,38 +68,25 @@ class ListArticleViewModel(
                 shoplistUiState = shoplistUiState.copy(id = itemId!!.toInt())
 
                 viewModelScope.launch {
-                    if(_searchUiState.value.category == 0){
-                        articleRepository.getItemsByName(
-                            shoplistUiState.id,
-                            _searchUiState.value.name
-                        )
-                            .collect { list ->
-                                _listUiState.value = ListUiState(
-                                    itemList = list,
-                                    itemCount = list.count(),
-                                    itemSelectCount = list.count { it.shopCheked }
-                                )
-                            }
+                    val category = _searchUiState.value.category
+                    val name = _searchUiState.value.name
 
-                    }else{
-                        articleRepository.getItemsByFilter(
-                            shoplistUiState.id,
-                            _searchUiState.value.name,
-                            _searchUiState.value.category
-                        )
-                            .collect { list ->
-                                _listUiState.value = ListUiState(
-                                    itemList = list,
-                                    itemCount = list.count(),
-                                    itemSelectCount = list.count { it.shopCheked }
-                                )
-                            }
-                    }
+                    val list =
+                        if (category == 0) {
+                            articleRepository.getItemsByName(shoplistUiState.id, name).first()
+                        } else {
+                            articleRepository.getItemsByFilter(shoplistUiState.id, name, category).first()
+                        }
 
+                    _listUiState.value = ListUiState(
+                        itemList = list,
+                        itemCount = list.count(),
+                        itemSelectCount = list.count { it.shopCheked }
+                    )
                 }
             }
         }catch (e: IllegalArgumentException){
-
+            Log.e("ListArticleViewModel", e.message.toString())
         }
     }
 
@@ -114,6 +96,8 @@ class ListArticleViewModel(
         }
 
         viewModelScope.launch(Dispatchers.IO) {
+            var auxQArticle: QArticle
+
             if(qArticle.shoplist_id > 0){
                 val shoplistArticle = shoplistArticleRepository.getItemByListAndArticle(
                     qArticle.shoplist_id, qArticle.id
@@ -122,6 +106,8 @@ class ListArticleViewModel(
                 if(shoplistArticle.first() != null) {
                     shoplistArticleRepository.deleteItem(shoplistArticle.first()!!)
                 }
+
+                auxQArticle = qArticle.copy(shoplist_id = 0)
 
             }else{
                 val count: Int = shoplistArticleRepository.count(shoplistUiState.id)
@@ -135,23 +121,38 @@ class ListArticleViewModel(
                 )
 
                 shoplistArticleRepository.insertItem(shoplistArticle)
+
+                auxQArticle = qArticle.copy(shoplist_id = shoplistUiState.id)
             }
+
+            updateStateListArticleWithModifyArticle(auxQArticle)
         }
     }
 
+    private fun updateStateListArticleWithModifyArticle(qArticle: QArticle, ) {
+        val currentList = _listUiState.value.itemList
+        val newList = currentList.map { article ->
+            if (article.id == qArticle.id) {
+                qArticle
+
+            } else {
+                article
+            }
+        }
+
+        _listUiState.value = _listUiState.value.copy(itemList = newList)
+    }
+
     fun searchByCategory(_category: Int){
-        _searchUiState.value.category = _category
-        getData()
+        _searchUiState.value= _searchUiState.value.copy(category = _category)
     }
 
     fun search(_name: String){
         _searchUiState.value = _searchUiState.value.copy(name = _name)
-        getData()
     }
 
     fun clearName(){
         _searchUiState.value = _searchUiState.value.copy(name = "")
-        getData()
     }
 
     fun onDialogDelete(article: QArticle){

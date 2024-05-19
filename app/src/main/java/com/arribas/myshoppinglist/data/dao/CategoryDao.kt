@@ -6,7 +6,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.arribas.myshoppinglist.data.model.Article
 import com.arribas.myshoppinglist.data.model.Category
 import kotlinx.coroutines.flow.Flow
 
@@ -14,6 +13,9 @@ import kotlinx.coroutines.flow.Flow
 interface CategoryDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(category: Category)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insert(categories: List<Category>)
 
     @Update
     suspend fun update(category: Category)

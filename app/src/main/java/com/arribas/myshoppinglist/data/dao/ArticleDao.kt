@@ -15,6 +15,9 @@ interface ArticleDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(article: Article): Long
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insert(articles: List<Article>)
+
     @Update
     suspend fun update(article: Article)
 

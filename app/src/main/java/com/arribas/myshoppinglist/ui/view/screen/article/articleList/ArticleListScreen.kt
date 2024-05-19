@@ -76,7 +76,7 @@ fun ArticleListScreen(
     val drawerState = remember { mutableStateOf(SidePanelState.Closed) }
     val categoryListUiState by categoryViewModel.listUiState.collectAsState()
 
-    LaunchedEffect(key1 = true) {
+    LaunchedEffect(key1 = true, searchUiState) {
         onComposing(
             AppBarState(
                 actions = {
@@ -98,6 +98,8 @@ fun ArticleListScreen(
                 }
             )
         )
+
+        viewModel.getData()
     }
 
     Column(
@@ -217,21 +219,6 @@ private fun InventoryItem(
             .background(colorResource(R.color.white))
             .padding(8.dp)
         ) {
-            /*var checked = remember { mutableStateOf(item.shopCheked) }
-
-            Checkbox(
-                checked = checked.value,
-
-                onCheckedChange = { _checked ->
-                    checked.value = _checked
-                    onCheckClick(item.copy(shopCheked = _checked))
-                },
-
-                modifier = Modifier
-                    .weight(0.3f)
-                    .padding(end = 10.dp)
-            )*/
-
             if(item.shoplist_id > 0) {
                 Image(
                     painter = painterResource(R.drawable.ic_check),
@@ -256,6 +243,7 @@ private fun InventoryItem(
                     horizontalArrangement = Arrangement.spacedBy(space = 3.dp)
                 ) {
                     val categories: List<String>? = item.category?.split(",")
+
                     if (categories != null) {
                         if(categories.isNotEmpty()) {
                             items(categories) { category ->
@@ -275,8 +263,6 @@ private fun InventoryItem(
                     }
                 }
             }
-
-
 
             IconButton(
                 onClick = { onItemClick(item) },
@@ -304,7 +290,6 @@ private fun InventoryItem(
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable

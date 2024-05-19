@@ -17,7 +17,6 @@
 package com.arribas.myshoppinglist.data.repository
 
 import com.arribas.myshoppinglist.data.dao.CategoryDao
-import com.arribas.myshoppinglist.data.model.Article
 import com.arribas.myshoppinglist.data.model.Category
 import kotlinx.coroutines.flow.Flow
 

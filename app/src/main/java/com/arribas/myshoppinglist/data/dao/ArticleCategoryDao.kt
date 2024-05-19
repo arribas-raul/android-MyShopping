@@ -15,6 +15,9 @@ interface ArticleCategoryDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(articleCategory: ArticleCategory)
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insert(articleCategories: List<ArticleCategory>)
+
     @Update
     suspend fun update(articleCategory: ArticleCategory)
 

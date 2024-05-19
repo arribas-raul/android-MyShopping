@@ -134,7 +134,7 @@ fun ShoplistBottomSheetContent(
                 value = shoplistUiState.name,
                 singleLine = true,
                 onValueChange = {
-                    onValueChange( shoplistUiState.copy(name = it.trim()))
+                    onValueChange( shoplistUiState.copy(name = it))
                 },
 
 
